@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Ledgera secret gate — blocks commits that stage secret material.
+# Requires gitleaks (MIT, v8.18.4). Install: brew install gitleaks or
+# download from https://github.com/gitleaks/gitleaks/releases
+set -euo pipefail
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "gitleaks: not installed — skipping local scan (CI still enforces)"
+  exit 0
+fi
+
+gitleaks protect --staged --redact --no-banner
