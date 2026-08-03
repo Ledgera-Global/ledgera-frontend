@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Ledgera secret gate — blocks pushes whose new commits contain secrets.
+# Scans only upstream..HEAD, so pre-existing history never blocks or leaks.
+# Requires gitleaks (MIT, v8.18.4). Install: brew install gitleaks
+set -euo pipefail
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "gitleaks: not installed — skipping local push scan (CI still enforces)"
+  exit 0
+fi
+
+# $1 = remote name, $2 = remote url, stdin rows: <local ref> <local sha> <remote ref> <remote sha>
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_ref" = "(delete)" ] && continue
+
+  if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+    range="HEAD"
+  else
+    range="${remote_sha}..${local_sha}"
+  fi
+
+  echo "gitleaks: scanning ${range} for ${remote_ref}"
+  if ! gitleaks detect --redact --no-banner --verbose --log-opts="${range}" 2>/dev/null; then
+    echo "gitleaks: SECRET DETECTED in ${range} — push blocked. Remove the secret and commit again."
+    exit 1
+  fi
+done
