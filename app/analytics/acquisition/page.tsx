@@ -6,6 +6,7 @@ const navLinks = [
   { label: "Dashboard", href: "/dashboard" },
   { label: "Integrations", href: "/integrations" },
   { label: "Acquisition", href: "/analytics/acquisition" },
+  { label: "Lender Readiness", href: "/analytics/lender-readiness" },
 ];
 
 function fmt(v: number) { return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(v); }
@@ -163,7 +164,7 @@ const DEFAULT_VAL = {
     "Pricing Power: Competitive pressure limits margin expansion post-deal.",
     "Legacy Systems: Non-integrated backend systems increase integration capex.",
   ],
-  valuationReadiness: "medium" as const,
+  valuationReadiness: "medium" as "high" | "medium" | "low",
   generatedAt: new Date().toISOString(),
 };
 
