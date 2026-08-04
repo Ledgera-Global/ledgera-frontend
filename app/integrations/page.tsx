@@ -124,6 +124,7 @@ export default function IntegrationsPage() {
             <Link href="/dashboard" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Dashboard</Link>
             <Link href="/integrations" className="text-sm font-medium text-white transition-colors">Integrations</Link>
             <Link href="/analytics/acquisition" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Acquisition</Link>
+            <Link href="/analytics/lender-readiness" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Lender Readiness</Link>
           </div>
         </nav>
       </header>
