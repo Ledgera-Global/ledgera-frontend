@@ -1,44 +1,49 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { handleApiGet } from "@/lib/backendProxy";
 
-export async function GET(request: NextRequest, { params }: { params: { companyId: string } }) {
-  const { companyId } = params;
+const demoRecommendation = {
+  eligible: true,
+  eligibilityReason: "Acquisition-ready with Mid-Market profile. A tuck-in strategy can accelerate to Large tier.",
+  clientTier: "mid",
+  clientRevenue: 420000,
+  clientEbitda: 185000,
+  targetTier: "large",
+  recommendedTargetRevenue: { min: 84000, max: 168000 },
+  recommendedTargetEbitda: { min: 8400, max: 42000 },
+  targetCount: 5,
+  proFormaRevenue: 1050000,
+  proFormaEbitda: 432500,
+  proFormaEbitdaMarginPct: 41.2,
+  synergySavingsPct: 15,
+  combinedEnterpriseValue: 4973750,
+  combinedMultiple: 11.5,
+  currentMultiple: 5.0,
+  multipleAfterFirstDeal: 7.5,
+  multipleAfterRollup: 11.5,
+  ceilingAfterRollup: 15,
+  multipleTrajectory: [
+    { label: "Current Standalone", multiple: 5.0, enterpriseValue: 925000, ebitda: 185000 },
+    { label: "After 1 acquisition", multiple: 7.5, enterpriseValue: 2148750, ebitda: 286500 },
+    { label: "After 2 acquisitions", multiple: 9.0, enterpriseValue: 3195000, ebitda: 355000 },
+    { label: "After 3 acquisitions", multiple: 10.2, enterpriseValue: 4131000, ebitda: 405000 },
+    { label: "After 4 acquisitions", multiple: 11.0, enterpriseValue: 4785000, ebitda: 435000 },
+    { label: "After 5 acquisitions", multiple: 11.5, enterpriseValue: 4973750, ebitda: 432500 },
+  ],
+  description: "As a Mid-Market company with $420k revenue and $185k EBITDA, you are well-positioned to execute a tuck-in acquisition strategy. By acquiring 5 target(s) in the $84k-$168k revenue range, you can scale to Large tier and expand your valuation multiple from 5.0x to 15x — unlocking significant enterprise value growth.",
+  risks: [
+    "Integration risk — combining operations, systems, and cultures requires dedicated leadership.",
+    "Customer retention risk — acquired customers may churn during transition.",
+    "Financing risk — acquisitions require capital; structure debt carefully.",
+    "Talent retention — key employees at the target may leave post-acquisition.",
+    "Multiple simultaneous integrations increase execution complexity.",
+  ],
+  generatedAt: new Date().toISOString(),
+};
 
-  const data = {
-    eligible: true,
-    eligibilityReason: "Acquisition-ready with Small profile. A tuck-in strategy can accelerate to Mid-Market tier.",
-    clientTier: "small",
-    clientRevenue: 420000,
-    clientEbitda: 185000,
-    targetTier: "mid",
-    recommendedTargetRevenue: { min: 84000, max: 168000 },
-    recommendedTargetEbitda: { min: 8400, max: 42000 },
-    targetCount: 4,
-    proFormaRevenue: 924000,
-    proFormaEbitda: 387500,
-    proFormaEbitdaMarginPct: 41.9,
-    synergySavingsPct: 15,
-    combinedEnterpriseValue: 3681250,
-    combinedMultiple: 9.5,
-    currentMultiple: 5.0,
-    multipleAfterFirstDeal: 7.5,
-    multipleAfterRollup: 9.5,
-    ceilingAfterRollup: 12,
-    multipleTrajectory: [
-      { label: "Current Standalone", multiple: 5.0, enterpriseValue: 925000, ebitda: 185000 },
-      { label: "After 1 acquisition", multiple: 7.5, enterpriseValue: 2148750, ebitda: 286500 },
-      { label: "After 2 acquisitions", multiple: 8.5, enterpriseValue: 3017500, ebitda: 355000 },
-      { label: "After 3 acquisitions", multiple: 9.1, enterpriseValue: 3685500, ebitda: 405000 },
-      { label: "After 4 acquisitions", multiple: 9.5, enterpriseValue: 3681250, ebitda: 387500 },
-    ],
-    description: "As a Small company with $420k revenue and $185k EBITDA, by acquiring 4 target(s) in the $84k-$168k revenue range, you can scale to Mid-Market tier and expand your valuation multiple from 5.0x to 12x.",
-    risks: [
-      "Integration risk — combining operations, systems, and cultures requires dedicated leadership.",
-      "Customer retention risk — acquired customers may churn during transition.",
-      "Financing risk — acquisitions require capital; structure debt carefully.",
-      "Talent retention — key employees at the target may leave post-acquisition.",
-    ],
-    generatedAt: new Date().toISOString(),
-  };
-
-  return NextResponse.json(data);
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ companyId: string }> }
+) {
+  const p = await params;
+  return handleApiGet(req, p, `/rollup-advisor/${p.companyId}`, demoRecommendation);
 }

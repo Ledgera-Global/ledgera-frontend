@@ -1,3 +1,5 @@
+"use client";
+
 type ActionPanelProps = {
   lead?: {
     score: number;
@@ -12,39 +14,39 @@ export default function ActionPanel({ lead }: ActionPanelProps) {
   return (
     <section>
       <div className="mb-4">
-        <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Sales Control</p>
+        <p className="text-xs uppercase tracking-[0.24em] text-surface-400">Sales Control</p>
         <h2 className="mt-2 text-2xl font-semibold text-white">Live Call Assist</h2>
       </div>
 
-      <div className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/70 p-6 shadow-xl shadow-black/20">
+      <div className="space-y-4 rounded-3xl border border-surface-800 bg-surface-900/70 p-6 shadow-xl shadow-black/20">
         <a
           href={zoomLink}
-          className="block rounded-2xl bg-cyan-500 px-4 py-3 text-center font-semibold text-slate-950 transition hover:bg-cyan-400"
+          className="block rounded-2xl bg-brand-500 px-4 py-3 text-center font-semibold text-surface-950 transition hover:bg-brand-400"
         >
           Join Zoom
         </a>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-400">
+        <div className="rounded-2xl border border-surface-800 bg-surface-950/70 p-4">
+          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-surface-400">
             Suggested Move
           </h3>
-          <p className="mt-3 text-sm leading-6 text-slate-200">
+          <p className="mt-3 text-sm leading-6 text-surface-200">
             Ask about AR delays and unpaid invoices.
           </p>
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-400">
+        <div className="rounded-2xl border border-surface-800 bg-surface-950/70 p-4">
+          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-surface-400">
             Close Probability
           </h3>
           <p className="mt-3 text-3xl font-semibold text-white">{score}%</p>
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-400">
+        <div className="rounded-2xl border border-surface-800 bg-surface-950/70 p-4">
+          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-surface-400">
             Objection Response
           </h3>
-          <p className="mt-3 text-sm leading-6 text-slate-200">
+          <p className="mt-3 text-sm leading-6 text-surface-200">
             We can quantify the leak first, then show the owner the ROI of fixing it.
           </p>
         </div>
