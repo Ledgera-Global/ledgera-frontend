@@ -1,110 +1,20 @@
-import fs from "node:fs";
-import jwt from "jsonwebtoken";
-import path from "node:path";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { handleApiGet } from "@/lib/backendProxy";
 
-type ProfitAlertSeverity = "CLEAN" | "HIGH" | "CRITICAL";
-
-type ProfitAlert = {
-  type: string;
-  severity: ProfitAlertSeverity;
-  title: string;
-  detail: string;
-  estimatedLostDollars?: number;
+const demoData = {
+  windowDays: 30,
+  generatedAt: new Date().toISOString(),
+  alerts: [
+    { type: "LOW_SERVICE_MARGIN", severity: "CRITICAL" as const, title: "$2,400 lost from underpriced installs", detail: "Pricing spread indicates underpriced services that reduce realized margin.", estimatedLostDollars: 2400 },
+    { type: "LOW_TECHNICIAN_EFFICIENCY", severity: "HIGH" as const, title: "Tech #4 30% below avg productivity", detail: "Windowed efficiency score suggests lower revenue throughput vs peers.", estimatedLostDollars: 3600 },
+    { type: "IDLE_TECHNICIAN", severity: "HIGH" as const, title: "12 missed calls = est. $6,000 lost", detail: "Dispatch/callback proxy indicates idle gaps that correlate with missed opportunities.", estimatedLostDollars: 6000 },
+  ],
 };
-
-type ProfitAlertsResponse = {
-  windowDays: number;
-  generatedAt: string;
-  alerts: ProfitAlert[];
-};
-
-function parseEnvFile(filePath: string): Record<string, string> {
-  try {
-    const raw = fs.readFileSync(filePath, "utf8");
-    const out: Record<string, string> = {};
-    for (const line of raw.split(/\r?\n/)) {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith("#")) continue;
-      const idx = trimmed.indexOf("=");
-      if (idx === -1) continue;
-      const key = trimmed.slice(0, idx).trim();
-      const value = trimmed.slice(idx + 1).trim();
-      out[key] = value.replace(/^"(.*)"$/, "$1");
-    }
-    return out;
-  } catch {
-    return {};
-  }
-}
-
-function getJwtSecret(): string | null {
-  const direct = process.env.JWT_SECRET;
-  if (direct && typeof direct === "string" && direct.length > 0) return direct;
-
-  const candidates = [
-    path.resolve(process.cwd(), "ledgera-backend", ".env"),
-    path.resolve(process.cwd(), "..", "ledgera-backend", ".env"),
-    path.resolve(process.cwd(), "..", "..", "ledgera-backend", ".env"),
-  ];
-
-  for (const candidate of candidates) {
-    const env = parseEnvFile(candidate);
-    const jwtSecret = env.JWT_SECRET;
-    if (jwtSecret && typeof jwtSecret === "string" && jwtSecret.length > 0) return jwtSecret;
-  }
-
-  return null;
-}
 
 export async function GET(
   req: NextRequest,
-  context: { params: { companyId: string } }
+  { params }: { params: Promise<{ companyId: string }> }
 ) {
-  const companyId = context.params.companyId;
-
-  const jwtSecret = getJwtSecret();
-  if (!jwtSecret) {
-    return NextResponse.json(
-      { error: "Missing JWT_SECRET. Provide it to the Next app runtime." },
-      { status: 500 }
-    );
-  }
-
-  const backendUrl =
-    process.env.LEDGERA_BACKEND_URL && process.env.LEDGERA_BACKEND_URL.length > 0
-      ? process.env.LEDGERA_BACKEND_URL
-      : "http://localhost:4000";
-
-  const token = jwt.sign(
-    { sub: companyId, email: "ui@ledgera.local", role: "user" },
-    jwtSecret,
-    { algorithm: "HS256" }
-  );
-
-  const url = `${backendUrl}/analytics/${companyId}/profit-alerts?windowDays=30`;
-
-  const res = await fetch(url, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "content-type": "application/json",
-    },
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    return NextResponse.json(
-      {
-        error: "Backend profit-alerts fetch failed",
-        status: res.status,
-        detail: text,
-      },
-      { status: res.status }
-    );
-  }
-
-  const data = (await res.json()) as ProfitAlertsResponse;
-  return NextResponse.json(data, { status: 200 });
+  const p = await params;
+  return handleApiGet(req, p, `/analytics/${p.companyId}/profit-alerts?windowDays=30`, demoData);
 }
