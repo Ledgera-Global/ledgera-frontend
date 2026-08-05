@@ -10,6 +10,9 @@ import {
 
 const JWT_SECRET = process.env.JWT_SECRET || "";
 const BACKEND_URL = process.env.LEDGERA_BACKEND_URL || "http://localhost:4000";
+// If the backend (e.g. Railway hobby tier) is cold-starting or down, fail fast and fall
+// back to demo data instead of letting pages hang on a slow/unbounded fetch.
+const BACKEND_FETCH_TIMEOUT_MS = 4000;
 
 /**
  * Extracts the user's session token from the incoming Next.js request.
@@ -76,6 +79,7 @@ export async function fetchFromBackend<T>(
       "Content-Type": "application/json",
     },
     cache: "no-store",
+    signal: AbortSignal.timeout(BACKEND_FETCH_TIMEOUT_MS),
   });
 
   if (!res.ok) {
@@ -277,6 +281,7 @@ export async function handleApiMutation<T>(
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
+      signal: AbortSignal.timeout(BACKEND_FETCH_TIMEOUT_MS),
     });
 
     if (!res.ok) {
