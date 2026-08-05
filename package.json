@@ -1,34 +1,33 @@
 {
-  "name": "ledgera-frontend",
+  "name": "ledgerahq",
   "version": "1.0.0",
   "private": true,
+  "description": "Ledgera — Institutional financial intelligence platform for HVAC contractors",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.53.1",
-    "@sentry/profiling-node": "^10.53.1",
     "@vercel/analytics": "^2.0.1",
+    "@vercel/connect": "^0.3.0",
     "@vercel/speed-insights": "^2.0.0",
-    "jsonwebtoken": "^9.0.2",
-    "next": "^14.2.16",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "jsonwebtoken": "^9.0.3",
+    "next": "^16.2.6",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.6",
-    "@types/node": "^20.3.1",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "autoprefixer": "^10.4.20",
-    "eslint": "^8.57.1",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
-    "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.14",
-    "typescript": "^5.6.3"
+    "@tailwindcss/postcss": "^4.0.15",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^25",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "9.7.0",
+    "eslint-config-next": "^16.2.6",
+    "tailwindcss": "^4.0.15",
+    "typescript": "^6"
   }
 }
