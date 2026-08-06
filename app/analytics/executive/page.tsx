@@ -1,15 +1,8 @@
 "use client";
+import InstitutionalNav from "@/components/layouts/InstitutionalNav";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-const navLinks = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Integrations", href: "/integrations" },
-  { label: "Analytics", href: "/analytics" },
-  { label: "Executive", href: "/analytics/executive" },
-  { label: "Acquisition", href: "/analytics/acquisition" },
-  { label: "Engines", href: "/analytics/engines" },
-];
+import { NAV_LINKS } from "@/lib/constants/styling";
 
 type Section = {
   title: string;
@@ -99,7 +92,7 @@ With targeted interventions, estimated EBITDA lift of 30.8% ($57K) is achievable
             <span className="text-lg font-semibold text-white">Ledgera Global</span>
           </Link>
           <div className="flex items-center gap-6">
-            {navLinks.map((link) => (
+            {NAV_LINKS.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
@@ -110,6 +103,7 @@ With targeted interventions, estimated EBITDA lift of 30.8% ($57K) is achievable
                 {link.label}
               </Link>
             ))}
+            <InstitutionalNav currentHref="/analytics/executive" />
           </div>
         </nav>
       </header>

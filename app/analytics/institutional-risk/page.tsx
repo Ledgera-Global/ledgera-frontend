@@ -5,7 +5,7 @@ import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import { fetchJson } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth-context";
 import { NAV_LINKS } from "@/lib/constants/styling";
-
+import InstitutionalNav from "@/components/layouts/InstitutionalNav";
 function fmt(v: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(v);
 }
@@ -290,9 +290,7 @@ export default function InstitutionalRiskPage() {
           <div className="hidden md:flex items-center gap-6">
             {NAV_LINKS.map((link) => (
               <Link key={link.label} href={link.href} className={`text-sm font-medium transition-colors ${link.href === "/analytics/institutional-risk" ? "text-white" : "text-surface-300 hover:text-white"}`}>{link.label}</Link>
-            ))}
-            <Link href="/analytics/institutional-risk" className="text-sm font-medium text-white">Institutional Risk</Link>
-          </div>
+            ))}          </div>
         </nav>
       </header>
 
@@ -306,6 +304,7 @@ export default function InstitutionalRiskPage() {
           </div>
 
           {loading ? <LoadingSkeleton count={6} /> : d && (
+<InstitutionalNav currentHref="/analytics/institutional-risk" linkClassName="text-sm font-medium text-surface-300 hover:text-white transition-colors" />
             <div className="space-y-8">
               {/* ═══════════════════════════════════════════════════════════
                   PHASE 1 — FINANCIAL & OPERATIONAL INTELLIGENCE
