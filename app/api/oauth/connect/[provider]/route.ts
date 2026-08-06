@@ -12,6 +12,160 @@ export async function GET(
   const companyId = request.nextUrl.searchParams.get("companyId") || "companyA";
   const appUrl = process.env.APP_URL || "https://ledgerahq.com";
 
+  // ── CallRail: API token auth, not OAuth ─────────────────────────────
+  if (provider === "callrail") {
+    return new NextResponse(
+      `<!DOCTYPE html>
+<html>
+<head>
+  <title>Connect CallRail – Ledgera</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0a0a0f;
+      color: #e4e4e7;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: #12121a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 40px;
+      max-width: 520px;
+      width: 100%;
+      margin: 20px;
+    }
+    h1 { font-size: 22px; font-weight: 600; margin-bottom: 8px; color: white; }
+    p { font-size: 14px; line-height: 1.6; color: #a1a1aa; margin-bottom: 24px; }
+    ol {
+      list-style: decimal;
+      padding-left: 20px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #a1a1aa;
+      margin-bottom: 24px;
+    }
+    ol a { color: #818cf8; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 13px; color: #a1a1aa; margin-bottom: 6px; }
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: #1a1a24;
+      color: white;
+      font-size: 14px;
+      font-family: monospace;
+      outline: none;
+    }
+    input:focus { border-color: #818cf8; }
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      background: #818cf8;
+      color: #0a0a0f;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .error { color: #f87171; font-size: 13px; margin-top: 12px; display: none; }
+    .success { color: #34d399; font-size: 13px; margin-top: 12px; display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Connect CallRail</h1>
+    <p>CallRail uses API token authentication. Enter your CallRail API token and account ID.</p>
+    <ol>
+      <li>Go to your CallRail dashboard: <strong>Settings → API → API Tokens</strong></li>
+      <li>Create a token and note your <strong>Account ID</strong> from the URL</li>
+      <li>Paste both below and click Connect</li>
+    </ol>
+    <div class="field">
+      <label>CallRail Account ID</label>
+      <input type="text" id="accountId" placeholder="e.g. 123456" autocomplete="off" />
+    </div>
+    <div class="field">
+      <label>CallRail API Token</label>
+      <input type="password" id="apiToken" placeholder="Paste your CallRail API token..." autocomplete="off" />
+    </div>
+    <button id="connectBtn" onclick="connect()">Connect &rarr;</button>
+    <div id="error" class="error"></div>
+    <div id="success" class="success"></div>
+  </div>
+  <script>
+    async function connect() {
+      const token = document.getElementById("apiToken").value.trim();
+      const accountId = document.getElementById("accountId").value.trim();
+      const btn = document.getElementById("connectBtn");
+      const errorEl = document.getElementById("error");
+      const successEl = document.getElementById("success");
+      errorEl.style.display = "none";
+      successEl.style.display = "none";
+
+      if (!token) {
+        errorEl.textContent = "Please enter your CallRail API token";
+        errorEl.style.display = "block";
+        return;
+      }
+      if (!accountId) {
+        errorEl.textContent = "Please enter your CallRail Account ID";
+        errorEl.style.display = "block";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Connecting...";
+
+      try {
+        const res = await fetch("/api/integrations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            provider: "callrail",
+            companyId: "${companyId}",
+            apiToken: token,
+            accountId: parseInt(accountId, 10),
+          }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || "Connection failed (" + res.status + ")");
+        }
+
+        successEl.textContent = "Connected successfully! Redirecting...";
+        successEl.style.display = "block";
+        setTimeout(() => { window.location.href = "${appUrl}/integrations?connected=callrail"; }, 1500);
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.style.display = "block";
+        btn.disabled = false;
+        btn.textContent = "Connect \\u2192";
+      }
+    }
+  </script>
+</body>
+</html>`,
+      {
+        status: 200,
+        headers: { "Content-Type": "text/html; charset=utf-8" },
+      }
+    );
+  }
+
   // ── Samsara: API token auth, not OAuth ──────────────────────────────
   // Samsara uses long-lived API tokens generated from their dashboard.
   // Instead of an OAuth redirect, return a page prompting for the token.

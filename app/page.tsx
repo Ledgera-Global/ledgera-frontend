@@ -94,7 +94,7 @@ function Navbar() {
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
         <Link href="/" className="flex items-center gap-2">
           <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-sm font-bold text-surface-950">L</span>
-          <span className="text-lg font-semibold text-white">Ledgera</span>
+          <span className="text-lg font-semibold text-white">Ledgera Global</span>
         </Link>
         <div className="flex items-center gap-6">
           {navLinks.map((link) =>
@@ -154,8 +154,8 @@ function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center pt-24 pb-16">
-      {/* Background */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.12),_transparent_34%),linear-gradient(180deg,_#020617_0%,_#020817_55%,_#0f172a_100%)]" />
+      {/* Background — deep navy with subtle brass glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(196,149,106,0.10),_transparent_34%),linear-gradient(180deg,_#060910_0%,_#0d111c_55%,_#172032_100%)]" />
 
       <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-8 px-6 lg:px-10">
         <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] shadow-2xl shadow-black/30 backdrop-blur-2xl">
@@ -164,7 +164,7 @@ function HeroSection() {
               <span className="inline-flex rounded-full border border-brand-400/25 bg-brand-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-brand-200">
                 Institutional operating layer
               </span>
-              <span className="inline-flex rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-200">
+              <span className="inline-flex rounded-full border border-brand-400/25 bg-brand-400/10 px-3 py-1 text-xs font-medium text-brand-200">
                 Production ready
               </span>
             </div>
@@ -206,7 +206,7 @@ function HeroSection() {
                     <p className="text-sm text-surface-400">{metric.label}</p>
                     <div className="mt-3 flex items-end justify-between gap-4">
                       <p className="text-3xl font-semibold text-white">{metric.value}</p>
-                      <p className="text-xs text-emerald-300">{metric.detail}</p>
+                      <p className="text-xs text-brand-300">{metric.detail}</p>
                     </div>
                   </div>
                 ))}
@@ -283,7 +283,7 @@ function PipelineSection() {
                 title="Live booking intelligence with executive visibility."
                 description="The moment a booking lands, the pipeline updates and the next action becomes obvious."
               />
-              <span className="shrink-0 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-200">
+              <span className="shrink-0 rounded-full border border-brand-400/20 bg-brand-400/10 px-3 py-1 text-xs font-medium text-brand-200">
                 Synced
               </span>
             </div>
@@ -313,7 +313,7 @@ function PipelineSection() {
               </ul>
             </div>
 
-            <div className="rounded-[2rem] border border-brand-400/15 bg-gradient-to-br from-brand-400/[0.08] to-white/[0.03] p-8 shadow-lg shadow-black/20">
+            <div className="rounded-[2rem] border border-brand-400/15 bg-gradient-to-br from-brand-400/[0.06] to-white/[0.02] p-8 shadow-lg shadow-black/20">
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand-200">Deployment posture</p>
               <h2 className="mt-4 text-2xl font-semibold text-white">Ready for a real environment.</h2>
               <p className="mt-3 text-sm leading-7 text-surface-300">The structure is simple, maintainable, and presentation-ready for an institutional audience.</p>

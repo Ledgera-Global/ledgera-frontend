@@ -1,12 +1,20 @@
 "use client";
+import ArCollectionRecommendations from "@/components/analytics/ArCollectionRecommendations";
+import EvTrackerCard from "@/components/EvTrackerCard";
 import Link from "next/link";
+import ValueMethodologyPanel from "@/components/analytics/ValueMethodologyPanel";
 import { useEffect, useState } from "react";
 import { AcquisitionScoreCard } from "@/components/analytics/AcquisitionScoreCard";
+import { ConfidenceInterval } from "@/components/analytics/ConfidenceInterval";
 import { DiligenceReportSection } from "@/components/analytics/DiligenceReportSection";
+import { LiveEvCard } from "@/components/analytics/LiveEvCard";
+import { MultiplePotentialChart } from "@/components/analytics/MultiplePotentialChart";
+import { ReadinessBadge } from "@/components/analytics/ReadinessBadge";
 import { RollupStrategySection } from "@/components/analytics/RollupStrategySection";
 import { ValuationHero } from "@/components/analytics/ValuationHero";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import { fetchJson } from "@/lib/api/client";
+import { useAuth } from "@/lib/auth-context";
 import { NAV_LINKS } from "@/lib/constants/styling";
 
 import {
@@ -14,23 +22,31 @@ import {
   DEFAULT_DILIGENCE_REPORT,
   DEFAULT_VALUATION,
   DEFAULT_ROLLUP_STRATEGY,
+  DEFAULT_MULTIPLE_POTENTIAL,
+  DEFAULT_READINESS,
 } from "@/lib/data/defaults";
 import type {
   AcquisitionScore,
   DiligenceReport,
   EnterpriseValuation,
   RollupStrategy,
+  LiveEvData,
+  MultiplePotential,
+  InstitutionalReadiness,
 } from "@/lib/types/acquisition";
 
-const COMPANY_ID = "companyA";
-
 export default function AcquisitionPage() {
+  const { user } = useAuth();
+  const COMPANY_ID = user?.companyId || "companyA";
   const [scrolled, setScrolled] = useState(false);
   const [acq, setAcq] = useState<AcquisitionScore>(DEFAULT_ACQUISITION_SCORE);
   const [dil, setDil] = useState<DiligenceReport>(DEFAULT_DILIGENCE_REPORT);
   const [val, setVal] = useState<EnterpriseValuation>(DEFAULT_VALUATION);
   const [rollup, setRollup] = useState<RollupStrategy>(DEFAULT_ROLLUP_STRATEGY);
+  const [multiplePot, setMultiplePot] = useState<MultiplePotential>(DEFAULT_MULTIPLE_POTENTIAL);
+  const [readiness, setReadiness] = useState<InstitutionalReadiness>(DEFAULT_READINESS);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"investment" | "operational">("investment");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -40,16 +56,19 @@ export default function AcquisitionPage() {
 
   useEffect(() => {
     (async () => {
-      const [a, d, v, r] = await Promise.all([
+      const [a, d, v, r, m] = await Promise.all([
         fetchJson(`/api/acquisition/${COMPANY_ID}`, DEFAULT_ACQUISITION_SCORE),
         fetchJson(`/api/diligence/${COMPANY_ID}`, DEFAULT_DILIGENCE_REPORT),
         fetchJson(`/api/enterprise-valuation/${COMPANY_ID}`, DEFAULT_VALUATION),
         fetchJson(`/api/rollup-advisor/${COMPANY_ID}`, DEFAULT_ROLLUP_STRATEGY),
+        fetchJson(`/api/multiple-potential/${COMPANY_ID}`, DEFAULT_MULTIPLE_POTENTIAL),
       ]);
       setAcq(a);
       setDil(d);
       setVal(v);
       setRollup(r);
+      setMultiplePot(m);
+      setReadiness(DEFAULT_READINESS);
       setLoading(false);
     })();
   }, []);
@@ -68,9 +87,9 @@ export default function AcquisitionPage() {
             <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-sm font-bold text-surface-950">
               L
             </span>
-            <span className="text-lg font-semibold text-white">Ledgera</span>
+            <span className="text-lg font-semibold text-white">Ledgera Global</span>
           </Link>
-          <div className="flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-6">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.label}
@@ -88,32 +107,96 @@ export default function AcquisitionPage() {
         </nav>
       </header>
 
-      <div className="pt-24 pb-16">
+      <div className="pt-24 pb-24">
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
-          <div className="mb-10">
+          {/* Page header */}
+          <div className="mb-12">
             <h1 className="text-3xl font-semibold text-white mb-3">
-              Enterprise Valuation & Acquisition Readiness
+              Institutional Investment Platform
             </h1>
             <p className="max-w-2xl text-base text-surface-300">
-              Real-time enterprise value computed from your connected operational data.
+              Enterprise valuation, acquisition readiness, and roll-up strategy powered by live operational data.
+              Built for private equity, lenders, and acquisition teams.
             </p>
           </div>
 
           {loading ? (
-            <LoadingSkeleton count={3} />
+            <LoadingSkeleton count={4} />
           ) : (
-            <div className="space-y-8">
-              <ValuationHero val={val} />
-              <RollupStrategySection rollup={rollup} />
-              <div className="grid gap-8 lg:grid-cols-5">
-                <div className="lg:col-span-2 space-y-6">
-                  <AcquisitionScoreCard acq={acq} />
+            <>
+              {/* ── TOP PRIORITY: The "Hero" section — EV, EBITDA, Multiple dominate ── */}
+              <div className="grid gap-8 lg:grid-cols-3 mb-12">
+                <div className="lg:col-span-2">
+                  <ValuationHero val={val} />
                 </div>
-                <div className="lg:col-span-3 space-y-6">
-                  <DiligenceReportSection dil={dil} />
+                <div className="lg:col-span-1 space-y-8">
+                  <LiveEvCard companyId={COMPANY_ID} />
+                  <ConfidenceInterval
+                    confidence={val.valuation.confidence}
+                    enterpriseValue={val.valuation.enterpriseValue}
+                  />
                 </div>
               </div>
-            </div>
+
+              {/* ── Tabbed view: Investment Intelligence vs Operational Intelligence ── */}
+              <div className="flex items-center gap-4 border-b border-white/10 mb-10 pb-2">
+                <button
+                  onClick={() => setActiveTab("investment")}
+                  className={`pb-3 text-sm font-semibold transition-colors border-b-2 ${
+                    activeTab === "investment"
+                      ? "text-brand-300 border-brand-400"
+                      : "text-surface-400 border-transparent hover:text-surface-200"
+                  }`}
+                >
+                  Investment Intelligence
+                </button>
+                <button
+                  onClick={() => setActiveTab("operational")}
+                  className={`pb-3 text-sm font-semibold transition-colors border-b-2 ${
+                    activeTab === "operational"
+                      ? "text-brand-300 border-brand-400"
+                      : "text-surface-400 border-transparent hover:text-surface-200"
+                  }`}
+                >
+                  Operational Intelligence
+                </button>
+              </div>
+
+              {activeTab === "investment" ? (
+                /* ── INVESTMENT INTELLIGENCE TAB ── */
+                <div className="space-y-12">
+                  {/* Multiple Potential & Readiness */}
+                  <div className="grid gap-8 lg:grid-cols-2">
+                    <MultiplePotentialChart data={multiplePot} />
+                    <ReadinessBadge data={readiness} />
+                  </div>
+
+                  {/* Roll-Up Strategy with synergy breakdown and model assumptions */}
+                  <RollupStrategySection rollup={rollup} />
+
+                  {/* Value Methodology Panel */}
+                  <ValueMethodologyPanel />
+
+                  {/* EvTrackerCard */}
+                  <EvTrackerCard companyId={COMPANY_ID} />
+                </div>
+              ) : (
+                /* ── OPERATIONAL INTELLIGENCE TAB ── */
+                <div className="space-y-8">
+                  {/* Acquisition Score + Diligence */}
+                  <div className="grid gap-8 lg:grid-cols-5">
+                    <div className="lg:col-span-2 space-y-6">
+                      <AcquisitionScoreCard acq={acq} />
+                    </div>
+                    <div className="lg:col-span-3 space-y-6">
+                      <DiligenceReportSection dil={dil} />
+                    </div>
+                  </div>
+
+                  <ArCollectionRecommendations companyId={COMPANY_ID} />
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

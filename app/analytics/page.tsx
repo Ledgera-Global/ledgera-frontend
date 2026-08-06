@@ -8,7 +8,10 @@ const navLinks = [
   { label: "Analytics", href: "/analytics" },
   { label: "Executive", href: "/analytics/executive" },
   { label: "Acquisition", href: "/analytics/acquisition" },
+  { label: "Value Growth", href: "/analytics/value-growth" },
+  { label: "Missed Calls", href: "/analytics/missed-calls" },
   { label: "Engines", href: "/analytics/engines" },
+  { label: "Institutional Risk", href: "/analytics/institutional-risk" },
 ];
 
 function fmt(v: number) {
@@ -131,7 +134,7 @@ export default function AnalyticsPage() {
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
           <Link href="/" className="flex items-center gap-2">
             <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-sm font-bold text-surface-950">L</span>
-            <span className="text-lg font-semibold text-white">Ledgera</span>
+            <span className="text-lg font-semibold text-white">Ledgera Global</span>
           </Link>
           <div className="flex items-center gap-6">
             {navLinks.map((link) => (

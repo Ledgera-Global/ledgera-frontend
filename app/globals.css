@@ -1,28 +1,31 @@
 @import "tailwindcss";
 
-/* Custom theme tokens */
+/* Custom theme tokens — Institutional palette */
 @theme {
-  --color-brand-50: #ecfeff;
-  --color-brand-100: #cffafe;
-  --color-brand-200: #a5f3fc;
-  --color-brand-300: #67e8f9;
-  --color-brand-400: #22d3ee;
-  --color-brand-500: #06b6d4;
-  --color-brand-600: #0891b2;
-  --color-brand-700: #0e7490;
-  --color-brand-800: #155e75;
-  --color-brand-900: #164e63;
-  --color-surface-50: #f8fafc;
-  --color-surface-100: #f1f5f9;
-  --color-surface-200: #e2e8f0;
-  --color-surface-300: #cbd5e1;
-  --color-surface-400: #94a3b8;
-  --color-surface-500: #64748b;
-  --color-surface-600: #475569;
-  --color-surface-700: #334155;
-  --color-surface-800: #1e293b;
-  --color-surface-900: #0f172a;
-  --color-surface-950: #020617;
+  /* Brand accent: warm brass/gold — signals wealth, trust, tradition */
+  --color-brand-50: #faf6eb;
+  --color-brand-100: #f3ead0;
+  --color-brand-200: #e7d39c;
+  --color-brand-300: #dbbc68;
+  --color-brand-400: #c4956a;
+  --color-brand-500: #a87d56;
+  --color-brand-600: #8a6544;
+  --color-brand-700: #6b4e34;
+  --color-brand-800: #4d3825;
+  --color-brand-900: #2e2116;
+
+  /* Surface: deep navy — institutional, serious */
+  --color-surface-50: #f1f5f9;
+  --color-surface-100: #e2e8f0;
+  --color-surface-200: #cbd5e1;
+  --color-surface-300: #94a3b8;
+  --color-surface-400: #64748b;
+  --color-surface-500: #475569;
+  --color-surface-600: #334155;
+  --color-surface-700: #1e293b;
+  --color-surface-800: #172032;
+  --color-surface-900: #0d111c;
+  --color-surface-950: #060910;
 }
 
 /* Fallback for dynamic lead score widths */
@@ -40,8 +43,8 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Subtle text selection */
+/* Subtle text selection — muted gold */
 ::selection {
-  background-color: rgba(6, 182, 212, 0.25);
-  color: #f8fafc;
+  background-color: rgba(196, 149, 106, 0.25);
+  color: #f1f5f9;
 }

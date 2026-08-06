@@ -11,7 +11,14 @@ export function AcquisitionScoreCard({ acq }: AcquisitionScoreCardProps) {
   return (
     <div className="rounded-[2rem] border border-white/10 bg-surface-950/60 p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-white">Acquisition Score</h2>
+        <div>
+          <h2 className="text-lg font-semibold text-white">Acquisition Score</h2>
+          <div className="flex items-center gap-1.5 mt-1">
+            <span className={`text-sm font-semibold ${acq.scoreTrend >= 0 ? "text-brand-400" : "text-red-400"}`}>
+              {acq.scoreTrend >= 0 ? "↑" : "↓"} +{Math.abs(acq.scoreTrend)} this month
+            </span>
+          </div>
+        </div>
         <span className={`rounded-full border px-3 py-1 text-xs font-medium ${acquisitionScoreColor(acq.score)}`}>
           {acquisitionScoreLabel(acq.score)}
         </span>

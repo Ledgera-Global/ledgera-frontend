@@ -381,7 +381,7 @@ function EnginePreview({ engine, data }: { engine: Engine; data: unknown }) {
       return (
         <div className="space-y-1.5">
           {services.slice(0, 3).map(s => (
-            <MiniBar key={s.serviceType} label={s.serviceType} value={s.revenue} max={maxRev} color="bg-brand-400" ffn={(v) => pct(s.marginPct)} />
+            <MiniBar key={s.serviceType} label={s.serviceType} value={s.revenue} max={maxRev} color="bg-brand-400" ffn={() => pct(s.marginPct)} />
           ))}
         </div>
       );
@@ -515,7 +515,7 @@ export default function EnginesPage() {
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
           <Link href="/" className="flex items-center gap-2">
             <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-sm font-bold text-surface-950">L</span>
-            <span className="text-lg font-semibold text-white">Ledgera</span>
+            <span className="text-lg font-semibold text-white">Ledgera Global</span>
           </Link>
           <div className="flex items-center gap-6">
             {navLinks.map((link) => (
