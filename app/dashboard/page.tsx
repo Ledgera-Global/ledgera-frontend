@@ -1,7 +1,13 @@
 "use client";
 import ActionPanel from "../../components/ActionPanel";
 import AuthGuard from "../../components/AuthGuard";
+import BranchRankingsCard from "../../components/BranchRankingsCard";
+import CashRunwayCard from "../../components/CashRunwayCard";
+import DailyBriefCard from "../../components/DailyBriefCard";
 import DashboardKpis from "../../components/DashboardKpis";
+import EvTrackerCard from "../../components/EvTrackerCard";
+import ExecutiveAlertsBanner from "../../components/analytics/ExecutiveAlertsBanner";
+import ExecutiveRecommendationsCard from "../../components/ExecutiveRecommendationsCard";
 import InsightPanel from "../../components/InsightPanel";
 import JobsTable from "../../components/JobsTable";
 import LeadList from "../../components/LeadList";
@@ -26,7 +32,7 @@ export default function Dashboard() {
             <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
               <Link href="/" className="flex items-center gap-2">
                 <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-brand-500 text-xs font-bold text-surface-950">L</span>
-                <span className="text-sm font-semibold text-white">Ledgera</span>
+                <span className="text-sm font-semibold text-white">Ledgera Global</span>
               </Link>
               <div className="flex items-center gap-4">
                 <LocationSwitcher companyId={companyId} />
@@ -36,6 +42,7 @@ export default function Dashboard() {
                 <Link href="/analytics/executive" className="text-xs text-surface-400 hover:text-white transition-colors">Executive</Link>
                 <Link href="/analytics/acquisition" className="text-xs text-surface-400 hover:text-white transition-colors">Acquisition</Link>
                 <Link href="/analytics/engines" className="text-xs text-surface-400 hover:text-white transition-colors">Engines</Link>
+                <Link href="/analytics/institutional-risk" className="text-xs text-surface-400 hover:text-white transition-colors">Risk</Link>
                 <Link href="/" className="text-xs text-surface-400 hover:text-white transition-colors">Landing</Link>
               </div>
             </div>
@@ -43,6 +50,9 @@ export default function Dashboard() {
 
           <div className="flex-1">
             <div className="mx-auto max-w-7xl px-6 py-6">
+              <div className="mb-6">
+                <ExecutiveAlertsBanner companyId={companyId} />
+              </div>
               <div className="grid min-h-screen grid-cols-1 gap-6 lg:grid-cols-4">
                 <aside className="border-b border-white/5 bg-surface-900/50 p-4 lg:col-span-1 lg:border-b-0 lg:border-r lg:border-white/5 lg:rounded-3xl">
                   <LeadList />
@@ -61,6 +71,20 @@ export default function Dashboard() {
                 </aside>
               </div>
 
+              {/* Institutional Cards */}
+              <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <EvTrackerCard companyId={companyId} />
+                <CashRunwayCard companyId={companyId} />
+              </div>
+              <div className="mt-6">
+                <DailyBriefCard companyId={companyId} />
+              </div>
+              <div className="mt-6">
+                <ExecutiveRecommendationsCard companyId={companyId} />
+              </div>
+              <div className="mt-6">
+                <BranchRankingsCard companyId={companyId} />
+              </div>
               <div className="mt-6 rounded-3xl border border-white/5 bg-surface-900/60 px-4 py-3">
                 <PipelineBar />
               </div>

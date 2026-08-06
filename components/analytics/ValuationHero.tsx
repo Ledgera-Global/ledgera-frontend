@@ -1,9 +1,8 @@
 "use client";
-import { MultiBar } from "@/components/analytics/MultiBar";
 import { readinessLabel, scoreTextColor } from "@/lib/constants/styling";
 import { magnitudeColor, signalDotColor } from "@/lib/constants/styling";
 import type { EnterpriseValuation, ValueDriver } from "@/lib/types/acquisition";
-import { fmt } from "@/lib/utils/format";
+import { fmt, mult } from "@/lib/utils/format";
 
 interface ValuationHeroProps {
   val: EnterpriseValuation;
@@ -11,23 +10,53 @@ interface ValuationHeroProps {
 
 export function ValuationHero({ val }: ValuationHeroProps) {
   const w = val.valuation;
+  const trendToday = w.enterpriseValueToday;
 
   return (
     <div className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-brand-500/[0.08] to-white/[0.02] p-8">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-bold text-white">Live Enterprise Value</h2>
-          <p className="text-sm text-surface-400 mt-1">
-            Updated {new Date(val.generatedAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })} &middot;
-            Based on real connected data &middot;
-            <span className="text-amber-400 font-medium"> {readinessLabel(val.valuationReadiness)}</span>
-          </p>
+      {/* Primary KPI cluster — Enterprise Value dominates */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+        {/* Left: EV + Trends */}
+        <div className="flex-1">
+          <span className="text-xs font-semibold uppercase tracking-wider text-surface-400">
+            Enterprise Value
+          </span>
+          <div className="flex items-baseline gap-4 mt-1">
+            <span className="text-5xl font-bold text-white tracking-tight">
+              {fmt(w.enterpriseValue)}
+            </span>
+            <span className={`text-base font-semibold ${trendToday >= 0 ? "text-brand-400" : "text-red-400"}`}>
+              {trendToday >= 0 ? "↑" : "↓"} {fmt(Math.abs(trendToday))} today
+            </span>
+          </div>
+          <div className="flex gap-4 mt-1 text-sm">
+            <span className="text-brand-400/80">↑ {fmt(w.enterpriseValueWeek)} this week</span>
+            <span className="text-brand-400/80">↑ {fmt(w.enterpriseValueQuarter)} this quarter</span>
+          </div>
+          <div className="flex items-center gap-2 mt-2 text-sm text-surface-400">
+            <span>Updated {new Date(w.lastUpdated).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}</span>
+            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400/60" />
+            <span className={val.valuationReadiness === "high" ? "text-brand-300" : "text-amber-400"}>
+              {readinessLabel(val.valuationReadiness)}
+            </span>
+          </div>
         </div>
-        <div className="text-right">
-          <div className="text-4xl font-bold text-white">{fmt(w.enterpriseValue)}</div>
-          <div className="text-sm text-surface-400 mt-1">
-            {w.currentMultiple}x EBITDA &middot; {fmt(w.ebitda)} EBITDA
+
+        {/* Right: EBITDA + Multiple */}
+        <div className="flex gap-8 shrink-0">
+          <div className="text-center">
+            <span className="text-xs uppercase tracking-wider text-surface-500">EBITDA</span>
+            <div className="text-2xl font-bold text-white mt-1">
+              {fmt(w.ebitda)}
+            </div>
+            <span className="text-xs text-surface-400">{w.ebitdaMarginPct.toFixed(1)}% margin</span>
+          </div>
+          <div className="text-center">
+            <span className="text-xs uppercase tracking-wider text-surface-500">Multiple</span>
+            <div className="text-2xl font-bold text-brand-300 mt-1">
+              {mult(w.currentMultiple)}
+            </div>
+            <span className="text-xs text-surface-400">Benchmark {mult(w.benchmarkMultiple)}</span>
           </div>
         </div>
       </div>
@@ -35,14 +64,15 @@ export function ValuationHero({ val }: ValuationHeroProps) {
       {/* Multiple Range Bar */}
       <div className="mb-8">
         <div className="flex items-center justify-between text-xs text-surface-400 mb-2">
-          <span>{fmt(w.multipleRange.floor)}x</span>
+          <span>{mult(w.multipleRange.floor)}</span>
           <span className="text-brand-300 font-semibold">
-            {w.currentMultiple}x &mdash; {w.multiplePercentile}% percentile
+            {mult(w.currentMultiple)} &mdash; {w.multiplePercentile}% percentile
           </span>
-          <span>{fmt(w.multipleRange.ceiling)}x</span>
+          <span>{mult(w.multipleRange.ceiling)}</span>
         </div>
         <div className="relative h-3 w-full rounded-full bg-surface-800 overflow-hidden">
-          <div className="h-full rounded-full bg-gradient-to-r from-brand-500 to-emerald-400 transition-all duration-1000" style={{ width: `${w.multiplePercentile}%` }} />
+          <div className="h-full rounded-full bg-gradient-to-r from-red-500/40 via-amber-500/40 via-brand-400 to-emerald-400 transition-all duration-1000"
+            style={{ width: `${w.multiplePercentile}%` }} />
         </div>
       </div>
 
@@ -54,13 +84,13 @@ export function ValuationHero({ val }: ValuationHeroProps) {
             <div key={key} className={`rounded-xl border p-4 text-center transition-all ${isCurrent ? "border-brand-400/40 bg-brand-400/10" : "border-white/10 bg-surface-900/30"}`}>
               <div className="text-xs text-surface-400 mb-1 capitalize">{key}</div>
               <div className="text-lg font-bold text-white">{fmt(scenario.enterpriseValue)}</div>
-              <div className="text-xs text-surface-500">{scenario.multiple}x</div>
+              <div className="text-xs text-surface-500">{mult(scenario.multiple)}</div>
             </div>
           );
         })}
       </div>
 
-      {/* Value Drivers */}
+      {/* Value Drivers with trends */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-6">
         {Object.entries(val.valueDrivers).map(([key, driver]: [string, ValueDriver]) => (
           <div key={key} className="rounded-xl border border-white/10 bg-surface-900/40 p-4">
@@ -68,16 +98,20 @@ export function ValuationHero({ val }: ValuationHeroProps) {
               <span className="text-xs font-semibold uppercase tracking-wider text-surface-400">
                 {key.replace(/([A-Z])/g, " $1").trim()}
               </span>
-              <span className={`text-sm font-bold ${scoreTextColor(driver.score)}`}>{driver.score}/100</span>
+              <div className="flex items-center gap-2">
+                <span className={`text-sm font-bold ${scoreTextColor(driver.score)}`}>{driver.score}/100</span>
+                <span className={`text-xs ${driver.scoreTrend >= 0 ? "text-brand-400" : "text-red-400"}`}>
+                  {driver.scoreTrend >= 0 ? "↑" : "↓"}{Math.abs(driver.scoreTrend)}
+                </span>
+              </div>
             </div>
-            <MultiBar val={driver.score} max={100} />
+            <div className="h-2 w-full rounded-full bg-surface-800">
+              <div className="h-full rounded-full bg-brand-400 transition-all" style={{ width: `${driver.score}%` }} />
+            </div>
             <div className="flex items-center justify-between mt-2 text-[11px] text-surface-500">
               <span>{driver.detail}</span>
               <span>Weight: {(driver.weight * 100).toFixed(0)}%</span>
             </div>
-            {driver.benchmark && (
-              <div className="mt-2 text-[10px] text-surface-600 italic border-t border-white/5 pt-2">{driver.benchmark}</div>
-            )}
           </div>
         ))}
       </div>
@@ -106,7 +140,7 @@ export function ValuationHero({ val }: ValuationHeroProps) {
       {/* Risk Factors */}
       {val.riskFactors.length > 0 && (
         <div className="rounded-xl border border-amber-400/20 bg-amber-400/5 p-4">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-amber-300 mb-2">M&A Due Diligence Risks</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-amber-300 mb-2">Risk Factors</h3>
           <ul className="space-y-1">
             {val.riskFactors.map((risk, i) => (
               <li key={i} className="flex items-start gap-2 text-xs text-surface-300">

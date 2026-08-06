@@ -181,7 +181,7 @@ export default function OnboardingPage() {
     } finally {
       setRestoringSigned(false);
     }
-  }, [company?.name, user?.email, refreshOnboarding]);
+  }, [company, user, refreshOnboarding]);
 
   if (authLoading) {
     return (
@@ -331,7 +331,7 @@ export default function OnboardingPage() {
             <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-sm font-bold text-surface-950">
               L
             </span>
-            <span className="text-lg font-semibold text-white">Ledgera</span>
+            <span className="text-lg font-semibold text-white">Ledgera Global</span>
           </Link>
           <span className="text-sm text-surface-400">{company.name}</span>
         </nav>

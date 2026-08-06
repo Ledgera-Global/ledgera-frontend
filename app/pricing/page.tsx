@@ -11,7 +11,7 @@ export default function PricingPage() {
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link href="/" className="flex items-center gap-2">
             <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-sm font-bold text-surface-950">L</span>
-            <span className="text-lg font-semibold text-white">Ledgera</span>
+            <span className="text-lg font-semibold text-white">Ledgera Global</span>
           </Link>
           <div className="flex items-center gap-4">
             {user ? (

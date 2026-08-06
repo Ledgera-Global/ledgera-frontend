@@ -40,6 +40,7 @@ const allIntegrations: Integration[] = [
   // Scheduling
   { provider: "calendly", label: "Calendly", description: "Appointment scheduling and booking automation", category: "scheduling", status: "connected" },
   // Communications
+  { provider: "callrail", label: "CallRail", description: "Call tracking, recording, and marketing attribution for missed call analysis", category: "communications", status: "not_connected" },
   { provider: "twilio", label: "Twilio", description: "SMS, voice, and call tracking", category: "communications", status: "demo" },
   // CRM
   { provider: "hubspot", label: "HubSpot", description: "CRM, pipeline management, and lead scoring", category: "crm", status: "not_connected" },
@@ -52,7 +53,7 @@ const allIntegrations: Integration[] = [
  * When the API returns a status for these, it overrides the hardcoded default.
  */
 const backendProviders = new Set([
-  "servicetitan", "quickbooks", "netsuite", "gusto", "adp", "paychex", "samsara",
+  "servicetitan", "quickbooks", "netsuite", "gusto", "adp", "paychex", "samsara", "callrail",
 ]);
 
 const categoryLabels: Record<string, string> = {
@@ -145,7 +146,7 @@ export default function IntegrationsPage() {
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
           <Link href="/" className="flex items-center gap-2">
             <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-sm font-bold text-surface-950">L</span>
-            <span className="text-lg font-semibold text-white">Ledgera</span>
+            <span className="text-lg font-semibold text-white">Ledgera Global</span>
           </Link>
           <div className="flex items-center gap-6">
             {navLinks.map((link) => (
