@@ -43,6 +43,9 @@ export default function Dashboard() {
                 <Link href="/analytics/acquisition" className="text-xs text-surface-400 hover:text-white transition-colors">Acquisition</Link>
                 <Link href="/analytics/engines" className="text-xs text-surface-400 hover:text-white transition-colors">Engines</Link>
                 <Link href="/analytics/institutional-risk" className="text-xs text-surface-400 hover:text-white transition-colors">Risk</Link>
+                <Link href="/analytics/lender-readiness" className="text-xs text-surface-400 hover:text-white transition-colors">Lender Readiness</Link>
+                <Link href="/analytics/value-growth" className="text-xs text-surface-400 hover:text-white transition-colors">Value Growth</Link>
+                <Link href="/analytics/missed-calls" className="text-xs text-surface-400 hover:text-white transition-colors">Missed Calls</Link>
                 <Link href="/" className="text-xs text-surface-400 hover:text-white transition-colors">Landing</Link>
               </div>
             </div>

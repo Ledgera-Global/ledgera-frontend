@@ -88,6 +88,9 @@ export const NAV_LINKS: NavLink[] = [
   { label: "Analytics", href: "/analytics" },
   { label: "Executive", href: "/analytics/executive" },
   { label: "Institutional Risk", href: "/analytics/institutional-risk" },
+  { label: "Lender Readiness", href: "/analytics/lender-readiness" },
+  { label: "Value Growth", href: "/analytics/value-growth" },
+  { label: "Missed Calls", href: "/analytics/missed-calls" },
   { label: "Acquisition", href: "/analytics/acquisition" },
   { label: "Engines", href: "/analytics/engines" },
 ];
