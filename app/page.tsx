@@ -44,6 +44,8 @@ const navLinks = [
   { label: "Pricing", href: "/pricing" },
   { label: "Integrations", href: "/integrations" },
   { label: "Analytics", href: "/analytics" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 // ─── Components ──────────────────────────────────────────────────────────────
@@ -338,6 +340,8 @@ function Footer() {
           <span className="text-sm text-surface-400">© {new Date().getFullYear()} Ledgera Global Inc.</span>
         </div>
         <div className="flex items-center gap-6">
+          <Link href="/about" className="text-sm text-surface-400 hover:text-white transition-colors">About</Link>
+          <Link href="/contact" className="text-sm text-surface-400 hover:text-white transition-colors">Contact</Link>
           <Link href="/dashboard" className="text-sm text-surface-400 hover:text-white transition-colors">Dashboard</Link>
           <a href="https://calendly.com/hello-ledgeraglobal" className="text-sm text-surface-400 hover:text-white transition-colors">Book a demo</a>
         </div>
