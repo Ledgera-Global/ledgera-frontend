@@ -1,11 +1,12 @@
 "use client";
+import InstitutionalNav from "@/components/layouts/InstitutionalNav";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Gauge } from "@/components/analytics/Gauge";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import { fetchJson } from "@/lib/api/client";
 import { NAV_LINKS } from "@/lib/constants/styling";
-import InstitutionalNav from "@/components/layouts/InstitutionalNav";
+
 const COMPANY_ID = "companyA";
 
 // ─── Types ─────────────────────────────────────────────────────────────
@@ -265,6 +266,7 @@ export default function LenderReadinessPage() {
                 {link.label}
               </Link>
             ))}
+            <InstitutionalNav currentHref="/analytics/lender-readiness" />
           </div>
         </nav>
       </header>
@@ -627,7 +629,6 @@ function MetricCard({ label, value, sub, status, statusLabel }: MetricCardProps)
           {label}
         </span>
         <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${STATUS_STYLES[status]}`}>
-<InstitutionalNav currentHref="/analytics/lender-readiness" linkClassName="text-sm font-medium text-surface-300 hover:text-white transition-colors" />
           {statusLabel}
         </span>
       </div>
