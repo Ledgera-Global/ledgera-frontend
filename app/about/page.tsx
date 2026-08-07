@@ -73,6 +73,7 @@ function SectionTitle({
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -97,7 +98,7 @@ function Navbar() {
           <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-sm font-bold text-surface-950">L</span>
           <span className="text-lg font-semibold text-white">Ledgera Global</span>
         </Link>
-        <div className="flex items-center gap-6">
+        <div className="hidden items-center gap-6 lg:flex">
           {navLinks.map((link) => (
             <Link
               key={link.label}
@@ -116,7 +117,58 @@ function Navbar() {
             Sign up
           </Link>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-surface-200 transition-colors hover:text-white lg:hidden"
+        >
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            {menuOpen ? (
+              <path d="M3 3l12 12M15 3L3 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            ) : (
+              <path d="M2 4.5h14M2 9h14M2 13.5h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            )}
+          </svg>
+        </button>
       </nav>
+
+      {menuOpen && (
+        <div className="border-t border-white/5 bg-surface-950/95 backdrop-blur-xl lg:hidden">
+          <div className="mx-auto max-w-7xl space-y-1 px-6 py-4">
+            {navLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className={`block rounded-xl px-4 py-3 text-base font-medium transition-colors hover:bg-white/5 hover:text-white ${
+                  link.href === "/about" ? "text-white" : "text-surface-200"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <div className="flex flex-col gap-3 border-t border-white/5 pt-4">
+              <Link
+                href="/login"
+                onClick={() => setMenuOpen(false)}
+                className="inline-flex items-center justify-center rounded-full border border-brand-400/20 bg-brand-400/10 px-4 py-2.5 text-sm font-medium text-brand-300 transition-colors hover:bg-brand-400/20"
+              >
+                Log in
+              </Link>
+              <Link
+                href="/signup"
+                onClick={() => setMenuOpen(false)}
+                className="inline-flex items-center justify-center rounded-full bg-brand-500 px-4 py-2.5 text-sm font-medium text-surface-950 transition-colors hover:bg-brand-400"
+              >
+                Sign up
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

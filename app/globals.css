@@ -43,6 +43,12 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Institutional guard: never allow horizontal page scrolling on any viewport */
+html,
+body {
+  overflow-x: clip;
+}
+
 /* Subtle text selection — muted gold */
 ::selection {
   background-color: rgba(196, 149, 106, 0.25);
