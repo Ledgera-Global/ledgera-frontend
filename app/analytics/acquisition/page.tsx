@@ -1,6 +1,7 @@
 "use client";
 import ArCollectionRecommendations from "@/components/analytics/ArCollectionRecommendations";
 import EvTrackerCard from "@/components/EvTrackerCard";
+import InstitutionalNav from "@/components/layouts/InstitutionalNav";
 import Link from "next/link";
 import ValueMethodologyPanel from "@/components/analytics/ValueMethodologyPanel";
 import { useEffect, useState } from "react";
@@ -103,6 +104,7 @@ export default function AcquisitionPage() {
                 {link.label}
               </Link>
             ))}
+            <InstitutionalNav currentHref="/analytics/acquisition" />
           </div>
         </nav>
       </header>

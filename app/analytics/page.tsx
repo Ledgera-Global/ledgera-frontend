@@ -1,18 +1,8 @@
 "use client";
+import InstitutionalNav from "@/components/layouts/InstitutionalNav";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-const navLinks = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Integrations", href: "/integrations" },
-  { label: "Analytics", href: "/analytics" },
-  { label: "Executive", href: "/analytics/executive" },
-  { label: "Acquisition", href: "/analytics/acquisition" },
-  { label: "Value Growth", href: "/analytics/value-growth" },
-  { label: "Missed Calls", href: "/analytics/missed-calls" },
-  { label: "Engines", href: "/analytics/engines" },
-  { label: "Institutional Risk", href: "/analytics/institutional-risk" },
-];
+import { NAV_LINKS } from "@/lib/constants/styling";
 
 function fmt(v: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(v);
@@ -137,9 +127,10 @@ export default function AnalyticsPage() {
             <span className="text-lg font-semibold text-white">Ledgera Global</span>
           </Link>
           <div className="flex items-center gap-6">
-            {navLinks.map((link) => (
+            {NAV_LINKS.map((link) => (
               <Link key={link.label} href={link.href} className={`text-sm font-medium transition-colors ${link.href === "/analytics" ? "text-white" : "text-surface-300 hover:text-white"}`}>{link.label}</Link>
             ))}
+            <InstitutionalNav currentHref="/analytics" />
           </div>
         </nav>
       </header>

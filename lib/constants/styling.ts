@@ -82,15 +82,14 @@ export interface NavLink {
   href: string;
 }
 
+// Core navigation shown in header bars. Institutional pages (Risk,
+// Lender Readiness, Value Growth, Missed Calls) live under the
+// InstitutionalNav dropdown so headers stay compact.
 export const NAV_LINKS: NavLink[] = [
   { label: "Dashboard", href: "/dashboard" },
   { label: "Integrations", href: "/integrations" },
   { label: "Analytics", href: "/analytics" },
   { label: "Executive", href: "/analytics/executive" },
-  { label: "Institutional Risk", href: "/analytics/institutional-risk" },
-  { label: "Lender Readiness", href: "/analytics/lender-readiness" },
-  { label: "Value Growth", href: "/analytics/value-growth" },
-  { label: "Missed Calls", href: "/analytics/missed-calls" },
   { label: "Acquisition", href: "/analytics/acquisition" },
   { label: "Engines", href: "/analytics/engines" },
 ];
