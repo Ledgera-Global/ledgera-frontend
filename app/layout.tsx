@@ -1,5 +1,4 @@
 import "./globals.css";
-import GoogleAnalytics from "../components/GoogleAnalytics";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
@@ -15,6 +14,12 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+// GA4 Measurement ID for the ledgerahq.com web data stream.
+// Rendered server-side in <head> so Google's tag detection (which reads the raw
+// HTML) and crawlers see the snippet. Override via NEXT_PUBLIC_GA_MEASUREMENT_ID.
+const GA_MEASUREMENT_ID =
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-00N56623LQ";
 
 export const metadata: Metadata = {
   title: "Ledgera — Institutional Financial Intelligence",
@@ -52,13 +57,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_MEASUREMENT_ID}');
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          {children}
-          <GoogleAnalytics />
-        </AuthProvider>
+        <AuthProvider>{children}</AuthProvider>
         <SpeedInsights />
         <Analytics />
       </body>

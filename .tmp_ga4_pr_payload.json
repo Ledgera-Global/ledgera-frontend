@@ -1,0 +1,6 @@
+{
+  "title": "feat: add Google Analytics 4 tracking to all pages",
+  "head": "nav/analytics-institutional-dropdown",
+  "base": "master",
+  "body": "## Why\n\nLedgera needs to see how visitors reach and move through ledgerahq.com. This adds the GA4 Measurement ID (G-00N56623LQ) for the web data stream created in Google Analytics.\n\n## What changed\n\n- New `components/GoogleAnalytics.tsx` — loads the gtag.js snippet after hydration (lazy, non-blocking), plus the standard GA4 config call. Reads `NEXT_PUBLIC_GA_MEASUREMENT_ID` with a fallback to the stream ID.\n- `app/layout.tsx` — renders `<GoogleAnalytics />` inside the root layout so every page (/, /about, /contact, /dashboard, /pricing, /login, /signup, analytics pages, etc.) is tracked automatically.\n- `.env.example` — documents `NEXT_PUBLIC_GA_MEASUREMENT_ID`.\n\n## Privacy notes\n\n- The contact form is a `mailto:` link — form field values are never sent to the server or Google.\n- No PII is placed in URLs, so standard GA4 collection (page views, scrolls, outbound clicks like Calendly, form interactions) captures no personal data.\n\nVerified: `npm run build` passes; route manifest complete. gtag loads after interactive with Enhanced Measurement already enabled on the stream — scrolls, outbound clicks, and form interactions will start appearing without further code."
+}
