@@ -16,10 +16,11 @@ const geistMono = Geist_Mono({
 });
 
 // GA4 Measurement ID for the ledgerahq.com web data stream.
-// Rendered server-side in <head> so Google's tag detection (which reads the raw
-// HTML) and crawlers see the snippet. Override via NEXT_PUBLIC_GA_MEASUREMENT_ID.
-const GA_MEASUREMENT_ID =
-  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-YXV6J1TX4F";
+// Hardcoded on purpose: rendered server-side in <head> so Google's tag detection
+// (which reads the raw HTML) and crawlers see the snippet. Deliberately no env
+// override so a stale NEXT_PUBLIC_* value on the hosting platform can never
+// replace this with an older property.
+const GA_MEASUREMENT_ID = "G-YXV6J1TX4F";
 
 export const metadata: Metadata = {
   title: "Ledgera — Institutional Financial Intelligence",
