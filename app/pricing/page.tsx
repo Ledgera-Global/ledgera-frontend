@@ -38,7 +38,7 @@ export default function PricingPage() {
                 Per-Location Pricing
               </span>
               <h1 className="mt-4 text-3xl font-semibold text-white">Full access to the Ledgera Financial Operating System</h1>
-              <p className="mt-2 text-sm text-surface-400">Pricing is per location. Each location receives financial intelligence, operational analytics, enterprise value tracking, forecasting, and performance monitoring — so owners immediately understand why additional locations cost more.</p>
+              <p className="mt-2 text-sm text-surface-400">Pricing is per location. Each location receives financial intelligence, operational analytics, enterprise value tracking, forecasting, and performance monitoring, so owners immediately understand why additional locations cost more.</p>
             </div>
 
             <div className="mb-6 space-y-2">
@@ -57,7 +57,7 @@ export default function PricingPage() {
                 </div>
               </div>
               <p className="text-xs text-surface-500 pt-1">
-                First month total: <span className="text-surface-300 font-medium">$3,750 per location</span> &mdash; then $1,250/month per location
+                First month total: <span className="text-surface-300 font-medium">$3,750 per location</span>, then $1,250/month per location
               </p>
             </div>
 

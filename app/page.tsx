@@ -221,7 +221,7 @@ function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center pt-24 pb-16">
-      {/* Background — deep navy with subtle brass glow */}
+      {/* Background: deep navy with subtle brass glow */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(196,149,106,0.10),_transparent_34%),linear-gradient(180deg,_#060910_0%,_#0d111c_55%,_#172032_100%)]" />
 
       <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-8 px-6 lg:px-10">
@@ -240,10 +240,10 @@ function HeroSection() {
               <div className="space-y-8">
                 <div className="space-y-6">
                   <h1 className="max-w-4xl text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl leading-[1.1]">
-                    Institutional financial intelligence for HVAC contractors.
+                    Institutional financial intelligence for home services and industrial contractors.
                   </h1>
                   <p className="max-w-3xl text-lg leading-8 text-surface-300 sm:text-xl">
-                    Ledgera surfaces every dollar your business is losing—from underpriced jobs and idle technicians to delayed cash—then tells you the exact move to recover it.
+                    Ledgera surfaces every dollar your business is losing, from underpriced jobs and idle technicians to delayed cash, then tells you the exact move to recover it.
                   </p>
                 </div>
 

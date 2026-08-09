@@ -38,9 +38,47 @@
 .lead-score-fill-45 { width: 45%; }
 .lead-score-fill-71 { width: 71%; }
 
-/* Smooth scroll */
+/* ─── Institutional typography ─────────────────────────────────────────────── */
+
 html {
   scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Architectural headings: wider tracking for a composed, confident cadence */
+h1,
+h2,
+h3 {
+  letter-spacing: -0.015em;
+}
+
+p {
+  letter-spacing: -0.005em;
+}
+
+/* Refined interaction contour for primary buttons */
+button,
+a,
+input,
+textarea {
+  transition-property: background-color, border-color, color, transform, opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
 
 /* Institutional guard: never allow horizontal page scrolling on any viewport */

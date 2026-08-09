@@ -15,7 +15,7 @@ const principles = [
   },
   {
     title: "Long-term thinking",
-    body: "We build for companies that plan to run for decades—and for owners who want to sell one day. That means clean books, auditable reporting, and enterprise value.",
+    body: "We build for companies that plan to run for decades and for owners who want to sell one day. That means clean books, auditable reporting, and enterprise value.",
   },
   {
     title: "Operational grounding",
@@ -223,7 +223,7 @@ export default function AboutPage() {
               <SectionTitle
                 eyebrow="Mission"
                 title="Give owners the same visibility their investors would demand."
-                description="Most service companies operate on monthly snapshots: a P&L, a balance sheet, a guess about where profit went. We replace that with a system that tracks profitability continuously—by job, by technician, by location—and turns it into a clear next action."
+                description="Most service companies operate on monthly snapshots: a P&L, a balance sheet, a guess about where profit went. We replace that with a system that tracks profitability continuously, by job, by technician, by location, and turns it into a clear next action."
               />
             </div>
             <div className="rounded-[2rem] border border-white/10 bg-surface-950/50 p-8 lg:p-10">

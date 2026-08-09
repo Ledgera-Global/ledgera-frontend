@@ -172,7 +172,7 @@ export default function ContactPage() {
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    const subject = encodeURIComponent(`${company ? `${company} — ` : ""}Inquiry from ${name || "Ledgera website"}`);
+    const subject = encodeURIComponent(`${company ? `${company} | ` : ""}Inquiry from ${name || "Ledgera website"}`);
     const body = encodeURIComponent(
       `Name: ${name}\nCompany: ${company}\nEmail: ${email}\n\n${message}`
     );
@@ -264,7 +264,7 @@ export default function ContactPage() {
                     value={message}
                     onChange={(event) => setMessage(event.target.value)}
                     className="mt-2 w-full resize-none rounded-xl border border-white/10 bg-surface-950/60 px-4 py-3 text-sm text-white placeholder:text-surface-500 focus:border-brand-400/50 focus:outline-none"
-                    placeholder="We run four trucks and two locations. Our technicians seem busy but our margins keep slipping—where would you start?"
+                    placeholder="We run four trucks and two locations. Our technicians seem busy but our margins keep slipping, where would you start?"
                   />
                 </div>
                 <button

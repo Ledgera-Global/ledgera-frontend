@@ -23,11 +23,14 @@ const geistMono = Geist_Mono({
 const GA_MEASUREMENT_ID = "G-YXV6J1TX4F";
 
 export const metadata: Metadata = {
-  title: "Ledgera — Institutional Financial Intelligence",
+  title: "Ledgera Global | Institutional Financial Intelligence",
   description:
-    "Ledgera gives HVAC contractors real-time visibility into profit leakage, cash flow, technician efficiency, and recovery automation—so they can stop losing money and start scaling.",
+    "Ledgera gives home services and industrial contractors institutional visibility into profit leakage, cash flow, technician efficiency, and recovery automation, so they can stop losing money and start scaling.",
   keywords: [
+    "home services",
     "HVAC",
+    "electrical",
+    "plumbing",
     "financial intelligence",
     "profit leakage",
     "cash flow",
@@ -36,17 +39,17 @@ export const metadata: Metadata = {
     "ledgera",
   ],
   openGraph: {
-    title: "Ledgera — Institutional Financial Intelligence",
+    title: "Ledgera Global | Institutional Financial Intelligence",
     description:
-      "Real-time profit leakage detection, cash flow visibility, and recovery automation for HVAC contractors.",
+      "Real-time profit leakage detection, cash flow visibility, and recovery automation for home services and industrial contractors.",
     type: "website",
     siteName: "Ledgera",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ledgera — Institutional Financial Intelligence",
+    title: "Ledgera Global | Institutional Financial Intelligence",
     description:
-      "Real-time profit leakage detection, cash flow visibility, and recovery automation for HVAC contractors.",
+      "Real-time profit leakage detection, cash flow visibility, and recovery automation for home services and industrial contractors.",
   },
   robots: { index: true, follow: true },
 };
