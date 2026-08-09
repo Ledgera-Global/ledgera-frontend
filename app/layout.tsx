@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 // Rendered server-side in <head> so Google's tag detection (which reads the raw
 // HTML) and crawlers see the snippet. Override via NEXT_PUBLIC_GA_MEASUREMENT_ID.
 const GA_MEASUREMENT_ID =
-  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-00N56623LQ";
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-YXV6J1TX4F";
 
 export const metadata: Metadata = {
   title: "Ledgera — Institutional Financial Intelligence",

@@ -1,6 +1,0 @@
-{
-  "title": "fix: allow Google Analytics in Content-Security-Policy",
-  "head": "nav/analytics-institutional-dropdown",
-  "base": "master",
-  "body": "## Why\n\nLive verification of the GA4 integration (PR #16) showed gtag was blocked in production by the Content-Security-Policy defined in `vercel.json`. The console error:\n\n> Loading the script 'https://www.googletagmanager.com/gtag/js?id=G-00N56623LQ' violates the following Content Security Policy directive: \"script-src 'self' 'unsafe-inline' https://assets.vercel.com https://va.vercel-scripts.com https://assets.calendly.com\"\n\n## What changed\n\n`vercel.json` CSP updated:\n- `script-src` — added `https://www.googletagmanager.com` for the gtag.js loader\n- `connect-src` — added `https://www.google-analytics.com`, `https://analytics.google.com`, `https://stats.g.doubleclick.net` for GA4 data beacons\n- `img-src` — added `https://www.google-analytics.com` for the GA4 tracking pixel\n\nAll other CSP directives are unchanged, so Calendly, Vercel Analytics, and Sentry integration remain intact."
-}
