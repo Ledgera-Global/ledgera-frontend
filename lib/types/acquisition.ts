@@ -288,3 +288,95 @@ export type InstitutionalReadiness = {
   categories: ReadinessCategory[];
   actionableNextStep: string;
 };
+
+// ─── Marketing Profit Intelligence ──────────────────────────────────────
+
+export type CampaignChannel =
+  | "google"
+  | "meta"
+  | "callrail"
+  | "direct"
+  | "other";
+
+export type CampaignStatus =
+  | "scaling"
+  | "holding"
+  | "trimming"
+  | "candidate_off";
+
+export type MarketingCampaign = {
+  id: string;
+  name: string;
+  channel: CampaignChannel;
+  spend: number;
+  leads: number;
+  bookedJobs: number;
+  revenue: number;
+  materialCost: number;
+  laborCost: number;
+  grossProfit: number;
+  grossMarginPct: number;
+  costPerLead: number;
+  costPerBookedJob: number;
+  closeRatePct: number;
+  paybackMonths: number;
+  status: CampaignStatus;
+  /** Gross profit minus marketing spend. Optional in inputs; the engine computes it. */
+  profitAfterMarketing?: number;
+};
+
+export type DiagnosticSeverity = "low" | "medium" | "high";
+
+export type MarketingProfitDiagnostic = {
+  campaignId: string;
+  campaignName: string;
+  severity: DiagnosticSeverity;
+  finding: string;
+  evidence: string;
+  recommendedAction: string;
+  profitImpactEstimate: number;
+};
+
+export type MarketingProfitReport = {
+  companyId: string;
+  generatedAt: string;
+  periodLabel: string;
+  totalSpend: number;
+  totalRevenue: number;
+  totalGrossProfit: number;
+  profitAfterMarketing: number;
+  marketingROAS: number;
+  marketingProfitRatio: number;
+  totalProfitLeaking: number;
+  campaigns: MarketingCampaign[];
+  diagnostics: MarketingProfitDiagnostic[];
+  enterpriseValueImpact: number;
+  appliedMultiple: number;
+  narrative: string;
+};
+
+// ─── Benchmarking ───────────────────────────────────────────────────────
+
+export type BenchmarkAssessment =
+  | "Above median"
+  | "Near top quartile"
+  | "Below median";
+
+export type BenchmarkMetric = {
+  key: string;
+  label: string;
+  value: number;
+  benchmarkValue: number;
+  topQuartileValue: number;
+  percentile: number;
+  assessment: BenchmarkAssessment;
+};
+
+export type BenchmarkReport = {
+  companyId: string;
+  generatedAt: string;
+  cohort: string;
+  cohortSize: number;
+  metrics: BenchmarkMetric[];
+  summary: string;
+};

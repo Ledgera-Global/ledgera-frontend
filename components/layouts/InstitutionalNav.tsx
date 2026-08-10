@@ -15,6 +15,8 @@ export const INSTITUTIONAL_LINKS: InstitutionalLink[] = [
   { label: "Lender Readiness", href: "/analytics/lender-readiness" },
   { label: "Value Growth", href: "/analytics/value-growth" },
   { label: "Missed Calls", href: "/analytics/missed-calls" },
+  { label: "Marketing Profit", href: "/analytics/marketing-profit" },
+  { label: "Benchmarks", href: "/analytics/benchmarks" },
 ];
 
 export default function InstitutionalNav({

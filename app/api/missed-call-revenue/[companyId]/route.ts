@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { handleApiGet } from "@/lib/backendProxy";
 import type { MissedCallRevenueImpact } from "@/lib/types/acquisition";
 
 const demoMissedCallRevenue: MissedCallRevenueImpact = {
@@ -25,6 +26,6 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ companyId: string }> }
 ) {
-  (await params);
-  return NextResponse.json(demoMissedCallRevenue);
+  const p = await params;
+  return handleApiGet(req, p, `/missed-call-revenue/${p.companyId}`, demoMissedCallRevenue);
 }
