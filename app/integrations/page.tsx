@@ -3,57 +3,80 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../lib/auth-context";
 
-type IntegrationStatus = "connected" | "not_connected" | "error" | "demo";
+type IntegrationStatus = "connected" | "not_connected" | "error" | "demo" | "roadmap";
 
-type Integration = {
+type CatalogItem = {
   provider: string;
   label: string;
   description: string;
   category: string;
-  status: IntegrationStatus;
+  authType: "oauth" | "api-token" | "webhook";
+  tier: 1 | 2 | 3;
+  built: boolean;
+  callbackPath: string | null;
 };
 
 /**
- * Default integration definitions.
- * Hardcoded statuses act as fallbacks and remain for providers that lack
- * a backend IntegrationCredential record (e.g. demo-only integrations).
- * The API response overrides statuses for providers backed by real OAuth.
+ * Fallback catalog used when the backend is unreachable (cold start / dev).
+ * Mirrors the backend registry so the page never renders empty.
  */
-const allIntegrations: Integration[] = [
-  // Field Service
-  { provider: "servicetitan", label: "ServiceTitan", description: "Field service management, job data, and technician scheduling", category: "field-service", status: "not_connected" },
-  { provider: "housecall-pro", label: "Housecall Pro", description: "Dispatch, work orders, and customer management", category: "field-service", status: "not_connected" },
-  { provider: "jobber", label: "Jobber", description: "Field service operations and client management", category: "field-service", status: "not_connected" },
-  // Fleet & IoT
-  { provider: "samsara", label: "Samsara", description: "Fleet tracking, vehicle GPS, driver behavior, and trip analytics", category: "fleet", status: "not_connected" },
-  // Accounting
-  { provider: "quickbooks", label: "QuickBooks Online", description: "General ledger, invoicing, and expense tracking", category: "accounting", status: "not_connected" },
-  { provider: "xero", label: "Xero", description: "Cloud accounting and financial reporting", category: "accounting", status: "not_connected" },
-  { provider: "netsuite", label: "NetSuite", description: "Enterprise accounting and ERP", category: "accounting", status: "not_connected" },
-  // Payroll
-  { provider: "gusto", label: "Gusto", description: "Payroll, benefits, and labor cost tracking", category: "payroll", status: "not_connected" },
-  { provider: "adp", label: "ADP Workforce Now", description: "Enterprise payroll and HR management", category: "payroll", status: "not_connected" },
-  { provider: "paychex", label: "Paychex Flex", description: "Payroll processing and labor data", category: "payroll", status: "not_connected" },
-  // Payments
-  { provider: "stripe", label: "Stripe", description: "Payment processing, invoice collection, and refunds", category: "payments", status: "demo" },
-  { provider: "square", label: "Square", description: "Point of sale and payment processing", category: "payments", status: "not_connected" },
-  // Scheduling
-  { provider: "calendly", label: "Calendly", description: "Appointment scheduling and booking automation", category: "scheduling", status: "connected" },
-  // Communications
-  { provider: "callrail", label: "CallRail", description: "Call tracking, recording, and marketing attribution for missed call analysis", category: "communications", status: "not_connected" },
-  { provider: "twilio", label: "Twilio", description: "SMS, voice, and call tracking", category: "communications", status: "demo" },
-  // CRM
-  { provider: "hubspot", label: "HubSpot", description: "CRM, pipeline management, and lead scoring", category: "crm", status: "not_connected" },
-  // Data Warehouse
-  { provider: "bigquery", label: "BigQuery", description: "Data warehouse and analytics infrastructure", category: "data-warehouse", status: "not_connected" },
+const FALLBACK_CATALOG: CatalogItem[] = [
+  { provider: "servicetitan", label: "ServiceTitan", description: "Field service management, job data, and technician scheduling", category: "field-service", authType: "oauth", tier: 1, built: true, callbackPath: "/oauth/servicetitan/callback" },
+  { provider: "housecall-pro", label: "Housecall Pro", description: "Dispatch, work orders, and customer management", category: "field-service", authType: "api-token", tier: 1, built: false, callbackPath: null },
+  { provider: "jobber", label: "Jobber", description: "Field service operations and client management", category: "field-service", authType: "api-token", tier: 1, built: false, callbackPath: null },
+  { provider: "fieldedge", label: "FieldEdge", description: "Dispatch, work orders, and customer management for residential HVAC/plumbing", category: "field-service", authType: "api-token", tier: 1, built: false, callbackPath: null },
+  { provider: "service-fusion", label: "Service Fusion", description: "Field service management for HVAC, plumbing, and electrical contractors", category: "field-service", authType: "api-token", tier: 1, built: false, callbackPath: null },
+  { provider: "successware", label: "Successware", description: "HVAC/plumbing service management platform", category: "field-service", authType: "api-token", tier: 1, built: false, callbackPath: null },
+  { provider: "servicetrade", label: "ServiceTrade", description: "Commercial mechanical, HVAC, and restoration field service management", category: "field-service", authType: "api-token", tier: 1, built: false, callbackPath: null },
+  { provider: "simpro", label: "Simpro", description: "Commercial/mechanical job management and maintenance scheduling", category: "field-service", authType: "oauth", tier: 1, built: false, callbackPath: "/oauth/simpro/callback" },
+  { provider: "samsara", label: "Samsara", description: "Fleet tracking, vehicle GPS, driver behavior, and trip analytics", category: "fleet", authType: "api-token", tier: 2, built: true, callbackPath: null },
+  { provider: "quickbooks", label: "QuickBooks Online", description: "General ledger, invoicing, and expense tracking", category: "accounting", authType: "oauth", tier: 1, built: true, callbackPath: "/oauth/quickbooks/callback" },
+  { provider: "quickbooks-desktop", label: "QuickBooks Enterprise/Desktop", description: "Desktop accounting used by many $3M-$15M shops", category: "accounting", authType: "api-token", tier: 1, built: false, callbackPath: null },
+  { provider: "xero", label: "Xero", description: "Cloud accounting and financial reporting", category: "accounting", authType: "oauth", tier: 2, built: false, callbackPath: null },
+  { provider: "netsuite", label: "NetSuite", description: "Enterprise accounting and ERP for $10M+ operators", category: "accounting", authType: "oauth", tier: 1, built: true, callbackPath: "/oauth/netsuite/callback" },
+  { provider: "sage-intacct", label: "Sage Intacct", description: "Cloud financial management for scaling service businesses", category: "accounting", authType: "api-token", tier: 1, built: false, callbackPath: null },
+  { provider: "viewpoint-vista", label: "Viewpoint Vista", description: "Construction ERP for commercial contractors", category: "accounting", authType: "api-token", tier: 2, built: false, callbackPath: null },
+  { provider: "foundation", label: "Foundation Software", description: "Construction-specific accounting and job costing", category: "accounting", authType: "api-token", tier: 2, built: false, callbackPath: null },
+  { provider: "acumatica", label: "Acumatica", description: "Cloud ERP with strong project accounting", category: "accounting", authType: "oauth", tier: 2, built: false, callbackPath: "/oauth/acumatica/callback" },
+  { provider: "gusto", label: "Gusto", description: "Payroll, benefits, and labor cost tracking", category: "payroll", authType: "oauth", tier: 1, built: true, callbackPath: "/oauth/gusto/callback" },
+  { provider: "adpWorkforceNow", label: "ADP Workforce Now", description: "Enterprise payroll and HR management", category: "payroll", authType: "oauth", tier: 1, built: true, callbackPath: "/oauth/adp/callback" },
+  { provider: "paychexFlex", label: "Paychex Flex", description: "Payroll processing and labor data", category: "payroll", authType: "oauth", tier: 1, built: true, callbackPath: "/oauth/paychex/callback" },
+  { provider: "rippling", label: "Rippling", description: "Modern payroll, HR, and IT management", category: "payroll", authType: "api-token", tier: 2, built: false, callbackPath: null },
+  { provider: "stripe", label: "Stripe", description: "Payment processing, invoice collection, and refunds", category: "payments", authType: "webhook", tier: 2, built: true, callbackPath: null },
+  { provider: "authorize-net", label: "Authorize.net", description: "Payment gateway widely used by HVAC/mechanical contractors", category: "payments", authType: "api-token", tier: 2, built: false, callbackPath: null },
+  { provider: "quickbooks-payments", label: "QuickBooks Payments", description: "Intuit payment processing tied to QuickBooks", category: "payments", authType: "oauth", tier: 2, built: false, callbackPath: "/oauth/quickbooks-payments/callback" },
+  { provider: "fiserv-clover", label: "Fiserv (Clover)", description: "Clover point-of-sale and payment data", category: "payments", authType: "api-token", tier: 2, built: false, callbackPath: null },
+  { provider: "plaid", label: "Plaid", description: "Banking aggregation - cash balances, transactions, and cash-flow analytics across 12,000+ financial institutions", category: "banking", authType: "oauth", tier: 1, built: true, callbackPath: "/oauth/plaid/callback" },
+  { provider: "finicity", label: "Finicity (Mastercard)", description: "Open-banking data aggregation", category: "banking", authType: "api-token", tier: 3, built: false, callbackPath: null },
+  { provider: "mx", label: "MX Technologies", description: "Financial data aggregation and enrichment", category: "banking", authType: "api-token", tier: 3, built: false, callbackPath: null },
+  { provider: "calendly", label: "Calendly", description: "Appointment scheduling and booking automation", category: "scheduling", authType: "webhook", tier: 2, built: true, callbackPath: null },
+  { provider: "callrail", label: "CallRail", description: "Call tracking, recording, and marketing attribution for missed call analysis", category: "communications", authType: "api-token", tier: 1, built: true, callbackPath: null },
+  { provider: "twilio", label: "Twilio", description: "SMS, voice, and call tracking", category: "communications", authType: "webhook", tier: 2, built: true, callbackPath: null },
+  { provider: "ringcentral", label: "RingCentral", description: "Cloud phone system and call analytics", category: "communications", authType: "api-token", tier: 2, built: false, callbackPath: null },
+  { provider: "zoom", label: "Zoom", description: "Video meetings and webinar data", category: "communications", authType: "api-token", tier: 2, built: true, callbackPath: null },
+  { provider: "microsoft-teams", label: "Microsoft Teams", description: "Team collaboration and meeting data", category: "communications", authType: "oauth", tier: 3, built: false, callbackPath: "/oauth/teams/callback" },
+  { provider: "hubspot", label: "HubSpot", description: "CRM, pipeline management, and lead scoring", category: "crm", authType: "api-token", tier: 1, built: true, callbackPath: null },
+  { provider: "salesforce", label: "Salesforce", description: "Enterprise sales CRM for larger commercial teams", category: "crm", authType: "oauth", tier: 2, built: false, callbackPath: "/oauth/salesforce/callback" },
+  { provider: "dynamics-365", label: "Microsoft Dynamics 365", description: "Microsoft CRM/ERP suite", category: "crm", authType: "oauth", tier: 2, built: false, callbackPath: "/oauth/dynamics/callback" },
+  { provider: "google-ads", label: "Google Ads", description: "Search, display, and call-only campaign spend analytics", category: "marketing", authType: "api-token", tier: 1, built: true, callbackPath: null },
+  { provider: "google-analytics", label: "Google Analytics (GA4)", description: "Website traffic, lead source, and conversion attribution", category: "marketing", authType: "api-token", tier: 1, built: false, callbackPath: null },
+  { provider: "meta-ads", label: "Meta for Business", description: "Facebook/Instagram ads spend and conversion analytics", category: "marketing", authType: "api-token", tier: 1, built: true, callbackPath: null },
+  { provider: "birdeye", label: "Birdeye", description: "Reviews, reputation, and local marketing", category: "marketing", authType: "api-token", tier: 2, built: false, callbackPath: null },
+  { provider: "docusign", label: "DocuSign", description: "Contract e-signature and agreement lifecycle", category: "document", authType: "oauth", tier: 2, built: true, callbackPath: "/oauth/docusign/callback" },
+  { provider: "dropbox", label: "Dropbox", description: "File storage for contracts and job documents", category: "document", authType: "api-token", tier: 2, built: false, callbackPath: null },
+  { provider: "google-drive", label: "Google Drive", description: "Cloud document storage", category: "document", authType: "api-token", tier: 3, built: false, callbackPath: null },
+  { provider: "sharepoint", label: "Microsoft SharePoint", description: "Enterprise document management", category: "document", authType: "oauth", tier: 3, built: false, callbackPath: "/oauth/sharepoint/callback" },
+  { provider: "bigquery", label: "BigQuery", description: "Data warehouse and analytics infrastructure", category: "data", authType: "api-token", tier: 2, built: true, callbackPath: null },
 ];
 
 /**
- * Backend providers that have IntegrationCredential support.
- * When the API returns a status for these, it overrides the hardcoded default.
+ * Providers that have a working connect flow on the frontend
+ * (either OAuth redirect or an API-token form). Everything else
+ * renders as "coming soon" instead of a dead Connect button.
  */
-const backendProviders = new Set([
-  "servicetitan", "quickbooks", "netsuite", "gusto", "adp", "paychex", "samsara", "callrail",
+const CONNECTABLE_PROVIDERS = new Set([
+  "servicetitan", "quickbooks", "gusto",
+  "callrail", "samsara", "google-ads", "meta-ads", "hubspot",
 ]);
 
 const categoryLabels: Record<string, string> = {
@@ -64,8 +87,12 @@ const categoryLabels: Record<string, string> = {
   "scheduling": "Scheduling & Booking",
   "communications": "Communications",
   "crm": "CRM",
+  "data": "Data & BI",
   "data-warehouse": "Data & BI",
   "fleet": "Fleet & IoT",
+  "banking": "Banking & Cash Flow",
+  "document": "Document Management",
+  "marketing": "Marketing & Attribution",
 };
 
 const statusColors: Record<IntegrationStatus, string> = {
@@ -73,6 +100,7 @@ const statusColors: Record<IntegrationStatus, string> = {
   demo: "bg-brand-400/10 text-brand-200 border-brand-400/20",
   not_connected: "bg-surface-800/50 text-surface-400 border-surface-700/30",
   error: "bg-red-400/10 text-red-200 border-red-400/20",
+  roadmap: "bg-surface-800/30 text-surface-500 border-surface-700/20",
 };
 
 const statusLabels: Record<IntegrationStatus, string> = {
@@ -80,6 +108,7 @@ const statusLabels: Record<IntegrationStatus, string> = {
   demo: "Demo Active",
   not_connected: "Not Connected",
   error: "Error",
+  roadmap: "On the roadmap",
 };
 
 const navLinks = [
@@ -95,6 +124,7 @@ export default function IntegrationsPage() {
   const { user } = useAuth();
   const companyId = user?.companyId ?? "companyA";
   const [scrolled, setScrolled] = useState(false);
+  const [catalog, setCatalog] = useState<CatalogItem[] | null>(null);
   const [liveStatuses, setLiveStatuses] = useState<Record<string, IntegrationStatus> | null>(null);
 
   useEffect(() => {
@@ -103,16 +133,32 @@ export default function IntegrationsPage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Fetch the provider catalog from the backend registry
+  useEffect(() => {
+    fetch("/api/integrations/catalog")
+      .then((r) => r.json())
+      .then((data: CatalogItem[]) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setCatalog(data);
+        } else {
+          setCatalog(FALLBACK_CATALOG);
+        }
+      })
+      .catch((err) => {
+        console.warn("[integrations] Failed to load catalog, using fallback:", err);
+        setCatalog(FALLBACK_CATALOG);
+      });
+  }, []);
+
   // Fetch real integration statuses from the backend
   useEffect(() => {
     fetch(`/api/integrations?companyId=${companyId}`)
       .then((r) => r.json())
       .then((data: Record<string, string>) => {
-        // Prune to known IntegrationStatus values
         const pruned: Record<string, IntegrationStatus> = {};
         for (const [provider, status] of Object.entries(data)) {
-          if (status === "connected" || status === "not_connected" || status === "error") {
-            pruned[provider] = status;
+          if (["connected", "not_connected", "error", "demo"].includes(status)) {
+            pruned[provider] = status as IntegrationStatus;
           }
         }
         setLiveStatuses(pruned);
@@ -123,15 +169,19 @@ export default function IntegrationsPage() {
       });
   }, [companyId]);
 
-  // Merge live backend statuses into the hardcoded defaults
-  const integrations = allIntegrations.map((i) => {
-    if (liveStatuses && backendProviders.has(i.provider) && liveStatuses[i.provider] !== undefined) {
-      return { ...i, status: liveStatuses[i.provider] };
-    }
-    return i;
+  const list: CatalogItem[] = catalog ?? FALLBACK_CATALOG;
+
+  // Merge live backend statuses; default by tier when unknown.
+  const integrations = list.map((item) => {
+    const live = liveStatuses?.[item.provider];
+    const status: IntegrationStatus =
+      live ?? (item.tier === 3 ? "roadmap" : "not_connected");
+    return { ...item, status };
   });
 
-  const connectedCount = integrations.filter((i) => i.status === "connected" || i.status === "demo").length;
+  const connectedCount = integrations.filter(
+    (i) => i.status === "connected" || i.status === "demo"
+  ).length;
   const totalCount = integrations.length;
   const categories = [...new Set(integrations.map((i) => i.category))];
 
@@ -208,23 +258,31 @@ export default function IntegrationsPage() {
                         </div>
                         <p className="text-sm leading-6 text-surface-400">{integration.description}</p>
                         <div className="mt-4 flex items-center gap-3">
-                          {integration.status === "not_connected" ? (
+                          {integration.status === "connected" ? (
+                            <span className="rounded-full border border-emerald-400/15 bg-emerald-400/5 px-4 py-1.5 text-xs font-medium text-emerald-300">
+                              Live connection
+                            </span>
+                          ) : integration.status === "demo" ? (
+                            <span className="rounded-full border border-brand-400/15 bg-brand-400/5 px-4 py-1.5 text-xs font-medium text-brand-300">
+                              Demo data active
+                            </span>
+                          ) : integration.status === "roadmap" ? (
+                            <span className="rounded-full border border-surface-700/30 bg-surface-800/30 px-4 py-1.5 text-xs font-medium text-surface-500">
+                              Coming soon
+                            </span>
+                          ) : CONNECTABLE_PROVIDERS.has(integration.provider) ? (
                             <button
                               onClick={async () => {
-                                // All providers use the same backend-driven OAuth flow
+                                // Providers with a connect flow: OAuth redirect or API-token form
                                 window.location.href = `/api/oauth/connect/${integration.provider}?companyId=${companyId}`;
                               }}
                               className="rounded-full bg-brand-500/90 px-4 py-1.5 text-xs font-medium text-surface-950 transition-all hover:bg-brand-400 hover:scale-[1.02]"
                             >
                               Connect &rarr;
                             </button>
-                          ) : integration.status === "demo" ? (
-                            <span className="rounded-full border border-brand-400/15 bg-brand-400/5 px-4 py-1.5 text-xs font-medium text-brand-300">
-                              Demo data active
-                            </span>
                           ) : (
-                            <span className="rounded-full border border-emerald-400/15 bg-emerald-400/5 px-4 py-1.5 text-xs font-medium text-emerald-300">
-                              Live connection
+                            <span className="rounded-full border border-surface-700/30 bg-surface-800/30 px-4 py-1.5 text-xs font-medium text-surface-500">
+                              Coming soon
                             </span>
                           )}
                         </div>
