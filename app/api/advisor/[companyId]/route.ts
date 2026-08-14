@@ -49,10 +49,19 @@ export async function POST(
     return fallback();
   }
 
-  return handleApiMutation(
+  // Proxy the request to the real backend. If the backend is unreachable
+  // (502/timeout surfaces as 500 from handleApiMutation), fall back to the
+  // demo answer so the AI Business Advisor never dead-ends for the owner.
+  const result = await handleApiMutation(
     req,
     p,
     `/advisor/${p.companyId}`,
     "POST"
   );
+
+  if (result.status === 500) {
+    return fallback();
+  }
+
+  return result;
 }
