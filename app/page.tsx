@@ -6,40 +6,43 @@ import { useEffect, useRef, useState } from "react";
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const metrics = [
-  { label: "Book-to-meeting rate", value: "68%", detail: "+11% this quarter" },
-  { label: "Average response time", value: "4m 12s", detail: "Across all channels" },
-  { label: "Qualified demos", value: "124", detail: "Last 30 days" },
+  { label: "Cash runway", value: "14 mo", detail: "Months of operating runway" },
+  { label: "EBITDA margin", value: "18.4%", detail: "Trailing 12 months" },
+  { label: "Founder stress index", value: "42", detail: "Moderate, improving" },
+  { label: "Estimated leakage", value: "$184K", detail: "Annualized, recoverable" },
 ];
 
 const capabilities = [
-  "Automated booking ingestion",
-  "Lead scoring with explainable signals",
-  "Calendar, CRM, and video workflow coordination",
-  "Institutional reporting and audit-ready logs",
+  "Cash Command Center: payroll coverage, cash runway, and AR aging in one view",
+  "Margin leak detection that explains where profit is disappearing",
+  "AI Business Advisor grounded in the company's own cash and margin data",
+  "Enterprise value tracking and acquisition readiness for owners and platforms",
+  "Lender readiness reports built for banks, credit unions, and equipment lenders",
+  "Benchmarking against anonymized peer companies in the same trades",
 ];
 
 const workflowSteps = [
-  { step: "01", title: "Capture", body: "Calendly events arrive instantly and normalize into a single operating view." },
-  { step: "02", title: "Evaluate", body: "The system scores each opportunity using activity, context, and historical conversion." },
-  { step: "03", title: "Act", body: "Owners get the next best action, the meeting link, and the executive summary in one place." },
+  { step: "01", title: "Understand", body: "Every morning the Command Center shows cash, payroll risk, stress, and the biggest money leaks across all locations." },
+  { step: "02", title: "Decide", body: "The AI Business Advisor answers real questions: Can I afford another truck? Which branch is underperforming? Can we hire?" },
+  { step: "03", title: "Act", body: "Executives get prioritized recommendations with estimated EBITDA impact, plus a weekly CEO briefing they can forward as-is." },
 ];
 
 const signals = [
-  "Calendly booking received from AC Repair Co.",
-  "AI flagged high close probability: 82%",
-  "Zoom link attached and ready to send",
-  "Deal score updated from inbound activity",
+  "Cash runway dropped to 3.2 months at one location",
+  "Payroll is covered for the next 14 days",
+  "Install margins fell 3.1% on five jobs this month",
+  "AR over 45 days increased 18% — escalation recommended",
 ];
 
 const leadCards = [
-  { company: "AC Repair Co.", owner: "M. Lopez", status: "Booked today", score: "92" },
-  { company: "Summit HVAC", owner: "J. Carter", status: "Needs follow-up", score: "78" },
-  { company: "Peak Mechanical", owner: "R. Singh", status: "Demo confirmed", score: "89" },
+  { company: "Cash Command Center", owner: "Owner daily screen", status: "Payroll, runway, stress", score: "Live" },
+  { company: "AI Business Advisor", owner: "Grounded in your data", status: "Ask about any decision", score: "AI" },
+  { company: "Enterprise Value", owner: "Exit and platform ready", status: "EBITDA, retention, maturity", score: "EV" },
 ];
 
 const navLinks = [
   { label: "Capabilities", href: "#capabilities" },
-  { label: "Pipeline", href: "#pipeline" },
+  { label: "Command Center", href: "/analytics/command-center" },
   { label: "Dashboard", href: "/dashboard" },
   { label: "Pricing", href: "/pricing" },
   { label: "Integrations", href: "/integrations" },
@@ -232,7 +235,7 @@ function HeroSection() {
                 Institutional operating layer
               </span>
               <span className="inline-flex rounded-full border border-brand-400/25 bg-brand-400/10 px-3 py-1 text-xs font-medium text-brand-200">
-                Production ready
+                For owners, platforms, and private equity
               </span>
             </div>
 
@@ -243,16 +246,16 @@ function HeroSection() {
                     Institutional financial intelligence for home services and industrial contractors.
                   </h1>
                   <p className="max-w-3xl text-lg leading-8 text-surface-300 sm:text-xl">
-                    Ledgera surfaces every dollar your business is losing, from underpriced jobs and idle technicians to delayed cash, then tells you the exact move to recover it.
+                    Ledgera gives owners, platforms, and investors one operating view of cash, payroll, margin, enterprise value, and lender readiness across every location. The AI Business Advisor answers the questions that keep owners up at night with evidence from their own numbers.
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-4 sm:flex-row">
                   <Link
                     className="inline-flex items-center justify-center rounded-full bg-brand-400 px-6 py-3.5 text-sm font-semibold text-surface-950 transition-all hover:bg-brand-300 hover:scale-[1.02]"
-                    href="/dashboard"
+                    href="/analytics/command-center"
                   >
-                    View live dashboard →
+                    Open the Command Center
                   </Link>
                   <a
                     className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-white/10 hover:scale-[1.02]"
@@ -294,8 +297,8 @@ function CapabilitiesSection() {
           <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 shadow-lg shadow-black/20 backdrop-blur-sm">
             <SectionTitle
               eyebrow="Core capabilities"
-              title="Designed to look and behave like a mature institutional system."
-              description="The interface emphasizes clarity, hierarchy, and operational confidence rather than marketing gloss."
+              title="Built as the financial operating system for growing service companies."
+              description="Every module answers a decision the owner actually makes: payroll, hiring, trucks, pricing, branches, lenders, and exit readiness."
             />
             <ul className="mt-8 space-y-3">
               {capabilities.map((capability) => (
@@ -312,9 +315,9 @@ function CapabilitiesSection() {
 
           <div className="rounded-[2rem] border border-white/10 bg-surface-950/50 p-8 shadow-lg shadow-black/20">
             <SectionTitle
-              eyebrow="Operating workflow"
-              title="A compact process map for leadership, operations, and sales."
-              description="Every stage is legible at a glance, making it easy to understand what happened, what's happening now, and what should happen next."
+              eyebrow="Operating rhythm"
+              title="From morning questions to weekly decisions."
+              description="Owners stop digging through reports. The platform surfaces the answer, the evidence, and the recommended action."
             />
             <div className="mt-8 grid gap-4">
               {workflowSteps.map((item) => (
@@ -346,12 +349,12 @@ function PipelineSection() {
           <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 shadow-lg shadow-black/20 backdrop-blur-sm">
             <div className="mb-6 flex items-center justify-between gap-4">
               <SectionTitle
-                eyebrow="Revenue pipeline"
-                title="Live booking intelligence with executive visibility."
-                description="The moment a booking lands, the pipeline updates and the next action becomes obvious."
+                eyebrow="Platform modules"
+                title="One platform across the entire ownership lifecycle."
+                description="Owner, operator, platform, and investor audiences each get the same disciplined view of the business."
               />
               <span className="shrink-0 rounded-full border border-brand-400/20 bg-brand-400/10 px-3 py-1 text-xs font-medium text-brand-200">
-                Synced
+                Live
               </span>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
@@ -372,7 +375,7 @@ function PipelineSection() {
 
           <div className="space-y-6">
             <div className="rounded-[2rem] border border-white/10 bg-surface-950/50 p-8 shadow-lg shadow-black/20">
-              <SectionTitle eyebrow="Signal feed" title="Operational context from live activity." description="Short, precise updates keep the team aligned without overwhelming the page." />
+              <SectionTitle eyebrow="Executive signals" title="Operational context from live activity." description="Short, precise updates keep leadership aligned across every location." />
               <ul className="mt-6 space-y-3">
                 {signals.map((signal) => (
                   <li key={signal} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-sm leading-6 text-surface-200">{signal}</li>
@@ -381,12 +384,12 @@ function PipelineSection() {
             </div>
 
             <div className="rounded-[2rem] border border-brand-400/15 bg-gradient-to-br from-brand-400/[0.06] to-white/[0.02] p-8 shadow-lg shadow-black/20">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand-200">Deployment posture</p>
-              <h2 className="mt-4 text-2xl font-semibold text-white">Ready for a real environment.</h2>
-              <p className="mt-3 text-sm leading-7 text-surface-300">The structure is simple, maintainable, and presentation-ready for an institutional audience.</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand-200">Institutional posture</p>
+              <h2 className="mt-4 text-2xl font-semibold text-white">Built for diligence, lenders, and exit.</h2>
+              <p className="mt-3 text-sm leading-7 text-surface-300">Audit-ready financial reporting, documented operational maturity, and lender readiness reports make every company more valuable and easier to underwrite.</p>
               <div className="mt-6 rounded-2xl border border-white/10 bg-surface-950/70 p-4">
-                <p className="text-sm font-medium text-white">Webhook endpoint</p>
-                <p className="mt-2 break-all font-mono text-sm text-surface-400">https://ledgerahq.com/api/webhooks/calendly</p>
+                <p className="text-sm font-medium text-white">Lender readiness</p>
+                <p className="mt-2 break-all font-mono text-sm text-surface-400">EBITDA, debt coverage, covenant monitoring</p>
               </div>
             </div>
           </div>
@@ -407,7 +410,7 @@ function Footer() {
         <div className="flex items-center gap-6">
           <Link href="/about" className="text-sm text-surface-400 hover:text-white transition-colors">About</Link>
           <Link href="/contact" className="text-sm text-surface-400 hover:text-white transition-colors">Contact</Link>
-          <Link href="/dashboard" className="text-sm text-surface-400 hover:text-white transition-colors">Dashboard</Link>
+          <Link href="/analytics/command-center" className="text-sm text-surface-400 hover:text-white transition-colors">Command Center</Link>
           <a href="https://calendly.com/hello-ledgeraglobal" className="text-sm text-surface-400 hover:text-white transition-colors">Book a demo</a>
         </div>
       </div>
