@@ -42,6 +42,52 @@ const FALLBACK: DailyBriefData = {
   ],
 };
 
+function toNum(value: unknown, fallback: number): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+/**
+ * Normalize the daily-brief payload into the shape this card renders.
+ * Supports both the canonical contract (`financialHealth` / `operationalIntelligence` / `aiAlerts`)
+ * and the legacy API shape (`financial` / `operational` / `alerts`) so a mismatched
+ * payload can never crash the Command Center page.
+ */
+function normalizeBrief(raw: unknown): DailyBriefData {
+  const d = (raw ?? {}) as Record<string, unknown>;
+  const financial = ((d.financialHealth ?? d.financial) ?? {}) as Record<string, unknown>;
+  const operational = ((d.operationalIntelligence ?? d.operational) ?? {}) as Record<string, unknown>;
+
+  const riskValue = String(financial.payrollRisk ?? FALLBACK.financialHealth.payrollRisk).toLowerCase();
+  const payrollRisk: "low" | "medium" | "high" =
+    riskValue === "low" || riskValue === "medium" || riskValue === "high"
+      ? riskValue
+      : FALLBACK.financialHealth.payrollRisk;
+
+  const alerts = Array.isArray(d.aiAlerts)
+    ? (d.aiAlerts as string[])
+    : Array.isArray(d.alerts)
+    ? (d.alerts as string[])
+    : FALLBACK.aiAlerts;
+
+  return {
+    financialHealth: {
+      grossMarginToday: toNum(financial.grossMarginToday, FALLBACK.financialHealth.grossMarginToday),
+      ebitdaToday: toNum(financial.ebitdaToday, FALLBACK.financialHealth.ebitdaToday),
+      revenuePace: toNum(financial.revenuePace, FALLBACK.financialHealth.revenuePace),
+      cashRunway: toNum(financial.cashRunway, FALLBACK.financialHealth.cashRunway),
+      payrollRisk,
+    },
+    operationalIntelligence: {
+      technicianProfitability: toNum(operational.technicianProfitability, FALLBACK.operationalIntelligence.technicianProfitability),
+      branchRankings: toNum(operational.branchRankings, FALLBACK.operationalIntelligence.branchRankings),
+      callbackCost: toNum(operational.callbackCost, FALLBACK.operationalIntelligence.callbackCost),
+      membershipHealth: toNum(operational.membershipHealth, FALLBACK.operationalIntelligence.membershipHealth),
+      truckUtilization: toNum(operational.truckUtilization, FALLBACK.operationalIntelligence.truckUtilization),
+    },
+    aiAlerts: alerts.length > 0 ? alerts : FALLBACK.aiAlerts,
+  };
+}
+
 function fmt(v: number) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -69,9 +115,9 @@ export default function DailyBriefCard({ companyId }: DailyBriefCardProps) {
     let cancelled = false;
     (async () => {
       setLoading(true);
-      const result = await fetchJson<DailyBriefData>(url, FALLBACK);
+      const result = await fetchJson<unknown>(url, FALLBACK);
       if (!cancelled) {
-        setData(result);
+        setData(normalizeBrief(result));
         setLoading(false);
       }
     })();
