@@ -7,7 +7,7 @@ import { INSTITUTIONAL_LINKS } from "./InstitutionalNav";
 // One shared header for every authenticated/admin page.
 //
 // Desktop (lg+): horizontal nav with the core tabs inline. The
-// "Plugins" tab expands into a dropdown listing every institutional
+// "Intelligence" tab expands into a dropdown listing every institutional
 // page (Risk, Lender Readiness, Value Growth, ...).
 //
 // Mobile (<lg): hamburger opens a full-screen drawer. Every core tab is
@@ -26,7 +26,7 @@ export const HEADER_TABS: HeaderTab[] = [
   { label: "Dashboard", href: "/dashboard" },
   { label: "Integrations", href: "/integrations" },
   {
-    label: "Plugins",
+    label: "Intelligence",
     href: "/analytics",
     children: [
       { label: "Analytics Overview", href: "/analytics" },
@@ -133,7 +133,7 @@ function DesktopNav({ currentHref }: { currentHref?: string }) {
               {openPlugin && (
                 <div className="absolute right-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-2xl border border-brand-400/20 bg-surface-900/95 shadow-2xl shadow-black/40 backdrop-blur-xl">
                   <span className="block px-4 pb-1 pt-3 text-[10px] font-semibold uppercase tracking-widest text-brand-300/70">
-                    Plugins
+                    Intelligence
                   </span>
                   {tab.children.map((child) => (
                     <Link

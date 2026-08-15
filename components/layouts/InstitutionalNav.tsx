@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-// ─── Institutional Navigation ──────────────────────────────────────────
+// ─── Intelligence Navigation ─────────────────────────────────────────
 // Groups the institutional pages under a single dropdown so the header
 // stays clean while keeping one-click access to every module.
 
@@ -82,7 +82,7 @@ export default function InstitutionalNav({
             clipRule="evenodd"
           />
         </svg>
-        Institutional
+        Intelligence
         <svg
           className={`h-3 w-3 transition-transform ${isOpen ? "rotate-180" : ""}`}
           viewBox="0 0 20 20"
@@ -100,7 +100,7 @@ export default function InstitutionalNav({
       {isOpen && (
         <div className="absolute right-0 top-full z-50 mt-2 w-60 overflow-hidden rounded-2xl border border-brand-400/20 bg-surface-900/95 shadow-2xl shadow-black/40 backdrop-blur-xl">
           <span className="block px-4 pb-1 pt-3 text-[10px] font-semibold uppercase tracking-widest text-brand-300/70">
-            Institutional
+            Intelligence
           </span>
           {INSTITUTIONAL_LINKS.map((link) => (
             <Link
