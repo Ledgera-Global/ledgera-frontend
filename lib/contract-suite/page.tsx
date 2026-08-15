@@ -274,7 +274,7 @@ function MSAContent({ company, state, locations, totalMonthly, totalSetup, today
       <Section title="8. Force Majeure" body="Neither party liable for delays caused by events beyond reasonable control. Affected party must provide prompt written notice." />
       <Section title={`9. Governing Law & Dispute Resolution`} body={`Governed by the laws of the State of ${state}. Good-faith mediation required before litigation.`} />
       <Section title="10. Amendments & Miscellaneous" body="Amendments must be in writing and signed by both parties. Client may not assign without prior written consent. Severability applies." />
-      <Section title="Exhibit A – Locations">
+      <Section title="Exhibit A - Locations">
         <table className="w-full border-collapse text-sm my-3">
           <thead><tr className="bg-[#0a0a0a] text-white"><th className="p-2.5 text-left text-[9.5px] font-semibold">Location</th><th className="p-2.5 text-left text-[9.5px] font-semibold">Setup Fee</th><th className="p-2.5 text-left text-[9.5px] font-semibold">Monthly Fee</th></tr></thead>
           <tbody>
@@ -284,7 +284,7 @@ function MSAContent({ company, state, locations, totalMonthly, totalSetup, today
           </tbody>
         </table>
       </Section>
-      <Section title="Exhibit B – SLA">
+      <Section title="Exhibit B - SLA">
         <table className="w-full border-collapse text-sm my-3">
           <thead><tr className="bg-[#0a0a0a] text-white"><th className="p-2.5 text-left text-[9.5px] font-semibold">Metric</th><th className="p-2.5 text-left text-[9.5px] font-semibold">Target</th></tr></thead>
           <tbody>
@@ -381,9 +381,9 @@ function IOUContent({ company, today }: { company: string; today: string }) {
       </Section>
       <Section title="4. Escalation Protocol">
         <ul className="list-disc ml-5 space-y-1">
-          <li><strong>Level 1:</strong> Direct contacts — 3 business days</li>
-          <li><strong>Level 2:</strong> Financial/Operations leads — 7 business days</li>
-          <li><strong>Level 3:</strong> Executive escalation — 14 business days</li>
+          <li><strong>Level 1:</strong> Direct contacts - 3 business days</li>
+          <li><strong>Level 2:</strong> Financial/Operations leads - 7 business days</li>
+          <li><strong>Level 3:</strong> Executive escalation - 14 business days</li>
           <li><strong>Level 4:</strong> Formal mediation per MSA</li>
         </ul>
       </Section>

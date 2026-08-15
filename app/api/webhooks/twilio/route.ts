@@ -18,7 +18,7 @@ function isValidTwilioRequest(
   signature: string
 ): boolean {
   if (!TWILIO_AUTH_TOKEN) {
-    // Dev mode without configured token — warn but allow
+    // Dev mode without configured token - warn but allow
     console.warn(
       "[twilio-webhook] TWILIO_AUTH_TOKEN not set, skipping signature validation"
     );

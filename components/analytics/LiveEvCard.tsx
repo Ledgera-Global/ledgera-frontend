@@ -67,7 +67,7 @@ export function LiveEvCard({ companyId }: LiveEvCardProps) {
         <span className="text-brand-400">↑ {fmt(d.quarterChange)} this quarter</span>
       </div>
 
-      {/* Value Creation Breakdown — Today's Drivers */}
+      {/* Value Creation Breakdown - Today's Drivers */}
       <div className="rounded-xl border border-white/10 bg-surface-900/40 p-4 mb-5">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-surface-400 mb-3">
           Today's Value Creation

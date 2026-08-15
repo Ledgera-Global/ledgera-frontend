@@ -1,7 +1,7 @@
 "use client";
+import AppHeader from "@/components/layouts/AppHeader";
 import ArCollectionRecommendations from "@/components/analytics/ArCollectionRecommendations";
 import EvTrackerCard from "@/components/EvTrackerCard";
-import InstitutionalNav from "@/components/layouts/InstitutionalNav";
 import Link from "next/link";
 import ValueMethodologyPanel from "@/components/analytics/ValueMethodologyPanel";
 import { useEffect, useState } from "react";
@@ -16,7 +16,6 @@ import { ValuationHero } from "@/components/analytics/ValuationHero";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import { fetchJson } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth-context";
-import { NAV_LINKS } from "@/lib/constants/styling";
 
 import {
   DEFAULT_ACQUISITION_SCORE,
@@ -39,7 +38,6 @@ import type {
 export default function AcquisitionPage() {
   const { user } = useAuth();
   const COMPANY_ID = user?.companyId || "companyA";
-  const [scrolled, setScrolled] = useState(false);
   const [acq, setAcq] = useState<AcquisitionScore>(DEFAULT_ACQUISITION_SCORE);
   const [dil, setDil] = useState<DiligenceReport>(DEFAULT_DILIGENCE_REPORT);
   const [val, setVal] = useState<EnterpriseValuation>(DEFAULT_VALUATION);
@@ -48,12 +46,6 @@ export default function AcquisitionPage() {
   const [readiness, setReadiness] = useState<InstitutionalReadiness>(DEFAULT_READINESS);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"investment" | "operational">("investment");
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     (async () => {
@@ -76,38 +68,7 @@ export default function AcquisitionPage() {
 
   return (
     <div className="min-h-screen bg-surface-950 text-surface-100">
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-surface-950/90 backdrop-blur-xl border-b border-white/5"
-            : "bg-transparent"
-        }`}
-      >
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-sm font-bold text-surface-950">
-              L
-            </span>
-            <span className="text-lg font-semibold text-white">Ledgera Global</span>
-          </Link>
-          <div className="hidden md:flex items-center gap-6">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className={`text-sm font-medium transition-colors ${
-                  link.href === "/analytics/acquisition"
-                    ? "text-white"
-                    : "text-surface-300 hover:text-white"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-            <InstitutionalNav currentHref="/analytics/acquisition" />
-          </div>
-        </nav>
-      </header>
+      <AppHeader currentHref="/analytics/acquisition" transparent />
 
       <div className="pt-24 pb-24">
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
@@ -126,7 +87,7 @@ export default function AcquisitionPage() {
             <LoadingSkeleton count={4} />
           ) : (
             <>
-              {/* ── TOP PRIORITY: The "Hero" section — EV, EBITDA, Multiple dominate ── */}
+              {/* ── TOP PRIORITY: The "Hero" section - EV, EBITDA, Multiple dominate ── */}
               <div className="grid gap-8 lg:grid-cols-3 mb-12">
                 <div className="lg:col-span-2">
                   <ValuationHero val={val} />

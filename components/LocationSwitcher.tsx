@@ -30,7 +30,7 @@ export default function LocationSwitcher({ companyId }: LocationSwitcherProps) {
     let cancelled = false;
     async function load() {
       if (companyId === "companyA") {
-        // Demo mode — show a single location
+        // Demo mode - show a single location
         setLocations([{ id: "", name: "All locations", address: null }]);
         setLoading(false);
         return;

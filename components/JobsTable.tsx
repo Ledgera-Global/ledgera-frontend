@@ -10,7 +10,7 @@ function formatProfit(v: number) { const s = v < 0 ? "-" : ""; return s + format
 function formatDuration(row: JobRow) {
   if (row.durationText) return row.durationText;
   if (typeof row.durationHours === "number" && Number.isFinite(row.durationHours)) return `${row.durationHours.toFixed(1)}h`;
-  return "—";
+  return "N/A";
 }
 
 export default function JobsTable({ companyId }: Props) {

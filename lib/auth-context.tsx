@@ -270,7 +270,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }));
       }
     } catch {
-      /* silent — polling can retry */
+      /* silent - polling can retry */
     }
   }
 

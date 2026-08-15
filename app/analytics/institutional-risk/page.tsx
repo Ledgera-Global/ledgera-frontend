@@ -1,11 +1,10 @@
 "use client";
-import InstitutionalNav from "@/components/layouts/InstitutionalNav";
+import AppHeader from "@/components/layouts/AppHeader";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import { fetchJson } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth-context";
-import { NAV_LINKS } from "@/lib/constants/styling";
 
 function fmt(v: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(v);
@@ -107,7 +106,7 @@ const DASHBOARD_DEFAULTS: ExecutiveRiskDashboard = {
     debtToEbitda: { totalDebt: 1284000, ebitda: 1100000, ratio: 1.17, assessment: "Moderate leverage" },
     interestCoverage: { ebit: 850000, annualInterest: 166780, coverageRatio: 5.1, status: "Strong" },
     enterpriseValueImpact: { potentialSavingsAnnual: 83330, evImpact: 374985, narrative: "Because your debt carries high interest rates averaging 13.0%, your company is worth approximately $375K less than it could be." },
-    refinanceOpportunities: { totalSavings: 12950, opportunities: [{ type: "Debt Consolidation — Credit Cards", currentRate: 26.0, estimatedNewRate: 8.5, annualSavings: 12950 }] },
+    refinanceOpportunities: { totalSavings: 12950, opportunities: [{ type: "Debt Consolidation - Credit Cards", currentRate: 26.0, estimatedNewRate: 8.5, annualSavings: 12950 }] },
     cashFlowWaterfall: {
       flowItems: [
         { label: "Revenue", amount: 420000, color: "#22c55e", pct: 100 },
@@ -124,13 +123,13 @@ const DASHBOARD_DEFAULTS: ExecutiveRiskDashboard = {
   },
   operational: { technicianUtilization: 72, bookingRate: 84, membershipRenewalRate: 82, installCloseRate: 38, maintenanceRevenue: 216000 },
   risk: { cyberHealth: { score: 65, rating: "Good" }, fraudAlerts: 3, darkWebAlerts: 3, cashRunway: 3.2, covenantStatus: "Watch", covenantAtRisk: 2 },
-  growth: { acquisitionReadiness: "Pre-Revenue Threshold", multiLocationCount: 3, customerLifetimeValue: 4200, marketingROI: 3.2, expansionCapacity: "Moderate — strengthen cash flow before new locations" },
+  growth: { acquisitionReadiness: "Pre-Revenue Threshold", multiLocationCount: 3, customerLifetimeValue: 4200, marketingROI: 3.2, expansionCapacity: "Moderate - strengthen cash flow before new locations" },
 };
 
 // ─── Phase 2 Demo Data ─────────────────────────────────────────────────
 
 const CYBER_DARK_WEB: DarkWebAlert[] = [
-  { id: "dw-1", type: "credential_leak", email: "admin@apexhvac.com", foundAt: "2026-06-15", source: "Dark Web Forum — breached database dump", severity: "critical", action: "Immediately reset password and enable MFA" },
+  { id: "dw-1", type: "credential_leak", email: "admin@apexhvac.com", foundAt: "2026-06-15", source: "Dark Web Forum - breached database dump", severity: "critical", action: "Immediately reset password and enable MFA" },
   { id: "dw-2", type: "email_exposure", email: "ap@apexhvac.com", foundAt: "2026-05-22", source: "LinkedIn scrape", severity: "medium", action: "Monitor for targeted phishing" },
   { id: "dw-3", type: "password_leak", email: "dispatcher@apexhvac.com", foundAt: "2026-07-01", source: "HaveIBeenPwned", severity: "high", action: "Reset password. Enforce unique passwords." },
 ];
@@ -144,7 +143,7 @@ const CYBER_LOGIN_ANOMALIES: LoginAnomaly[] = [
 const CYBER_FRAUD_SIGNALS: FraudSignal[] = [
   { id: "fs-1", type: "duplicate_invoice", amount: 4250, description: "Invoice #INV-4421 matches #INV-4398 from ABC Supply", severity: "high", status: "open", recommendation: "Verify with vendor before payment" },
   { id: "fs-2", type: "suspicious_vendor", amount: 12000, description: "New vendor with same bank routing as existing vendor", severity: "critical", status: "open", recommendation: "Verify vendor authenticity" },
-  { id: "fs-3", type: "ach_anomaly", amount: 85000, description: "ACH transfer to new bank account — exceeds normal pattern by 340%", severity: "critical", status: "investigating", recommendation: "Contact bank immediately" },
+  { id: "fs-3", type: "ach_anomaly", amount: 85000, description: "ACH transfer to new bank account - exceeds normal pattern by 340%", severity: "critical", status: "investigating", recommendation: "Contact bank immediately" },
 ];
 
 const CYBER_VENDORS: VendorRisk[] = [
@@ -205,7 +204,7 @@ const CYBER_INSURANCE_READINESS = {
 const BANK_FRAUD_ALERTS = [
   { type: "Unusual ACH Transfer", amount: 85000, date: "2026-07-28", risk: "critical" as const, detail: "ACH to new account ending 8892" },
   { type: "Duplicate Payment", amount: 4250, date: "2026-07-25", risk: "high" as const, detail: "Invoice #4421 duplicate of #4398" },
-  { type: "New Vendor Payment", amount: 12000, date: "2026-07-24", risk: "high" as const, detail: "PremierHVAC Parts LLC — verify registration" },
+  { type: "New Vendor Payment", amount: 12000, date: "2026-07-24", risk: "high" as const, detail: "PremierHVAC Parts LLC - verify registration" },
 ];
 
 const EMAIL_SECURITY = {
@@ -249,15 +248,8 @@ function CollapsibleSection({ title, sub, defaultOpen = false, children }: { tit
 export default function InstitutionalRiskPage() {
   const { user } = useAuth();
   const COMPANY_ID = user?.companyId || "companyA";
-  const [scrolled, setScrolled] = useState(false);
   const [dashboard, setDashboard] = useState<ExecutiveRiskDashboard | null>(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     (async () => {
@@ -282,20 +274,7 @@ export default function InstitutionalRiskPage() {
 
   return (
     <div className="min-h-screen bg-surface-950 text-surface-100">
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-surface-950/90 backdrop-blur-xl border-b border-white/5" : "bg-transparent"}`}>
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-sm font-bold text-surface-950">L</span>
-            <span className="text-lg font-semibold text-white">Ledgera Global</span>
-          </Link>
-          <div className="hidden md:flex items-center gap-6">
-            {NAV_LINKS.map((link) => (
-              <Link key={link.label} href={link.href} className={`text-sm font-medium transition-colors ${link.href === "/analytics/institutional-risk" ? "text-white" : "text-surface-300 hover:text-white"}`}>{link.label}</Link>
-            ))}
-            <InstitutionalNav currentHref="/analytics/institutional-risk" />
-          </div>
-        </nav>
-      </header>
+      <AppHeader currentHref="/analytics/institutional-risk" transparent />
 
       <div className="pt-24 pb-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
@@ -309,12 +288,12 @@ export default function InstitutionalRiskPage() {
           {loading ? <LoadingSkeleton count={6} /> : d && (
             <div className="space-y-8">
               {/* ═══════════════════════════════════════════════════════════
-                  PHASE 1 — FINANCIAL & OPERATIONAL INTELLIGENCE
+                  PHASE 1 - FINANCIAL & OPERATIONAL INTELLIGENCE
                  ═══════════════════════════════════════════════════════════ */}
               <div>
                 <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full bg-brand-400" />
-                  Phase 1 — Financial & Operational Intelligence
+                  Phase 1 - Financial & Operational Intelligence
                 </h2>
 
                 {/* ROW 1: Financial Health Summary */}
@@ -382,7 +361,7 @@ export default function InstitutionalRiskPage() {
                     </div>
                   </S>
 
-                  <S title="Debt Health" sub={`Score: ${f!.debtHealth.score}/100 — ${f!.debtHealth.rating}`}>
+                  <S title="Debt Health" sub={`Score: ${f!.debtHealth.score}/100 - ${f!.debtHealth.rating}`}>
                     <div className="flex flex-col items-center gap-4">
                       <Gauge score={f!.debtHealth.score} size={130} />
                       <div className="w-full space-y-2">
@@ -512,12 +491,12 @@ export default function InstitutionalRiskPage() {
               </div>
 
               {/* ═══════════════════════════════════════════════════════════
-                  PHASE 2 — INSTITUTIONAL CYBERSECURITY & FRAUD PROTECTION
+                  PHASE 2 - INSTITUTIONAL CYBERSECURITY & FRAUD PROTECTION
                  ═══════════════════════════════════════════════════════════ */}
               <div>
                 <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full bg-red-400" />
-                  Phase 2 — Institutional Cybersecurity & Fraud Protection
+                  Phase 2 - Institutional Cybersecurity & Fraud Protection
                 </h2>
 
                 {/* Cyber Health Overview */}
@@ -525,7 +504,7 @@ export default function InstitutionalRiskPage() {
                   <S title="Cyber Health">
                     <div className="flex flex-col items-center">
                       <Gauge score={65} size={110} />
-                      <p className="text-sm text-surface-400 mt-2">65/100 — Good</p>
+                      <p className="text-sm text-surface-400 mt-2">65/100 - Good</p>
                     </div>
                   </S>
                   <S title="Ransomware Readiness">
@@ -559,7 +538,7 @@ export default function InstitutionalRiskPage() {
                           <span className="text-xs font-medium capitalize">{a.type.replace(/_/g, ' ')}</span>
                           <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${sevColor(a.severity)}`}>{a.severity}</span>
                         </div>
-                        <p className="text-xs text-surface-200">{a.email} — {a.source}</p>
+                        <p className="text-xs text-surface-200">{a.email} - {a.source}</p>
                         <p className="text-xs text-surface-400 mt-1">Found: {a.foundAt}</p>
                         <p className="text-xs text-surface-300 mt-1.5">Action: {a.action}</p>
                       </div>
@@ -633,7 +612,7 @@ export default function InstitutionalRiskPage() {
                           <span className="text-[10px] text-surface-400">{v.category}</span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${v.riskLevel === "low" ? "text-emerald-300 bg-emerald-400/10" : "text-amber-300 bg-amber-400/10"}`}>{v.riskScore} — {v.riskLevel}</span>
+                          <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${v.riskLevel === "low" ? "text-emerald-300 bg-emerald-400/10" : "text-amber-300 bg-amber-400/10"}`}>{v.riskScore} - {v.riskLevel}</span>
                           <span className={`text-[10px] ${v.hasMfa ? "text-emerald-300" : "text-red-300"}`}>MFA {v.hasMfa ? "✓" : "✗"}</span>
                         </div>
                       </div>
@@ -725,13 +704,13 @@ export default function InstitutionalRiskPage() {
                       </div>
                     ))}
                     <div className="mt-2 rounded-xl border border-amber-400/20 bg-amber-400/5 p-3">
-                      <p className="text-xs text-amber-300 font-medium">⚠ 3 unused admin accounts found — review and deactivate</p>
+                      <p className="text-xs text-amber-300 font-medium">⚠ 3 unused admin accounts found - review and deactivate</p>
                     </div>
                   </div>
                 </CollapsibleSection>
 
                 {/* Ransomware Readiness Details */}
-                <CollapsibleSection title="Ransomware Readiness — Detailed" sub={`${RANSOMWARE_READINESS.gaps.length} gaps identified`}>
+                <CollapsibleSection title="Ransomware Readiness - Detailed" sub={`${RANSOMWARE_READINESS.gaps.length} gaps identified`}>
                   <div className="space-y-3">
                     <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                       <div className="rounded-xl border border-white/10 bg-surface-900/50 p-3 text-center">

@@ -15,7 +15,7 @@ type ActionGuide = {
 
 const ACTION_GUIDES: Record<string, ActionGuide> = {
   LOW_SERVICE_MARGIN: {
-    rootCause: "Your pricing hasn't kept up with rising material and labor costs — some jobs are priced below what they cost to deliver.",
+    rootCause: "Your pricing hasn't kept up with rising material and labor costs - some jobs are priced below what they cost to deliver.",
     whatToDo: "Review your service price book and update it to reflect current costs. Target a minimum 35% margin on every job.",
     actionLabel: "Review price book in QuickBooks",
     actionHref: "https://quickbooks.intuit.com",
@@ -27,7 +27,7 @@ const ACTION_GUIDES: Record<string, ActionGuide> = {
     actionHref: "/dashboard",
   },
   IDLE_TECHNICIAN: {
-    rootCause: "Missed or dropped calls indicate dispatch gaps — jobs are going to competitors because no one answered or followed up.",
+    rootCause: "Missed or dropped calls indicate dispatch gaps - jobs are going to competitors because no one answered or followed up.",
     whatToDo: "Set up after-hours call forwarding and a same-day callback policy. Every missed call is a lost job.",
     actionLabel: "Configure call tracking in Twilio",
     actionHref: "/integrations",

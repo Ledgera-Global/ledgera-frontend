@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
   try {
     const response = await fetch(backendUrl.toString(), {
       method: "GET",
-      redirect: "manual", // Do not follow redirect — capture it
+      redirect: "manual", // Do not follow redirect - capture it
     });
 
     // Backend returns a 302 redirect back to the app (e.g., /integrations?connected=quickbooks)
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL("/integrations", request.url).toString());
     }
 
-    // Error case — redirect to integrations with error
+    // Error case - redirect to integrations with error
     console.error("[quickbooks/callback] Backend error:", response.status, text);
     return NextResponse.redirect(new URL(`/integrations?error=quickbooks_connect_failed`, request.url).toString());
   } catch (err) {

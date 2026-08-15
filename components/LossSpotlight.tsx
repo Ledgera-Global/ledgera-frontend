@@ -127,7 +127,7 @@ export default function LossSpotlight({
     <div className="rounded-3xl border border-surface-800 bg-surface-900/70 p-6 shadow-xl shadow-black/20">
       <p className="text-xs uppercase tracking-[0.24em] text-surface-400">Contractor Spotlight</p>
       <h3 className="mt-2 text-lg font-semibold text-white">No &ge; {formatMoney(lossThresholdDollars)} loss detected</h3>
-      <p className="mt-2 text-sm text-surface-400">Net cash flow: {cashFlow ? formatMoney(cashFlow.realCashFlow) : "—"}</p>
+      <p className="mt-2 text-sm text-surface-400">Net cash flow: {cashFlow ? formatMoney(cashFlow.realCashFlow) : "N/A"}</p>
     </div>
   );
 
@@ -149,29 +149,29 @@ export default function LossSpotlight({
       <div className="mt-6 grid gap-3 md:grid-cols-3">
         <div className="rounded-2xl border border-surface-800 bg-surface-950/70 p-4">
           <p className="text-xs uppercase tracking-[0.18em] text-surface-400">Uncollected revenue</p>
-          <p className="mt-2 text-xl font-semibold text-white">{leakage ? formatMoney(leakage.breakdown.uncollectedRevenue) : "—"}</p>
+          <p className="mt-2 text-xl font-semibold text-white">{leakage ? formatMoney(leakage.breakdown.uncollectedRevenue) : "N/A"}</p>
           <p className="mt-1 text-sm text-surface-400">{showDetail ? "Collections lag" : "Loading details&hellip;"}</p>
         </div>
         <div className="rounded-2xl border border-surface-800 bg-surface-950/70 p-4">
           <p className="text-xs uppercase tracking-[0.18em] text-surface-400">Underpriced services</p>
-          <p className="mt-2 text-xl font-semibold text-white">{leakage ? formatMoney(leakage.breakdown.underpricedServices) : "—"}</p>
+          <p className="mt-2 text-xl font-semibold text-white">{leakage ? formatMoney(leakage.breakdown.underpricedServices) : "N/A"}</p>
           <p className="mt-1 text-sm text-surface-400">{showDetail ? "Margin leakage" : "Loading details&hellip;"}</p>
         </div>
         <div className="rounded-2xl border border-surface-800 bg-surface-950/70 p-4">
           <p className="text-xs uppercase tracking-[0.18em] text-surface-400">Labor inefficiency</p>
-          <p className="mt-2 text-xl font-semibold text-white">{leakage ? formatMoney(leakage.breakdown.laborInefficiency) : "—"}</p>
+          <p className="mt-2 text-xl font-semibold text-white">{leakage ? formatMoney(leakage.breakdown.laborInefficiency) : "N/A"}</p>
           <p className="mt-1 text-sm text-surface-400">{showDetail ? "Negative profit jobs" : "Loading details&hellip;"}</p>
         </div>
       </div>
       <div className="mt-5 rounded-2xl border border-surface-800 bg-surface-950/70 p-4">
         <p className="text-sm text-surface-300">
-          Leakage model signal: <span className="font-semibold text-surface-100">{leakage?.signal ?? "—"}</span>
+          Leakage model signal: <span className="font-semibold text-surface-100">{leakage?.signal ?? "N/A"}</span>
           {leakage ? ` (score ${leakage.score})` : ""}
         </p>
         <div className="mt-3 h-px w-full bg-surface-800" />
         <p className="mt-3 text-sm leading-6 text-surface-400">
           {showDetail
-            ? "In under a minute, hand your contractor these three levers: collections, pricing, and labor efficiency—then route each lever into a recovery action."
+            ? "In under a minute, hand your contractor these three levers: collections, pricing, and labor efficiency - then route each lever into a recovery action."
             : "Preparing the contractor handoff&hellip; details will appear when the countdown finishes."}
         </p>
       </div>

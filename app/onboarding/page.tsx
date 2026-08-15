@@ -268,7 +268,7 @@ export default function OnboardingPage() {
       step: "3",
       label: "Payment & Subscription",
       description:
-        "Complete payment to activate your Ledgera subscription. Your contract has been signed — proceed to checkout.",
+        "Complete payment to activate your Ledgera subscription. Your contract has been signed - proceed to checkout.",
       state: isCompleted(current, "pending_payment")
         ? "completed"
         : isActive(current, "pending_payment")

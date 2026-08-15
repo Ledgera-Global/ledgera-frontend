@@ -28,7 +28,7 @@ const demoData = {
       priority: "MEDIUM",
       estimatedRecovery: 5220,
       recoveryProbabilityPct: 90,
-      recommendation: "Call customer directly. This is a recurring monthly service client — a reminder usually resolves within 7 days.",
+      recommendation: "Call customer directly. This is a recurring monthly service client - a reminder usually resolves within 7 days.",
       ebitdaImpact: 290,
     },
     {

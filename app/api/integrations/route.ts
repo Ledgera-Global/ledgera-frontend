@@ -20,7 +20,7 @@ export async function GET(
     request,
     { companyId, ...awaitedParams },
     `/integrations/status/${companyId}`,
-    {} // demo data (empty — frontend uses hardcoded defaults)
+    {} // demo data (empty - frontend uses hardcoded defaults)
   );
 }
 

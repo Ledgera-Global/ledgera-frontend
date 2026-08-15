@@ -143,7 +143,7 @@ export async function handleApiGet<T>(
   if (userToken) {
     const tokenValidation = verifyApiToken(userToken);
     if (!tokenValidation.valid) {
-      // Invalid token — reject to prevent unauthorized data access
+      // Invalid token - reject to prevent unauthorized data access
       return NextResponse.json(
         { error: "Invalid or expired session" },
         { status: 401, headers }

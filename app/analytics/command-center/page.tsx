@@ -23,7 +23,7 @@ export default function CommandCenterPage() {
           <p className="mt-2 max-w-3xl text-base text-surface-300">
             The first screen an owner sees each morning. Cash, payroll, stress,
             branches, recommendations, enterprise value, the AI daily brief, and
-            the advisor — one place for confident decisions without digging through
+            the advisor - one place for confident decisions without digging through
             reports.
           </p>
         </div>

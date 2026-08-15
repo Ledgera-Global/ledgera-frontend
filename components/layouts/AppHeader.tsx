@@ -12,7 +12,7 @@ import { INSTITUTIONAL_LINKS } from "./InstitutionalNav";
 //
 // Mobile (<lg): hamburger opens a full-screen drawer. Every core tab is
 // an accordion group; tabs that have sub-pages reveal them beneath the
-// tab when tapped. Nothing overflows — each group is a clean vertical
+// tab when tapped. Nothing overflows - each group is a clean vertical
 // stack, so every destination is one or two taps away.
 
 export interface HeaderTab {

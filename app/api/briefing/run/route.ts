@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchFromBackend } from "@/lib/backendProxy";
 
-// ─── Weekly CEO Briefing — delivery endpoint ───────────────────────────
+// ─── Weekly CEO Briefing - delivery endpoint ───────────────────────────
 // Cron-invocable (Bearer CRON_SECRET), like the existing /api/cron route.
 // Composes a Monday-morning briefing from live company data and POSTs it to
 // a Slack-style webhook (BRIEFING_WEBHOOK_URL) when configured. Returns the
@@ -37,7 +37,7 @@ function fmtCurrency(v: number): string {
 
 function buildBriefingText(companyId: string, brief: DailyBrief): string {
   const lines = [
-    `📊 *Weekly CEO Briefing — ${new Date(brief.generatedAt).toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}*`,
+    `📊 *Weekly CEO Briefing - ${new Date(brief.generatedAt).toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}*`,
     ``,
     `*Financial*`,
     `• Gross margin: ${brief.financial.grossMarginToday}%`,
@@ -53,9 +53,9 @@ function buildBriefingText(companyId: string, brief: DailyBrief): string {
     `*This week's watch list*`,
     ...(brief.alerts.length > 0
       ? brief.alerts.map((a) => `• ${a}`)
-      : ["• No alerts — steady week."]),
+      : ["• No alerts - steady week."]),
     ``,
-    `— Ledgera Command Center`,
+    `- Ledgera Command Center`,
   ];
   return lines.join("\n");
 }

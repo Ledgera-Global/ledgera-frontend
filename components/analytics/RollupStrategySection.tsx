@@ -35,7 +35,7 @@ export function RollupStrategySection({ rollup }: RollupStrategySectionProps) {
           <div className="grid gap-4 sm:grid-cols-3 mb-6">
             <MetricCard label="Client Tier" value={rollup.clientTier} sub={`${fmt(rollup.clientRevenue)} revenue`} />
             <MetricCard label="Target Tier" value={rollup.targetTier} sub={`${rollup.targetCount} acquisition${rollup.targetCount > 1 ? "s" : ""}`} />
-            <MetricCard label="Target Revenue" value={`${fmt(rollup.recommendedTargetRevenue.min)} – ${fmt(rollup.recommendedTargetRevenue.max)}`} sub={`${rollup.synergySavingsPct}% synergy savings`} />
+            <MetricCard label="Target Revenue" value={`${fmt(rollup.recommendedTargetRevenue.min)} - ${fmt(rollup.recommendedTargetRevenue.max)}`} sub={`${rollup.synergySavingsPct}% synergy savings`} />
           </div>
 
           {/* Pro-Forma Metrics */}
@@ -68,7 +68,7 @@ export function RollupStrategySection({ rollup }: RollupStrategySectionProps) {
 
           <div className="rounded-xl border border-brand-400/20 bg-brand-400/5 p-4 text-center mb-4">
             <span className="text-sm text-surface-300">
-              Multiple ceiling achievable: <span className="font-bold text-emerald-400">{rollup.ceilingAfterRollup}x</span> &mdash;
+              Multiple ceiling achievable: <span className="font-bold text-emerald-400">{rollup.ceilingAfterRollup}x</span>  - 
               From {rollup.currentMultiple}x to {rollup.ceilingAfterRollup}x through strategic roll-up
             </span>
           </div>

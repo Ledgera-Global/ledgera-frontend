@@ -37,7 +37,7 @@ const FALLBACK: DailyBriefData = {
   },
   aiAlerts: [
     "Revenue pacing 8% ahead of forecast this month",
-    "Tech #3 idle rate increased 12% — investigate dispatch gaps",
+    "Tech #3 idle rate increased 12% - investigate dispatch gaps",
     "Callback cost trending 5% lower week-over-week",
   ],
 };

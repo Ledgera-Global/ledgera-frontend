@@ -27,7 +27,7 @@ const demoData = {
       type: "AGED_RECEIVABLES_CONCENTRATION",
       emoji: "🚨",
       title: "3 invoices represent 45% of aged receivables",
-      detail: "Invoices #1831 ($12.4K), #1842 ($5.8K), #1850 ($3.8K) total $22K — all beyond 45 days. Immediate collection action recommended.",
+      detail: "Invoices #1831 ($12.4K), #1842 ($5.8K), #1850 ($3.8K) total $22K - all beyond 45 days. Immediate collection action recommended.",
       severity: "high",
       metric: "$22K",
       metricLabel: "at risk",

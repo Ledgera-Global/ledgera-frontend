@@ -1,8 +1,7 @@
 "use client";
-import InstitutionalNav from "@/components/layouts/InstitutionalNav";
+import AppHeader from "@/components/layouts/AppHeader";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { NAV_LINKS } from "@/lib/constants/styling";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
@@ -84,8 +83,8 @@ type Engine = {
 
 const engines: Engine[] = [
   // FINANCIAL
-  { id: "leakage-score", name: "Leakage Score Engine", description: "Uncollected revenue, underpriced services, labor inefficiency → single leakage score (0–100).", service: "leakageScoreEngine.ts", route: "routes/leakage.ts", apiPath: "/api/leakage-score/companyA", page: "/analytics", status: "production", category: "financial" },
-  { id: "parts-leakage", name: "Parts Leakage Score Engine", description: "Parts-level margin erosion — high-cost parts, write-offs, vendor pricing gaps.", service: "partsLeakageScoreEngine.ts", route: "routes/leakage.ts", apiPath: "/api/parts-leakage-score/companyA", page: "/analytics", status: "demo_ready", category: "financial" },
+  { id: "leakage-score", name: "Leakage Score Engine", description: "Uncollected revenue, underpriced services, labor inefficiency → single leakage score (0-100).", service: "leakageScoreEngine.ts", route: "routes/leakage.ts", apiPath: "/api/leakage-score/companyA", page: "/analytics", status: "production", category: "financial" },
+  { id: "parts-leakage", name: "Parts Leakage Score Engine", description: "Parts-level margin erosion - high-cost parts, write-offs, vendor pricing gaps.", service: "partsLeakageScoreEngine.ts", route: "routes/leakage.ts", apiPath: "/api/parts-leakage-score/companyA", page: "/analytics", status: "demo_ready", category: "financial" },
   { id: "margin-insights", name: "Margin Insights Engine", description: "Per-service-type margin analysis with revenue, profit, and margin percentage.", service: "marginEngine.ts", route: "routes/analytics.ts", apiPath: "/api/margin-insights/companyA", page: "/analytics", status: "production", category: "financial" },
   { id: "cash-flow", name: "Cash Flow Engine", description: "Real cash flow (in - out) over trailing window with net position.", service: "cashFlowEngine.ts", route: "routes/analytics.ts", apiPath: "/api/cash-flow/companyA", page: "/analytics", status: "production", category: "financial" },
   { id: "profit-alerts", name: "Profit Alert Engine", description: "Typed, severity-ranked alerts with estimated dollar impact.", service: "profitAlertEngine.ts", route: "routes/jobs.ts", apiPath: "/api/profit-alerts/companyA", page: "/dashboard", status: "production", category: "financial" },
@@ -93,20 +92,20 @@ const engines: Engine[] = [
   { id: "ar-risk", name: "AR Risk Engine", description: "Aging-bucket analysis with total outstanding and at-risk amounts.", service: "arRiskEngine.ts", route: "routes/analytics.ts", apiPath: "/api/ar-aging/companyA", page: "/analytics", status: "production", category: "financial" },
   // OPERATIONS
   { id: "technician-efficiency", name: "Technician Efficiency Engine", description: "Per-technician score based on jobs, revenue, profit, margin, and duration.", service: "technicianEfficiencyEngine.ts", route: "routes/jobs.ts", apiPath: "/api/technician-efficiency/companyA", page: "/dashboard", status: "production", category: "operations" },
-  { id: "technician-profit", name: "Technician Profit Engine", description: "Profitability breakdown by technician — revenue, profit, margin rank.", service: "technicianProfitEngine.ts", route: "routes/jobs.ts", apiPath: "/api/tech-profit/companyA", page: "/analytics", status: "demo_ready", category: "operations" },
+  { id: "technician-profit", name: "Technician Profit Engine", description: "Profitability breakdown by technician - revenue, profit, margin rank.", service: "technicianProfitEngine.ts", route: "routes/jobs.ts", apiPath: "/api/tech-profit/companyA", page: "/analytics", status: "demo_ready", category: "operations" },
   { id: "service-profit", name: "Service Profit Engine", description: "Revenue, profit, margin, job count grouped by service category.", service: "serviceProfitEngine.ts", route: "routes/jobs.ts", apiPath: "/api/service-profit/companyA", page: "/analytics", status: "demo_ready", category: "operations" },
-  { id: "dispatch-inefficiency", name: "Dispatch Inefficiency Engine", description: "Travel time, schedule overlaps, idle gaps that erode margin.", service: "dispatchInefficiencyEngine.ts", route: "routes/jobs.ts", apiPath: "", page: "—", status: "active", category: "operations" },
-  { id: "pricing-inconsistency", name: "Pricing Inconsistency Engine", description: "Margin band deviations — underpriced and overpriced service lines.", service: "pricingInconsistencyEngine.ts", route: "routes/jobs.ts", apiPath: "", page: "—", status: "active", category: "operations" },
+  { id: "dispatch-inefficiency", name: "Dispatch Inefficiency Engine", description: "Travel time, schedule overlaps, idle gaps that erode margin.", service: "dispatchInefficiencyEngine.ts", route: "routes/jobs.ts", apiPath: "", page: "N/A", status: "active", category: "operations" },
+  { id: "pricing-inconsistency", name: "Pricing Inconsistency Engine", description: "Margin band deviations - underpriced and overpriced service lines.", service: "pricingInconsistencyEngine.ts", route: "routes/jobs.ts", apiPath: "", page: "N/A", status: "active", category: "operations" },
   // COMMERCIAL
   { id: "call-metrics", name: "Call Metrics Engine", description: "Calls, missed rate, response time, call-to-job conversion.", service: "callMetricsEngine.ts", route: "routes/analytics.ts", apiPath: "/api/call-metrics/companyA", page: "/analytics", status: "demo_ready", category: "commercial" },
-  { id: "pricing-engine", name: "Pricing Engine", description: "Optimal price points modeled against market benchmarks and costs.", service: "pricingEngine.ts", route: "routes/analytics.ts", apiPath: "", page: "—", status: "active", category: "commercial" },
-  { id: "recovery-automation", name: "Recovery Automation Engine", description: "Collectible AR identification, re-pricing suggestions, priority ranking.", service: "recoveryAutomationEngine.ts", route: "routes/analytics.ts", apiPath: "", page: "—", status: "active", category: "commercial" },
-  { id: "recovery-metrics", name: "Recovery Metrics Engine", description: "Dollars recovered, recovery rate, aging of recovered vs. written-off.", service: "recoveryMetricsEngine.ts", route: "routes/analytics.ts", apiPath: "", page: "—", status: "active", category: "commercial" },
+  { id: "pricing-engine", name: "Pricing Engine", description: "Optimal price points modeled against market benchmarks and costs.", service: "pricingEngine.ts", route: "routes/analytics.ts", apiPath: "", page: "N/A", status: "active", category: "commercial" },
+  { id: "recovery-automation", name: "Recovery Automation Engine", description: "Collectible AR identification, re-pricing suggestions, priority ranking.", service: "recoveryAutomationEngine.ts", route: "routes/analytics.ts", apiPath: "", page: "N/A", status: "active", category: "commercial" },
+  { id: "recovery-metrics", name: "Recovery Metrics Engine", description: "Dollars recovered, recovery rate, aging of recovered vs. written-off.", service: "recoveryMetricsEngine.ts", route: "routes/analytics.ts", apiPath: "", page: "N/A", status: "active", category: "commercial" },
   // INSTITUTIONAL
   { id: "acquisition-score", name: "Acquisition Score Engine", description: "M&A readiness score (0-100) with buyer-facing recommendation.", service: "acquisitionScoreEngine.ts", route: "routes/acquisition.ts", apiPath: "/api/acquisition/companyA", page: "/analytics/acquisition", status: "demo_ready", category: "institutional" },
-  { id: "diligence-report", name: "Diligence Report Engine", description: "Multi-section due diligence — Financial, Ops, AR, Compliance with risk levels.", service: "diligenceReportEngine.ts", route: "routes/diligence.ts", apiPath: "/api/diligence/companyA", page: "/analytics/acquisition", status: "demo_ready", category: "institutional" },
+  { id: "diligence-report", name: "Diligence Report Engine", description: "Multi-section due diligence - Financial, Ops, AR, Compliance with risk levels.", service: "diligenceReportEngine.ts", route: "routes/diligence.ts", apiPath: "/api/diligence/companyA", page: "/analytics/acquisition", status: "demo_ready", category: "institutional" },
   { id: "valuation", name: "Valuation Engine", description: "EBITDA-based valuation with multiple analysis and exit readiness.", service: "valuationEngine.ts", route: "routes/executiveDashboard.ts", apiPath: "/api/executive/companyA", page: "/analytics/executive", status: "production", category: "institutional" },
-  { id: "ebitda-simulator", name: "EBITDA Lift Simulator", description: "What-if simulator for pricing corrections, efficiency, recovery on EBITDA.", service: "ebitdaLiftSimulator.ts", route: "routes/ebitdaSimulator.ts", apiPath: "", page: "—", status: "active", category: "institutional" },
+  { id: "ebitda-simulator", name: "EBITDA Lift Simulator", description: "What-if simulator for pricing corrections, efficiency, recovery on EBITDA.", service: "ebitdaLiftSimulator.ts", route: "routes/ebitdaSimulator.ts", apiPath: "", page: "N/A", status: "active", category: "institutional" },
   // INTELLIGENCE
   { id: "ai-executive-report", name: "AI Executive Report", description: "LLM narrative consolidating margin, tech, AR, EBITDA into executive summary.", service: "aiExecutiveReport.ts", route: "routes/aiExecutiveReport.ts", apiPath: "/api/ai-executive-report/companyA", page: "/analytics/executive", status: "production", category: "intelligence" },
 ];
@@ -390,15 +389,15 @@ function EnginePreview({ engine, data }: { engine: Engine; data: unknown }) {
         <div className="grid grid-cols-3 gap-2">
           <div className="rounded-lg bg-surface-900/60 p-2 text-center">
             <p className="text-[10px] text-surface-400">Calls</p>
-            <p className="text-xs font-semibold text-white">{total?.value || "—"}</p>
+            <p className="text-xs font-semibold text-white">{total?.value || "N/A"}</p>
           </div>
           <div className="rounded-lg bg-surface-900/60 p-2 text-center">
             <p className="text-[10px] text-surface-400">Missed</p>
-            <p className="text-xs font-semibold text-red-300">{missed?.value?.toFixed(1) || "—"}%</p>
+            <p className="text-xs font-semibold text-red-300">{missed?.value?.toFixed(1) || "N/A"}%</p>
           </div>
           <div className="rounded-lg bg-surface-900/60 p-2 text-center">
             <p className="text-[10px] text-surface-400">Conv.</p>
-            <p className="text-xs font-semibold text-emerald-300">{conv?.value?.toFixed(1) || "—"}%</p>
+            <p className="text-xs font-semibold text-emerald-300">{conv?.value?.toFixed(1) || "N/A"}%</p>
           </div>
         </div>
       );
@@ -461,19 +460,12 @@ function EnginePreview({ engine, data }: { engine: Engine; data: unknown }) {
 // ─── Page ─────────────────────────────────────────────────────────────────
 
 export default function EnginesPage() {
-  const [scrolled, setScrolled] = useState(false);
   const [liveData, setLiveData] = useState<Record<string, unknown>>({});
   const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>(() => {
     const init: Record<string, boolean> = {};
     engines.filter(e => e.apiPath).forEach(e => { init[e.id] = true; });
     return init;
   });
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   // Fetch live data for all engines with API paths
   useEffect(() => {
@@ -504,20 +496,7 @@ export default function EnginesPage() {
 
   return (
     <div className="min-h-screen bg-surface-950 text-surface-100">
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-surface-950/90 backdrop-blur-xl border-b border-white/5" : "bg-transparent"}`}>
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-sm font-bold text-surface-950">L</span>
-            <span className="text-lg font-semibold text-white">Ledgera Global</span>
-          </Link>
-          <div className="flex items-center gap-6">
-            {NAV_LINKS.map((link) => (
-              <Link key={link.label} href={link.href} className={`text-sm font-medium transition-colors ${link.href === "/analytics/engines" ? "text-white" : "text-surface-300 hover:text-white"}`}>{link.label}</Link>
-            ))}
-            <InstitutionalNav currentHref="/analytics/engines" />
-          </div>
-        </nav>
-      </header>
+      <AppHeader currentHref="/analytics/engines" transparent />
 
       <div className="pt-24 pb-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
@@ -530,7 +509,7 @@ export default function EnginesPage() {
                 Live
               </span>
             </div>
-            <p className="max-w-2xl text-base text-surface-300">Every engine is fetching live data from your connected integrations. Each card shows a real-time preview of its output — connect more data sources to unlock the full picture.</p>
+            <p className="max-w-2xl text-base text-surface-300">Every engine is fetching live data from your connected integrations. Each card shows a real-time preview of its output - connect more data sources to unlock the full picture.</p>
           </div>
 
           {/* Stats bar */}
@@ -608,7 +587,7 @@ export default function EnginesPage() {
                               <code className="text-[10px] text-surface-400 truncate">GET {engine.apiPath}</code>
                             </div>
                           )}
-                          {engine.page !== "—" && (
+                          {engine.page !== "N/A" && (
                             <div className="flex items-center gap-2">
                               <span className="text-[9px] font-medium uppercase tracking-[0.15em] text-surface-500">Page</span>
                               <Link href={engine.page} className="text-[10px] text-brand-400 hover:text-brand-300 transition-colors">{engine.page}</Link>
@@ -630,7 +609,7 @@ export default function EnginesPage() {
               Every engine preview above fetches real-time data from your connected integrations via the Ledgera API proxy layer. 
               When <code className="text-brand-300">JWT_SECRET</code> and <code className="text-brand-300">LEDGERA_BACKEND_URL</code> are configured, 
               data flows from your live ServiceTitan, QuickBooks, Gusto, and other integrations through the backend engine and directly into these visual previews.
-              As your business improves — fewer missed calls, higher margins, better AR collection — the gauges and indicators update automatically.
+              As your business improves - fewer missed calls, higher margins, better AR collection - the gauges and indicators update automatically.
             </p>
           </div>
         </div>

@@ -12,9 +12,9 @@ type Props = { companyId: string };
 function formatMoney(v: number) { return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(v); }
 function formatPct(v: number) { return `${v.toFixed(2)}%`; }
 function formatJobsPerDay(jobsCount: number, windowDays: number) {
-  if (!Number.isFinite(windowDays) || windowDays <= 0) return "—";
+  if (!Number.isFinite(windowDays) || windowDays <= 0) return "N/A";
   const v = jobsCount / windowDays;
-  return Number.isFinite(v) ? `${v.toFixed(2)}/day` : "—";
+  return Number.isFinite(v) ? `${v.toFixed(2)}/day` : "N/A";
 }
 
 export default function TechnicianPerformance({ companyId }: Props) {

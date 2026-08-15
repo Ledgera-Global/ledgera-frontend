@@ -1,8 +1,7 @@
 "use client";
-import InstitutionalNav from "@/components/layouts/InstitutionalNav";
+import AppHeader from "@/components/layouts/AppHeader";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { NAV_LINKS } from "@/lib/constants/styling";
 
 function fmt(v: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(v);
@@ -79,7 +78,6 @@ async function fd<T>(url: string, d: T): Promise<T> {
 }
 
 export default function AnalyticsPage() {
-  const [scrolled, setScrolled] = useState(false);
   const [leak, setLeak] = useState<LeakageScoreData | null>(null);
   const [cf, setCf] = useState<CashFlowData | null>(null);
   const [margin, setMargin] = useState<MarginInsightsData | null>(null);
@@ -87,12 +85,6 @@ export default function AnalyticsPage() {
   const [ar, setAr] = useState<ArAgingData | null>(null);
   const [eb, setEb] = useState<EbitdaForecastData | null>(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     (async () => {
@@ -120,26 +112,13 @@ export default function AnalyticsPage() {
 
   return (
     <div className="min-h-screen bg-surface-950 text-surface-100">
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-surface-950/90 backdrop-blur-xl border-b border-white/5" : "bg-transparent"}`}>
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-sm font-bold text-surface-950">L</span>
-            <span className="text-lg font-semibold text-white">Ledgera Global</span>
-          </Link>
-          <div className="flex items-center gap-6">
-            {NAV_LINKS.map((link) => (
-              <Link key={link.label} href={link.href} className={`text-sm font-medium transition-colors ${link.href === "/analytics" ? "text-white" : "text-surface-300 hover:text-white"}`}>{link.label}</Link>
-            ))}
-            <InstitutionalNav currentHref="/analytics" />
-          </div>
-        </nav>
-      </header>
+      <AppHeader currentHref="/analytics" transparent />
 
       <div className="pt-24 pb-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
           <div className="mb-10">
             <h1 className="text-3xl font-semibold text-white mb-3">Analytics Dashboard</h1>
-            <p className="max-w-2xl text-base text-surface-300">Visual breakdown of all engine outputs — leakage, cash, margins, efficiency, AR, and valuation.</p>
+            <p className="max-w-2xl text-base text-surface-300">Visual breakdown of all engine outputs - leakage, cash, margins, efficiency, AR, and valuation.</p>
           </div>
 
           {loading ? (
@@ -155,7 +134,7 @@ export default function AnalyticsPage() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {/* 1. Leakage Score */}
               {leak && (
-                <S title="Leakage Score" sub={`Signal: ${leak.signal} — ${fmt(leak.totalLeakage)} total`}>
+                <S title="Leakage Score" sub={`Signal: ${leak.signal} - ${fmt(leak.totalLeakage)} total`}>
                   <div className="flex flex-col items-center gap-4">
                     <Gauge score={leak.score} />
                     <div className="w-full space-y-2">
@@ -181,7 +160,7 @@ export default function AnalyticsPage() {
                 </S>
               )}
 
-              {/* 3. Margin Insights — vertical bars */}
+              {/* 3. Margin Insights - vertical bars */}
               {margin && (
                 <S title="Margin Insights">
                   <div className="flex items-end justify-around gap-3 h-48">

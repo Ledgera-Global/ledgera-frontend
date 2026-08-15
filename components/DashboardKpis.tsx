@@ -54,23 +54,23 @@ export default function DashboardKpis({ companyId }: DashboardKpisProps) {
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-3xl border border-surface-800 bg-surface-900/70 p-5 shadow-xl shadow-black/20">
           <p className="text-xs uppercase tracking-[0.18em] text-surface-400">Total Revenue</p>
-          <p className="mt-2 text-2xl font-semibold text-white">{loading || !data ? "—" : formatMoney(data.totalRevenue)}</p>
+          <p className="mt-2 text-2xl font-semibold text-white">{loading || !data ? "N/A" : formatMoney(data.totalRevenue)}</p>
         </div>
         <div className="rounded-3xl border border-surface-800 bg-surface-900/70 p-5 shadow-xl shadow-black/20">
           <p className="text-xs uppercase tracking-[0.18em] text-surface-400">Total Profit</p>
           <p className={`mt-2 text-2xl font-semibold ${!data ? "text-surface-100" : data.totalProfit < 0 ? "text-red-300" : "text-emerald-300"}`}>
-            {loading || !data ? "—" : formatMoney(data.totalProfit)}
+            {loading || !data ? "N/A" : formatMoney(data.totalProfit)}
           </p>
         </div>
         <div className="rounded-3xl border border-surface-800 bg-surface-900/70 p-5 shadow-xl shadow-black/20">
           <p className="text-xs uppercase tracking-[0.18em] text-surface-400">Avg Margin</p>
           <p className={`mt-2 text-2xl font-semibold ${!data ? "text-surface-100" : marginIsGood ? "text-emerald-300" : "text-amber-200"}`}>
-            {loading || !data ? "—" : formatPct(data.avgMarginPct)}
+            {loading || !data ? "N/A" : formatPct(data.avgMarginPct)}
           </p>
         </div>
         <div className="rounded-3xl border border-surface-800 bg-surface-900/70 p-5 shadow-xl shadow-black/20">
           <p className="text-xs uppercase tracking-[0.18em] text-surface-400">Money Leaked This Week</p>
-          <p className="mt-2 text-2xl font-semibold text-red-200">{loading || !data ? "—" : formatMoney(data.moneyLeakedThisWeek)}</p>
+          <p className="mt-2 text-2xl font-semibold text-red-200">{loading || !data ? "N/A" : formatMoney(data.moneyLeakedThisWeek)}</p>
           <p className="mt-1 text-sm text-surface-400">Estimated from low-profit job patterns.</p>
         </div>
       </div>

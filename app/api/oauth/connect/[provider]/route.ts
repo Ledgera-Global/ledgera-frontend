@@ -18,7 +18,7 @@ export async function GET(
       `<!DOCTYPE html>
 <html>
 <head>
-  <title>Connect CallRail – Ledgera</title>
+  <title>Connect CallRail - Ledgera</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
@@ -174,7 +174,7 @@ export async function GET(
       `<!DOCTYPE html>
 <html>
 <head>
-  <title>Connect Samsara – Ledgera</title>
+  <title>Connect Samsara - Ledgera</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
@@ -313,7 +313,7 @@ export async function GET(
       `<!DOCTYPE html>
 <html>
 <head>
-  <title>Connect Google Ads – Ledgera</title>
+  <title>Connect Google Ads - Ledgera</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
@@ -466,7 +466,7 @@ export async function GET(
       `<!DOCTYPE html>
 <html>
 <head>
-  <title>Connect Meta Ads – Ledgera</title>
+  <title>Connect Meta Ads - Ledgera</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
@@ -620,7 +620,7 @@ export async function GET(
       `<!DOCTYPE html>
 <html>
 <head>
-  <title>Connect HubSpot – Ledgera</title>
+  <title>Connect HubSpot - Ledgera</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>

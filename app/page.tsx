@@ -40,7 +40,7 @@ const problemFlow = [
   { label: "Systems of record", detail: "QuickBooks · ServiceTitan · NetSuite · Banking · Payroll · CRM" },
   { label: "Fragmented data", detail: "Each system records its own slice of the business" },
   { label: "Ledgera Global", detail: "One normalized intelligence layer" },
-  { label: "Decision", detail: "Cash, margin, hire, invest, exit — grounded in evidence" },
+  { label: "Decision", detail: "Cash, margin, hire, invest, exit - grounded in evidence" },
 ];
 
 const audiences = [
@@ -52,7 +52,7 @@ const audiences = [
   {
     title: "Private Equity",
     tagline: "Portfolio intelligence",
-    body: "Standardize financial and operational data across portfolio companies and identify value-creation opportunities — from one view.",
+    body: "Standardize financial and operational data across portfolio companies and identify value-creation opportunities - from one view.",
   },
   {
     title: "Family Offices",
@@ -70,7 +70,7 @@ const architectureSteps = [
   {
     step: "01",
     title: "Connect",
-    body: "Integrate financial, operational, and commercial systems — without replacing the systems of record you already run on.",
+    body: "Integrate financial, operational, and commercial systems - without replacing the systems of record you already run on.",
   },
   {
     step: "02",
@@ -85,16 +85,16 @@ const architectureSteps = [
 ];
 
 const modules = [
-  { name: "Cash Command Center", href: "/analytics/command-center", detail: "Payroll coverage, cash runway, and AR aging — the owner's daily screen." },
+  { name: "Cash Command Center", href: "/analytics/command-center", detail: "Payroll coverage, cash runway, and AR aging - the owner's daily screen." },
   { name: "AI Business Advisor", href: "/dashboard", detail: "\u201CCan I afford another truck?\u201D answered with evidence from your own data." },
-  { name: "Margin Leak Detection", href: "/analytics", detail: "Explains where profit disappears — by job, technician, and location." },
+  { name: "Margin Leak Detection", href: "/analytics", detail: "Explains where profit disappears - by job, technician, and location." },
   { name: "Enterprise Value Tracker", href: "/analytics/value-growth", detail: "EBITDA, retention, and operational maturity, tracked continuously." },
   { name: "Acquisition & Diligence", href: "/analytics/acquisition", detail: "Readiness scores, diligence reports, and multiple-potential analysis." },
   { name: "Lender Readiness", href: "/analytics/lender-readiness", detail: "Debt coverage, covenants, and reports built for banks and lenders." },
   { name: "Institutional Risk", href: "/analytics/institutional-risk", detail: "Debt dashboard, covenant monitoring, and executive risk signals." },
   { name: "Peer Benchmarks", href: "/analytics/benchmarks", detail: "Anonymized comparison of margins and KPIs across the same trades." },
   { name: "Missed-Call Revenue", href: "/analytics/missed-calls", detail: "Recover revenue lost to calls that never converted." },
-  { name: "Marketing Profit", href: "/analytics/marketing-profit", detail: "Which spend actually produces margin — not just leads." },
+  { name: "Marketing Profit", href: "/analytics/marketing-profit", detail: "Which spend actually produces margin - not just leads." },
   { name: "Founder Stress Index", href: "/analytics/command-center", detail: "A single score for operational health across the company." },
   { name: "Weekly CEO Briefing", href: "/analytics/executive", detail: "Priorities, alerts, and recommended actions every Monday morning." },
 ];
@@ -544,7 +544,7 @@ function ModulesSection() {
           <SectionTitle
             eyebrow="Platform modules"
             title="Everything the owner and the institution need, in one layer."
-            description="Each module answers a real decision — payroll, trucks, pricing, lenders, exit — not just a chart."
+            description="Each module answers a real decision - payroll, trucks, pricing, lenders, exit - not just a chart."
           />
           <span className="rounded-full border border-brand-400/20 bg-brand-400/10 px-3 py-1 text-xs font-medium text-brand-200">Live</span>
         </div>
@@ -709,19 +709,19 @@ function VisionCtaSection() {
               href="/signup"
               className="inline-flex items-center justify-center rounded-full bg-brand-400 px-6 py-3.5 text-sm font-semibold text-surface-950 transition-all hover:bg-brand-300 hover:scale-[1.02]"
             >
-              For Operators — Request Access
+              For Operators - Request Access
             </Link>
             <Link
               href="/contact"
               className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-white/10 hover:scale-[1.02]"
             >
-              For Investors — Institutional Access
+              For Investors - Institutional Access
             </Link>
             <Link
               href="/contact"
               className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-white/10 hover:scale-[1.02]"
             >
-              For Partners — Partner With Us
+              For Partners - Partner With Us
             </Link>
           </div>
 

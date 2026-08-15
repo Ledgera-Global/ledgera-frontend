@@ -3,7 +3,7 @@ import { handleApiGet } from "@/lib/backendProxy";
 
 const demoData = {
   score: 72,
-  recommendation: "Strong acquisition candidate — healthy margins with moderate operational risk.",
+  recommendation: "Strong acquisition candidate - healthy margins with moderate operational risk.",
   signals: [
     "Revenue growth above industry median",
     "Technician utilization at 82%",

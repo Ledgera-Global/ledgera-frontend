@@ -76,7 +76,7 @@ export default function CashFlowCard({ companyId, companyLabel }: { companyId: s
               netIsNegative ? "text-red-300" : "text-emerald-300",
             ].join(" ")}
           >
-            {loading ? "—" : data ? formatMoney(data.realCashFlow) : "—"}
+            {loading ? "N/A" : data ? formatMoney(data.realCashFlow) : "N/A"}
           </p>
         </div>
       </div>
@@ -85,7 +85,7 @@ export default function CashFlowCard({ companyId, companyLabel }: { companyId: s
         <div className="rounded-2xl border border-surface-800 bg-surface-950/70 p-4">
           <p className="text-xs uppercase tracking-[0.18em] text-surface-400">Cash In</p>
           <p className="mt-2 text-2xl font-semibold text-white">
-            {loading ? "—" : data ? formatMoney(data.cashIn) : "—"}
+            {loading ? "N/A" : data ? formatMoney(data.cashIn) : "N/A"}
           </p>
           <p className="mt-1 text-sm text-surface-400">Recovered payments</p>
         </div>
@@ -93,7 +93,7 @@ export default function CashFlowCard({ companyId, companyLabel }: { companyId: s
         <div className="rounded-2xl border border-surface-800 bg-surface-950/70 p-4">
           <p className="text-xs uppercase tracking-[0.18em] text-surface-400">Cash Out</p>
           <p className="mt-2 text-2xl font-semibold text-white">
-            {loading ? "—" : data ? formatMoney(data.cashOut) : "—"}
+            {loading ? "N/A" : data ? formatMoney(data.cashOut) : "N/A"}
           </p>
           <p className="mt-1 text-sm text-surface-400">Payroll + job + QB non-payroll</p>
         </div>

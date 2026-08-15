@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch {
-    // Non-critical — cookie is best-effort
+    // Non-critical - cookie is best-effort
     return NextResponse.json({ ok: true });
   }
 }

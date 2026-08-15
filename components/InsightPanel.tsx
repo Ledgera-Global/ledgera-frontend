@@ -14,7 +14,7 @@ type InsightPanelProps = {
 };
 
 function defaultAiReport(company: string) {
-  return `This HVAC company (${company}) likely loses margin due to delayed invoicing and dispatch blind spots—now you can see exactly what to fix first.`;
+  return `This HVAC company (${company}) likely loses margin due to delayed invoicing and dispatch blind spots - now you can see exactly what to fix first.`;
 }
 
 export default function InsightPanel({ lead }: InsightPanelProps) {
@@ -32,7 +32,7 @@ export default function InsightPanel({ lead }: InsightPanelProps) {
       <div className="rounded-3xl border border-surface-800 bg-surface-900/70 p-6 shadow-xl shadow-black/20">
         <p className="text-xs uppercase tracking-[0.20em] text-surface-400">Owner takeaway</p>
         <blockquote className="mt-3 border-l-2 border-brand-500 pl-4 text-base leading-7 text-surface-200">
-          &ldquo;This makes the loss obvious—and tells me the first move to recover it.&rdquo;
+          &ldquo;This makes the loss obvious - and tells me the first move to recover it.&rdquo;
         </blockquote>
 
         <p className="mt-5 text-base leading-7 text-surface-200">{aiReport}</p>

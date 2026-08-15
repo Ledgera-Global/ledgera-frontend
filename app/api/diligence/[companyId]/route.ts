@@ -18,7 +18,7 @@ const demoData = {
     {
       title: "Operations",
       findings: [
-        "Technician utilization at 74% — below 85% target",
+        "Technician utilization at 74% - below 85% target",
         "Average job duration 3.2 hours vs 2.8 benchmark",
         "Dispatch inefficiency detected in 12% of jobs",
       ],
@@ -37,7 +37,7 @@ const demoData = {
       title: "Compliance & Contracts",
       findings: [
         "All vendor agreements current",
-        "Worker classification reviewed — no red flags",
+        "Worker classification reviewed - no red flags",
         "Insurance coverage adequate for operational scale",
       ],
       riskLevel: "LOW" as const,

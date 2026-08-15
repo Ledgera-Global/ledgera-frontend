@@ -7,7 +7,7 @@ const BACKEND_URL = process.env.LEDGERA_BACKEND_URL || "http://localhost:4000";
  *
  * Proxies the public integration catalog from the Express backend.
  * The backend renders this from its provider registry, so adding a
- * provider in the backend automatically surfaces it here — no redeploy
+ * provider in the backend automatically surfaces it here - no redeploy
  * of the frontend page code is required.
  */
 export async function GET(request: NextRequest) {

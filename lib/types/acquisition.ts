@@ -1,6 +1,6 @@
 // ─── Enterprise Valuation & Acquisition Domain Types ───────────────────
 // Institutional-grade type definitions for M&A analytics
-// Versions: 2026-07 — Live EV, activity feed, synergy breakdown, readiness
+// Versions: 2026-07 - Live EV, activity feed, synergy breakdown, readiness
 
 export type RiskLevel = "LOW" | "MODERATE" | "HIGH" | "CRITICAL";
 
@@ -128,7 +128,7 @@ export type LiveEvData = {
   todayChange: number;
   weekChange: number;
   quarterChange: number;
-  lastUpdated: string; // ISO timestamp — updated 13 seconds ago
+  lastUpdated: string; // ISO timestamp - updated 13 seconds ago
   secondsSinceUpdate: number;
   activity: ActivityEvent[];
   valueCreation: ValueCreationBreakdown;

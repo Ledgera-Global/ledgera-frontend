@@ -14,8 +14,8 @@ const demoData = {
     technicianProfitability: "Tech #4 leads at $2,055 profit/job; Tech #2 lowest at $1,320",
     branchRankings: "Greenville (85) > Charlotte (78) > Raleigh (62)",
     callbackCost: "$12,400 in callback costs this month (+8% vs last month)",
-    membershipHealth: "82% renewal rate — 900 agreements at risk next quarter",
-    truckUtilization: "72% fleet utilization — 2 trucks underperforming",
+    membershipHealth: "82% renewal rate - 900 agreements at risk next quarter",
+    truckUtilization: "72% fleet utilization - 2 trucks underperforming",
   },
   alerts: [
     "Gross margin dropped 3.1% because install labor exceeded estimate on five jobs.",

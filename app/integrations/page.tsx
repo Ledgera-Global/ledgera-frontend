@@ -1,4 +1,5 @@
 "use client";
+import AppHeader from "../../components/layouts/AppHeader";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../lib/auth-context";
@@ -111,27 +112,11 @@ const statusLabels: Record<IntegrationStatus, string> = {
   roadmap: "On the roadmap",
 };
 
-const navLinks = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Integrations", href: "/integrations" },
-  { label: "Analytics", href: "/analytics" },
-  { label: "Executive", href: "/analytics/executive" },
-  { label: "Acquisition", href: "/analytics/acquisition" },
-  { label: "Engines", href: "/analytics/engines" },
-];
-
 export default function IntegrationsPage() {
   const { user } = useAuth();
   const companyId = user?.companyId ?? "companyA";
-  const [scrolled, setScrolled] = useState(false);
   const [catalog, setCatalog] = useState<CatalogItem[] | null>(null);
   const [liveStatuses, setLiveStatuses] = useState<Record<string, IntegrationStatus> | null>(null);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   // Fetch the provider catalog from the backend registry
   useEffect(() => {
@@ -187,34 +172,7 @@ export default function IntegrationsPage() {
 
   return (
     <div className="min-h-screen bg-surface-950 text-surface-100">
-      {/* Nav */}
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? "bg-surface-950/90 backdrop-blur-xl border-b border-white/5" : "bg-transparent"
-        }`}
-      >
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-sm font-bold text-surface-950">L</span>
-            <span className="text-lg font-semibold text-white">Ledgera Global</span>
-          </Link>
-          <div className="flex items-center gap-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className={`text-sm font-medium transition-colors ${
-                  link.href === "/integrations"
-                    ? "text-white"
-                    : "text-surface-300 hover:text-white"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-        </nav>
-      </header>
+      <AppHeader currentHref="/integrations" transparent />
 
       {/* Main */}
       <div className="pt-24 pb-16">
@@ -298,7 +256,7 @@ export default function IntegrationsPage() {
           <div className="mt-16 rounded-[2rem] border border-white/10 bg-gradient-to-br from-brand-400/[0.06] to-white/[0.02] p-8">
             <h3 className="text-xl font-semibold text-white mb-3">Data infrastructure</h3>
             <p className="max-w-3xl text-sm leading-7 text-surface-300">
-              All integrations feed into Ledgera&rsquo;s unified data layer &mdash; a harmonized warehouse that normalizes
+              All integrations feed into Ledgera&rsquo;s unified data layer - a harmonized warehouse that normalizes
               accounting, payroll, field service, and communications data into a single operating view.
               This enables cross-system analysis that individual tools cannot provide alone.
             </p>

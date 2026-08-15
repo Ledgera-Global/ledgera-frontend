@@ -1,9 +1,8 @@
 "use client";
-import InstitutionalNav from "@/components/layouts/InstitutionalNav";
+import AppHeader from "@/components/layouts/AppHeader";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { fetchJson } from "@/lib/api/client";
-import { NAV_LINKS } from "@/lib/constants/styling";
 import type { MarketingProfitReport } from "@/lib/types/acquisition";
 
 const COMPANY_ID = "companyA";
@@ -64,30 +63,9 @@ export default function MarketingProfitPage() {
 
   return (
     <div className="min-h-screen bg-surface-950 text-surface-100">
-      <header className="border-b border-white/5 bg-surface-950/90">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-sm font-bold text-surface-950">L</span>
-            <span className="text-lg font-semibold text-white">Ledgera Global</span>
-          </Link>
-          <div className="flex items-center gap-6">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className={`text-sm font-medium transition-colors ${
-                  link.href === "/analytics/marketing-profit" ? "text-white" : "text-surface-300 hover:text-white"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-            <InstitutionalNav currentHref="/analytics/marketing-profit" />
-          </div>
-        </nav>
-      </header>
+      <AppHeader currentHref="/analytics/marketing-profit" />
 
-      <main className="mx-auto max-w-6xl px-6 py-12">
+      <main className="mx-auto max-w-6xl px-6 pt-24 pb-12">
         <div className="mb-10">
           <h1 className="text-3xl font-semibold text-white mb-3">Marketing Profit Intelligence</h1>
           <p className="text-surface-400 max-w-2xl">

@@ -22,7 +22,7 @@ async function initSentry() {
     };
     sentryAvailable = true;
   } catch {
-    // Sentry not installed or configured — silently degrade
+    // Sentry not installed or configured - silently degrade
     sentryCapture = null;
     sentryAvailable = false;
   }

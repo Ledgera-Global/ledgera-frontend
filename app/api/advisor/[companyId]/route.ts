@@ -44,7 +44,7 @@ export async function POST(
 
   const fallback = () => NextResponse.json(withQuestion);
 
-  // If JWT_SECRET is not set, we can't reach a real backend — return demo data directly.
+  // If JWT_SECRET is not set, we can't reach a real backend - return demo data directly.
   if (!process.env.JWT_SECRET) {
     return fallback();
   }

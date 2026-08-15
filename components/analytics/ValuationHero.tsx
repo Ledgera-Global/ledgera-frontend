@@ -14,7 +14,7 @@ export function ValuationHero({ val }: ValuationHeroProps) {
 
   return (
     <div className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-brand-500/[0.08] to-white/[0.02] p-8">
-      {/* Primary KPI cluster — Enterprise Value dominates */}
+      {/* Primary KPI cluster - Enterprise Value dominates */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
         {/* Left: EV + Trends */}
         <div className="flex-1">
@@ -66,7 +66,7 @@ export function ValuationHero({ val }: ValuationHeroProps) {
         <div className="flex items-center justify-between text-xs text-surface-400 mb-2">
           <span>{mult(w.multipleRange.floor)}</span>
           <span className="text-brand-300 font-semibold">
-            {mult(w.currentMultiple)} &mdash; {w.multiplePercentile}% percentile
+            {mult(w.currentMultiple)} - {w.multiplePercentile}% percentile
           </span>
           <span>{mult(w.multipleRange.ceiling)}</span>
         </div>

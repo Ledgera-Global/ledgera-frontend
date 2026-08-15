@@ -30,7 +30,7 @@ const demoData = {
     debtToEbitda: { totalDebt: 1284000, ebitda: 1100000, ratio: 1.17, assessment: "Moderate leverage" },
     interestCoverage: { ebit: 850000, annualInterest: 166780, coverageRatio: 5.1, status: "Strong" },
     enterpriseValueImpact: { currentDebtCostAnnual: 166780, optimizedDebtCostAnnual: 83450, potentialSavingsAnnual: 83330, multipleImpact: 0.75, evImpact: 374985, narrative: "Because your debt carries high interest rates averaging 13.0%, your company is worth approximately $375K less than it could be." },
-    refinanceOpportunities: { opportunities: [ { type: "Debt Consolidation — Credit Cards", currentRate: 26.0, estimatedNewRate: 8.5, annualSavings: 12950 } ], totalSavings: 12950 },
+    refinanceOpportunities: { opportunities: [ { type: "Debt Consolidation - Credit Cards", currentRate: 26.0, estimatedNewRate: 8.5, annualSavings: 12950 } ], totalSavings: 12950 },
     cashFlowWaterfall: { revenue: 420000, cogs: 252000, grossProfit: 168000, grossMarginPct: 40.0, payroll: 98000, rent: 18000, marketing: 12000, interest: 28000, taxes: 8400, netIncome: 3600, freeCashFlow: 3600, flowItems: [] },
   },
   operational: { technicianUtilization: 72, bookingRate: 84, membershipRenewalRate: 82, installCloseRate: 38, maintenanceRevenue: 216000 },
@@ -43,7 +43,7 @@ const demoData = {
     covenantAtRisk: 2,
     complianceStatus: "All compliance checks passed",
   },
-  growth: { acquisitionReadiness: "Pre-Revenue Threshold", multiLocationCount: 3, customerLifetimeValue: 4200, marketingROI: 3.2, expansionCapacity: "Moderate — strengthen cash flow before new locations" },
+  growth: { acquisitionReadiness: "Pre-Revenue Threshold", multiLocationCount: 3, customerLifetimeValue: 4200, marketingROI: 3.2, expansionCapacity: "Moderate - strengthen cash flow before new locations" },
 };
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ companyId: string }> }) {

@@ -76,7 +76,7 @@ const demoGrowthPlan: EnterpriseValueGrowthPlan = {
       prescription: "Implement automated renewal reminders 60/30/15 days before expiration. Add technician incentives for membership renewals during service calls. Offer loyalty pricing for auto-renew customers.",
     },
   ],
-  summary: "By executing the top 5 priorities, companyA can increase enterprise value from $0.9M to $4.9M — a $4.0M value creation opportunity.",
+  summary: "By executing the top 5 priorities, companyA can increase enterprise value from $0.9M to $4.9M - a $4.0M value creation opportunity.",
 };
 
 export async function GET(

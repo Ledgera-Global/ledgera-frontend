@@ -45,7 +45,7 @@ const FALLBACK: ExecutiveRecommendationsData = {
       type: "risk",
       priority: 4,
       title: "Key technician retention program",
-      detail: "Two senior techs flagged for competing offers — replacement cost estimated at $45K per hire.",
+      detail: "Two senior techs flagged for competing offers - replacement cost estimated at $45K per hire.",
       action: "Offer retention bonus and expedited promotion path.",
       estimatedImpact: 90_000,
     },

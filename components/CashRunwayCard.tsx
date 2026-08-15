@@ -144,8 +144,8 @@ export default function CashRunwayCard({ companyId }: Props) {
                 {d.monthsOfRunway >= 12
                   ? "Healthy runway"
                   : d.monthsOfRunway >= 6
-                  ? "Moderate — monitor closely"
-                  : "Critical — reduce burn rate"}
+                  ? "Moderate - monitor closely"
+                  : "Critical - reduce burn rate"}
               </p>
             </div>
 
@@ -166,7 +166,7 @@ export default function CashRunwayCard({ companyId }: Props) {
                     ? "Payroll is well-covered by current cash position"
                     : rl === "medium"
                     ? "Payroll may be tight within 2-3 months"
-                    : "Payroll at immediate risk — action required"}
+                    : "Payroll at immediate risk - action required"}
                 </p>
               </div>
             </div>
