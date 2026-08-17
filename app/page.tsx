@@ -129,14 +129,11 @@ const infrastructureItems = [
 
 const navLinks = [
   { label: "Platform", href: "#platform" },
-  { label: "For Operators", href: "#audiences" },
-  { label: "For Investors", href: "#audiences" },
   { label: "Intelligence", href: "#architecture" },
   { label: "Pricing", href: "/pricing" },
   { label: "Integrations", href: "/integrations" },
   { label: "Security", href: "/trust" },
   { label: "Company", href: "/about" },
-  { label: "Contact", href: "/contact" },
 ];
 
 // ─── Shared components ───────────────────────────────────────────────────────
