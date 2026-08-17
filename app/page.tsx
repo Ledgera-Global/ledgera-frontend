@@ -134,6 +134,7 @@ const navLinks = [
   { label: "Intelligence", href: "#architecture" },
   { label: "Pricing", href: "/pricing" },
   { label: "Integrations", href: "/integrations" },
+  { label: "Security", href: "/trust" },
   { label: "Company", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
