@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Security & Trust — Ledgera Global",
+  title: "Security & Trust - Ledgera Global",
   description:
     "How Ledgera Global protects institutional financial data: encryption, tenant isolation, audit logging, backups, compliance roadmap, and subprocessors.",
 };
@@ -58,7 +58,7 @@ const trustControls = [
       "Authentication via Supabase GoTrue (JWKS-verified) with legacy signed-token fallback",
       "Role-based authorization and per-company tenant context",
       "MFA enforced on GitHub and admin access",
-      "No production credentials in repositories — secret scanning gates every push",
+      "No production credentials in repositories - secret scanning gates every push",
     ],
   },
   {
@@ -211,7 +211,7 @@ export default function TrustPage() {
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-8 text-surface-300 sm:text-lg">
               Ledgera is the financial and operational infrastructure layer for service and industrial companies. That role
-              only works if institutions trust how we handle their data. This page states — without marketing language —
+              only works if institutions trust how we handle their data. This page states - without marketing language -
               how we secure it today and what we are building toward.
             </p>
           </div>
@@ -363,7 +363,7 @@ export default function TrustPage() {
             </Link>
             <a href="mailto:security@ledgerahq.com" className="group rounded-2xl border border-brand-400/20 bg-brand-400/[0.06] p-6 transition-colors hover:border-brand-400/40">
               <h3 className="font-semibold text-brand-100 group-hover:text-white transition-colors">Security & DPA requests</h3>
-              <p className="mt-2 text-sm text-surface-400">security@ledgerahq.com — questionnaires, DPAs, and reports.</p>
+              <p className="mt-2 text-sm text-surface-400">security@ledgerahq.com - questionnaires, DPAs, and reports.</p>
             </a>
           </div>
         </div>
