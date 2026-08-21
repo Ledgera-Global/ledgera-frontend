@@ -20,13 +20,16 @@ function formatMetric(
   };
   return {
     value: fmt(metric.value),
-    benchmark: fmt(metric.benchmarkValue),
-    topQuartile: fmt(metric.topQuartileValue),
+    benchmark: metric.benchmarkValue === null ? "-" : fmt(metric.benchmarkValue),
+    topQuartile: metric.topQuartileValue === null ? "-" : fmt(metric.topQuartileValue),
   };
 }
 
-function gapFor(metric: BenchmarkMetric): { label: string; direction: "ahead" | "behind" } {
+function gapFor(metric: BenchmarkMetric): { label: string; direction: "ahead" | "behind" | "neutral" } {
   const lowerIsBetter = metric.key === "ar_over_60" || metric.key === "callback_rate";
+  if (metric.benchmarkValue === null) {
+    return { label: "cohort growing", direction: "neutral" };
+  }
   const diff = metric.value - metric.benchmarkValue;
   const ahead = lowerIsBetter ? diff < 0 : diff > 0;
   const abs = Math.abs(diff);
@@ -46,6 +49,7 @@ const ASSESSMENT_BADGE: Record<string, string> = {
   "Near top quartile": "bg-brand-400/10 text-brand-200 border-brand-400/20",
   "Above median": "bg-brand-400/10 text-brand-200 border-brand-400/20",
   "Below median": "bg-red-400/10 text-red-200 border-red-400/20",
+  "Cohort growing": "bg-white/5 text-surface-300 border-white/10",
 };
 
 export default function BenchmarksPage() {
@@ -85,7 +89,9 @@ export default function BenchmarksPage() {
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-surface-500 mb-1">Peer Companies</p>
-                  <p className="text-lg font-semibold text-white">{data.cohortSize}</p>
+                  <p className="text-lg font-semibold text-white">
+                    {data.cohortReady ? data.cohortSize : "Cohort growing"}
+                  </p>
                 </div>
               </div>
               {data.summary && (
@@ -124,10 +130,12 @@ export default function BenchmarksPage() {
                           <td className="px-4 py-4 text-right font-semibold text-white">{formatted.value}</td>
                           <td className="px-4 py-4 text-right text-surface-300">{formatted.benchmark}</td>
                           <td className="px-4 py-4 text-right text-surface-300">{formatted.topQuartile}</td>
-                          <td className={`px-4 py-4 text-right ${gap.direction === "ahead" ? "text-brand-300" : "text-red-400"}`}>
+                          <td className={`px-4 py-4 text-right ${gap.direction === "ahead" ? "text-brand-300" : gap.direction === "behind" ? "text-red-400" : "text-surface-400"}`}>
                             {gap.label}
                           </td>
-                          <td className="px-4 py-4 text-right text-surface-300">{metric.percentile}th</td>
+                          <td className="px-4 py-4 text-right text-surface-300">
+                            {metric.percentile === null ? "-" : `${metric.percentile}th`}
+                          </td>
                           <td className="px-6 py-4">
                             <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium ${ASSESSMENT_BADGE[metric.assessment] ?? "bg-white/5 text-surface-300 border-white/10"}`}>
                               {metric.assessment}

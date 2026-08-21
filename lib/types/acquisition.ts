@@ -360,15 +360,16 @@ export type MarketingProfitReport = {
 export type BenchmarkAssessment =
   | "Above median"
   | "Near top quartile"
-  | "Below median";
+  | "Below median"
+  | "Cohort growing";
 
 export type BenchmarkMetric = {
   key: string;
   label: string;
   value: number;
-  benchmarkValue: number;
-  topQuartileValue: number;
-  percentile: number;
+  benchmarkValue: number | null;
+  topQuartileValue: number | null;
+  percentile: number | null;
   assessment: BenchmarkAssessment;
 };
 
@@ -377,6 +378,7 @@ export type BenchmarkReport = {
   generatedAt: string;
   cohort: string;
   cohortSize: number;
+  cohortReady: boolean;
   metrics: BenchmarkMetric[];
   summary: string;
 };
