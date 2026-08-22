@@ -117,6 +117,67 @@ const roadmap = [
   },
 ];
 
+// Append-only security journey: each entry mirrors SECURITY_IMPROVEMENT_LOG.md.
+// New milestones are added to BOTH places; this timeline renders newest first.
+const securityJourney = [
+  {
+    date: "2026-08-19",
+    category: "Evidence program",
+    title: "Operational security evidence program",
+    detail:
+      "Published six auditable procedures - access control, change management, vulnerability management, encryption & key management, data retention & deletion, and security monitoring - converting code-level controls into evidence-producing operations.",
+  },
+  {
+    date: "2026-08-19",
+    category: "Controls",
+    title: "Secret hygiene hardening",
+    detail:
+      "Added repository-level protections that block credential files from ever being committed, closing a high-severity finding from the August security audit.",
+  },
+  {
+    date: "2026-08-19",
+    category: "Controls",
+    title: "Secure Git access",
+    detail:
+      "Deployed secret scanning in CI (gitleaks) and npm audit gates, plus pre-commit and pre-push hooks, so every push is scanned for credentials and vulnerable dependencies.",
+  },
+  {
+    date: "2026-08-19",
+    category: "Controls",
+    title: "Rate limiting and CI cleanup",
+    detail:
+      "Removed the duplicate global rate limiter and cleaned duplicated CI steps. A single enforced rate-limit posture (100 requests/15 min global, 10/15 min webhooks) is now in effect.",
+  },
+  {
+    date: "2026-08-16",
+    category: "Policy",
+    title: "Incident response runbook",
+    detail:
+      "Published severity-classified incident response: SEV0-SEV3 definitions, containment and recovery phases, customer notification obligations, and a quarterly tabletop checklist.",
+  },
+  {
+    date: "2026-08-16",
+    category: "Policy",
+    title: "Data map published",
+    detail:
+      "Documented every data class, its sensitivity and retention, all US-region storage locations, integration data flows, subprocessors, key inventory, and logs.",
+  },
+  {
+    date: "2026-08-15",
+    category: "Program",
+    title: "Institutional security masterplan",
+    detail:
+      "Published the codebase-audited roadmap to institutional trust: tenant isolation, JWKS auth, AES-256-GCM credential encryption, tested backups, and a phased path to SOC 2 and ISO 27001.",
+  },
+];
+
+const upcomingCommitments = [
+  { month: "Q4 2026", title: "First formal quarterly reviews", detail: "Access, vulnerability, and retention reviews with incident response tabletop." },
+  { month: "H1 2027", title: "SOC 2 readiness assessment", detail: "Control narrative draft and gap analysis with an independent auditor." },
+  { month: "2027+", title: "SOC 2 Type I, then Type II", detail: "Independent examination after controls operate for 3-6 months." },
+  { month: "Future", title: "ISO 27001 & data residency", detail: "Regions, customer SSO, and advanced governance as customers require." },
+];
+
 const subprocessors = [
   { name: "Vercel", role: "Frontend hosting & edge delivery", region: "US / Global edge" },
   { name: "Railway", role: "Backend hosting (US region)", region: "US" },
@@ -313,6 +374,54 @@ export default function TrustPage() {
                   <p className="mt-2 text-sm leading-6 text-surface-400">{stage.detail}</p>
                 </article>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Security journey */}
+      <section className="relative py-12">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <div className="rounded-[2rem] border border-white/10 bg-surface-950/50 p-8 lg:p-10">
+            <h2 className="text-2xl font-semibold text-white">Our security journey</h2>
+            <p className="mt-3 max-w-3xl text-sm leading-7 text-surface-300">
+              Security is not a snapshot - it is a compounding record of controls shipped, policies
+              published, and audits passed. This timeline is append-only: every milestone is dated and
+              retained, so you can see how Ledgera&apos;s program has improved over months, years, and
+              decades - and hold us to it.
+            </p>
+            <ol className="relative mt-10 space-y-8 border-l border-white/10 pl-8">
+              {securityJourney.map((entry) => (
+                <li key={entry.date + entry.title} className="relative">
+                  <span className="absolute -left-[2.35rem] top-1.5 h-3 w-3 rounded-full bg-brand-400 ring-4 ring-brand-400/20" />
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-300">
+                      {entry.date}
+                    </span>
+                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 text-[11px] font-medium text-surface-400">
+                      {entry.category}
+                    </span>
+                  </div>
+                  <h3 className="mt-2 text-base font-semibold text-white">{entry.title}</h3>
+                  <p className="mt-1.5 text-sm leading-6 text-surface-400">{entry.detail}</p>
+                </li>
+              ))}
+            </ol>
+            <div className="mt-10 border-t border-white/10 pt-8">
+              <h3 className="text-sm font-semibold uppercase tracking-[0.15em] text-surface-300">
+                What we have committed to next
+              </h3>
+              <ul className="mt-5 grid gap-3 sm:grid-cols-2">
+                {upcomingCommitments.map((commitment) => (
+                  <li key={commitment.month + commitment.title} className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-300">{commitment.month}</p>
+                      <p className="mt-1.5 text-sm font-medium text-white">{commitment.title}</p>
+                      <p className="mt-1 text-xs leading-5 text-surface-400">{commitment.detail}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
