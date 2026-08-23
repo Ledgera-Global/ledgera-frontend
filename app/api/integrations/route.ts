@@ -1,5 +1,18 @@
+import jwt from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
 import { handleApiGet } from "../../../lib/backendProxy";
+
+/**
+ * Sign a backend JWT with the shared JWT_SECRET. The Express backend's auth
+ * middleware reads `sub`/`companyId` as the tenant, matching backendProxy.
+ */
+function createBackendToken(companyId: string): string {
+  return jwt.sign(
+    { sub: companyId, companyId, userId: `ui-${companyId}`, email: "ui@ledgera.local", role: "admin" },
+    process.env.JWT_SECRET || "",
+    { algorithm: "HS256", expiresIn: "5m" }
+  );
+}
 
 const BACKEND_URL = process.env.LEDGERA_BACKEND_URL || "http://localhost:4000";
 
@@ -196,11 +209,12 @@ export async function POST(
     }
 
     const backendUrl = `${BACKEND_URL}/integrations/${companyId}/token-connect`;
+    const backendToken = createBackendToken(companyId);
     const res = await fetch(backendUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": process.env.INTERNAL_API_KEY || "",
+        Authorization: `Bearer ${backendToken}`,
       },
       body: JSON.stringify({ provider, credentials }),
     });

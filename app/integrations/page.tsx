@@ -61,7 +61,7 @@ const FALLBACK_CATALOG: CatalogItem[] = [
   { provider: "microsoft-teams", label: "Microsoft Teams", description: "Team collaboration and meeting data", category: "communications", authType: "oauth", tier: 3, built: false, callbackPath: "/oauth/teams/callback" },
   { provider: "hubspot", label: "HubSpot", description: "CRM, pipeline management, and lead scoring", category: "crm", authType: "api-token", tier: 1, built: true, callbackPath: null },
   { provider: "salesforce", label: "Salesforce", description: "Enterprise sales CRM for larger commercial teams", category: "crm", authType: "oauth", tier: 2, built: false, callbackPath: "/oauth/salesforce/callback" },
-  { provider: "dynamics-365", label: "Microsoft Dynamics 365", description: "Microsoft CRM/ERP suite", category: "crm", authType: "oauth", tier: 2, built: false, callbackPath: "/oauth/dynamics/callback" },
+  { provider: "dynamics-365", label: "Microsoft Dynamics 365", description: "Microsoft CRM/ERP suite used by industrial and enterprise operators", category: "crm", authType: "api-token", tier: 2, built: true, callbackPath: null },
   { provider: "google-ads", label: "Google Ads", description: "Search, display, and call-only campaign spend analytics", category: "marketing", authType: "api-token", tier: 1, built: true, callbackPath: null },
   { provider: "google-analytics", label: "Google Analytics (GA4)", description: "Website traffic, lead source, and conversion attribution", category: "marketing", authType: "api-token", tier: 1, built: false, callbackPath: null },
   { provider: "meta-ads", label: "Meta for Business", description: "Facebook/Instagram ads spend and conversion analytics", category: "marketing", authType: "api-token", tier: 1, built: true, callbackPath: null },
@@ -82,6 +82,7 @@ const CONNECTABLE_PROVIDERS = new Set([
   "servicetitan", "quickbooks", "gusto",
   "callrail", "samsara", "google-ads", "meta-ads", "hubspot",
   "housecall-pro", "autodesk-acc", "viewpoint-vista", "bamboohr", "workday",
+  "dynamics-365",
 ]);
 
 const categoryLabels: Record<string, string> = {

@@ -826,6 +826,19 @@ export async function GET(
         { key: "tenantBaseUrl", label: "Tenant Base URL", placeholder: "https://services1.myworkday.com/ccx/...", secret: false },
       ],
     },
+    "dynamics-365": {
+      title: "Connect Microsoft Dynamics 365",
+      blurb: "Dynamics 365 connects with a Microsoft identity platform access token and your instance URL.",
+      steps: [
+        "Register an app in Microsoft Entra ID and grant Dynamics 365 user_impersonation",
+        "Acquire an access token and copy your CRM instance URL (yourorg.crm.dynamics.com)",
+        "Paste both below and click Connect",
+      ],
+      fields: [
+        { key: "accessToken", label: "Access Token", placeholder: "Paste your Microsoft identity platform access token...", secret: true },
+        { key: "instanceUrl", label: "Instance URL", placeholder: "https://yourorg.crm.dynamics.com", secret: false },
+      ],
+    },
   };
 
   const tokenForm = TOKEN_PROVIDER_FORMS[provider];
