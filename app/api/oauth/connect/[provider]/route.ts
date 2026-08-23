@@ -752,6 +752,210 @@ export async function GET(
     );
   }
 
+  // ── Generic token providers (registry-driven connect form) ─────────
+  // One form generator covers every api-token provider; fields mirror
+  // the backend registry so the UI and validation stay in sync.
+  const TOKEN_PROVIDER_FORMS: Record<
+    string,
+    {
+      title: string;
+      blurb: string;
+      steps: string[];
+      fields: { key: string; label: string; placeholder: string; secret: boolean }[];
+    }
+  > = {
+    "housecall-pro": {
+      title: "Connect Housecall Pro",
+      blurb: "Housecall Pro uses API token authentication.",
+      steps: [
+        "Log in to your Housecall Pro account",
+        "Go to <strong>Settings → API</strong> and create an API token",
+        "Paste the token below and click Connect",
+      ],
+      fields: [{ key: "apiKey", label: "API Key", placeholder: "Paste your Housecall Pro API key...", secret: true }],
+    },
+    "autodesk-acc": {
+      title: "Connect Autodesk Construction Cloud",
+      blurb: "Autodesk ACC connects via an APS (Autodesk Platform Services) token.",
+      steps: [
+        "Create an app in the Autodesk Developer Console and provision an access token",
+        "Note your <strong>Account ID</strong> from the ACC admin console URL",
+        "Paste both below and click Connect",
+      ],
+      fields: [
+        { key: "accessToken", label: "Access Token (APS)", placeholder: "Paste your Autodesk APS token...", secret: true },
+        { key: "accountId", label: "Account ID", placeholder: "Autodesk account id", secret: false },
+      ],
+    },
+    "viewpoint-vista": {
+      title: "Connect Viewpoint Vista (Trimble)",
+      blurb: "Viewpoint Vista connects with an API key and instance URL.",
+      steps: [
+        "Generate an API key in your Vista admin console",
+        "Note your instance API base URL",
+        "Paste both below and click Connect",
+      ],
+      fields: [
+        { key: "apiKey", label: "API Key", placeholder: "Paste your Vista API key...", secret: true },
+        { key: "baseUrl", label: "Instance URL", placeholder: "https://api.viewpoint.com", secret: false },
+      ],
+    },
+    bamboohr: {
+      title: "Connect BambooHR",
+      blurb: "BambooHR connects with an API key and your subdomain.",
+      steps: [
+        "In BambooHR, click your avatar → <strong>API Keys</strong> and generate a key",
+        "Note your subdomain (from mycompany.bamboohr.com)",
+        "Paste both below and click Connect",
+      ],
+      fields: [
+        { key: "apiKey", label: "API Key", placeholder: "Paste your BambooHR API key...", secret: true },
+        { key: "subdomain", label: "Subdomain", placeholder: "e.g. mycompany", secret: false },
+      ],
+    },
+    workday: {
+      title: "Connect Workday",
+      blurb: "Workday connects with an Integration System User (ISU) token and tenant URL.",
+      steps: [
+        "Provision an Integration System User and generate its token",
+        "Copy your tenant base URL (services1.myworkday.com/ccx/...)",
+        "Paste both below and click Connect",
+      ],
+      fields: [
+        { key: "accessToken", label: "Access Token (ISU)", placeholder: "Paste your Workday integration token...", secret: true },
+        { key: "tenantBaseUrl", label: "Tenant Base URL", placeholder: "https://services1.myworkday.com/ccx/...", secret: false },
+      ],
+    },
+  };
+
+  const tokenForm = TOKEN_PROVIDER_FORMS[provider];
+  if (tokenForm) {
+    const fieldsHtml = tokenForm.fields
+      .map(
+        (f) => `<div class="field">
+      <label>${f.label}</label>
+      <input type="${f.secret ? "password" : "text"}" id="field-${f.key}" placeholder="${f.placeholder}" autocomplete="off" />
+    </div>`
+      )
+      .join("\n    ");
+
+    const stepsHtml = tokenForm.steps.map((s) => `<li>${s}</li>`).join("\n      ");
+    const collectJs = tokenForm.fields
+      .map((f) => `credentials["${f.key}"] = document.getElementById("field-${f.key}").value.trim();`)
+      .join("\n        ");
+    const validateJs = tokenForm.fields
+      .map((f) => `if (!credentials["${f.key}"]) { errorEl.textContent = "Please enter your ${f.label.toLowerCase()}"; errorEl.style.display = "block"; return; }`)
+      .join("\n      ");
+
+    return new NextResponse(
+      `<!DOCTYPE html>
+<html>
+<head>
+  <title>${tokenForm.title} - Ledgera</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0a0a0f;
+      color: #e4e4e7;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: #12121a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 40px;
+      max-width: 520px;
+      width: 100%;
+      margin: 20px;
+    }
+    h1 { font-size: 22px; font-weight: 600; margin-bottom: 8px; color: white; }
+    p { font-size: 14px; line-height: 1.6; color: #a1a1aa; margin-bottom: 24px; }
+    ol { list-style: decimal; padding-left: 20px; font-size: 13px; line-height: 1.8; color: #a1a1aa; margin-bottom: 24px; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 13px; color: #a1a1aa; margin-bottom: 6px; }
+    input {
+      width: 100%; padding: 12px 16px; border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1); background: #1a1a24;
+      color: white; font-size: 14px; font-family: monospace; outline: none;
+    }
+    input:focus { border-color: #818cf8; }
+    button {
+      width: 100%; padding: 12px; border-radius: 12px; border: none;
+      background: #818cf8; color: #0a0a0f; font-weight: 600; font-size: 14px;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .error { color: #f87171; font-size: 13px; margin-top: 12px; display: none; }
+    .success { color: #34d399; font-size: 13px; margin-top: 12px; display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>${tokenForm.title}</h1>
+    <p>${tokenForm.blurb}</p>
+    <ol>
+      ${stepsHtml}
+    </ol>
+    ${fieldsHtml}
+    <button id="connectBtn" onclick="connect()">Connect &rarr;</button>
+    <div id="error" class="error"></div>
+    <div id="success" class="success"></div>
+  </div>
+  <script>
+    async function connect() {
+      const credentials = {};
+      const btn = document.getElementById("connectBtn");
+      const errorEl = document.getElementById("error");
+      const successEl = document.getElementById("success");
+      errorEl.style.display = "none";
+      successEl.style.display = "none";
+
+      ${collectJs}
+      ${validateJs}
+
+      btn.disabled = true;
+      btn.textContent = "Connecting...";
+
+      try {
+        const res = await fetch("/api/integrations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            provider: "${provider}",
+            companyId: "${companyId}",
+            credentials: credentials,
+          }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || "Connection failed (" + res.status + ")");
+        }
+
+        successEl.textContent = "Connected successfully! Redirecting...";
+        successEl.style.display = "block";
+        setTimeout(() => { window.location.href = "${appUrl}/integrations?connected=${provider}"; }, 1500);
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.style.display = "block";
+        btn.disabled = false;
+        btn.textContent = "Connect \\u2192";
+      }
+    }
+  </script>
+</body>
+</html>`,
+      { status: 200, headers: { "Content-Type": "text/html; charset=utf-8" } }
+    );
+  }
+
   // ── OAuth providers ─────────────────────────────────────────────────
   const providerMap: Record<string, string> = {
     servicetitan: "servicetitan",

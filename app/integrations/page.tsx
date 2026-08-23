@@ -23,12 +23,13 @@ type CatalogItem = {
  */
 const FALLBACK_CATALOG: CatalogItem[] = [
   { provider: "servicetitan", label: "ServiceTitan", description: "Field service management, job data, and technician scheduling", category: "field-service", authType: "oauth", tier: 1, built: true, callbackPath: "/oauth/servicetitan/callback" },
-  { provider: "housecall-pro", label: "Housecall Pro", description: "Dispatch, work orders, and customer management", category: "field-service", authType: "api-token", tier: 1, built: false, callbackPath: null },
+  { provider: "housecall-pro", label: "Housecall Pro", description: "Residential field service jobs, customers, and invoices", category: "field-service", authType: "api-token", tier: 1, built: true, callbackPath: null },
   { provider: "jobber", label: "Jobber", description: "Field service operations and client management", category: "field-service", authType: "api-token", tier: 1, built: false, callbackPath: null },
   { provider: "fieldedge", label: "FieldEdge", description: "Dispatch, work orders, and customer management for residential HVAC/plumbing", category: "field-service", authType: "api-token", tier: 1, built: false, callbackPath: null },
   { provider: "service-fusion", label: "Service Fusion", description: "Field service management for HVAC, plumbing, and electrical contractors", category: "field-service", authType: "api-token", tier: 1, built: false, callbackPath: null },
   { provider: "successware", label: "Successware", description: "HVAC/plumbing service management platform", category: "field-service", authType: "api-token", tier: 1, built: false, callbackPath: null },
   { provider: "servicetrade", label: "ServiceTrade", description: "Commercial mechanical, HVAC, and restoration field service management", category: "field-service", authType: "api-token", tier: 1, built: false, callbackPath: null },
+  { provider: "autodesk-acc", label: "Autodesk Construction Cloud", description: "Construction project management, budgets, and cost data for commercial contractors", category: "field-service", authType: "api-token", tier: 2, built: true, callbackPath: null },
   { provider: "simpro", label: "Simpro", description: "Commercial/mechanical job management and maintenance scheduling", category: "field-service", authType: "oauth", tier: 1, built: false, callbackPath: "/oauth/simpro/callback" },
   { provider: "samsara", label: "Samsara", description: "Fleet tracking, vehicle GPS, driver behavior, and trip analytics", category: "fleet", authType: "api-token", tier: 2, built: true, callbackPath: null },
   { provider: "quickbooks", label: "QuickBooks Online", description: "General ledger, invoicing, and expense tracking", category: "accounting", authType: "oauth", tier: 1, built: true, callbackPath: "/oauth/quickbooks/callback" },
@@ -36,12 +37,14 @@ const FALLBACK_CATALOG: CatalogItem[] = [
   { provider: "xero", label: "Xero", description: "Cloud accounting and financial reporting", category: "accounting", authType: "oauth", tier: 2, built: false, callbackPath: null },
   { provider: "netsuite", label: "NetSuite", description: "Enterprise accounting and ERP for $10M+ operators", category: "accounting", authType: "oauth", tier: 1, built: true, callbackPath: "/oauth/netsuite/callback" },
   { provider: "sage-intacct", label: "Sage Intacct", description: "Cloud financial management for scaling service businesses", category: "accounting", authType: "api-token", tier: 1, built: false, callbackPath: null },
-  { provider: "viewpoint-vista", label: "Viewpoint Vista", description: "Construction ERP for commercial contractors", category: "accounting", authType: "api-token", tier: 2, built: false, callbackPath: null },
+  { provider: "viewpoint-vista", label: "Viewpoint Vista (Trimble)", description: "Construction ERP for heavy/commercial contractors: job costing and projects", category: "accounting", authType: "api-token", tier: 2, built: true, callbackPath: null },
   { provider: "foundation", label: "Foundation Software", description: "Construction-specific accounting and job costing", category: "accounting", authType: "api-token", tier: 2, built: false, callbackPath: null },
   { provider: "acumatica", label: "Acumatica", description: "Cloud ERP with strong project accounting", category: "accounting", authType: "oauth", tier: 2, built: false, callbackPath: "/oauth/acumatica/callback" },
   { provider: "gusto", label: "Gusto", description: "Payroll, benefits, and labor cost tracking", category: "payroll", authType: "oauth", tier: 1, built: true, callbackPath: "/oauth/gusto/callback" },
   { provider: "adpWorkforceNow", label: "ADP Workforce Now", description: "Enterprise payroll and HR management", category: "payroll", authType: "oauth", tier: 1, built: true, callbackPath: "/oauth/adp/callback" },
   { provider: "paychexFlex", label: "Paychex Flex", description: "Payroll processing and labor data", category: "payroll", authType: "oauth", tier: 1, built: true, callbackPath: "/oauth/paychex/callback" },
+  { provider: "bamboohr", label: "BambooHR", description: "HR system: headcount, departments, and hiring trends", category: "payroll", authType: "api-token", tier: 2, built: true, callbackPath: null },
+  { provider: "workday", label: "Workday", description: "Enterprise HR/finance suite for large PE-backed operators", category: "payroll", authType: "api-token", tier: 2, built: true, callbackPath: null },
   { provider: "rippling", label: "Rippling", description: "Modern payroll, HR, and IT management", category: "payroll", authType: "api-token", tier: 2, built: false, callbackPath: null },
   { provider: "stripe", label: "Stripe", description: "Payment processing, invoice collection, and refunds", category: "payments", authType: "webhook", tier: 2, built: true, callbackPath: null },
   { provider: "authorize-net", label: "Authorize.net", description: "Payment gateway widely used by HVAC/mechanical contractors", category: "payments", authType: "api-token", tier: 2, built: false, callbackPath: null },
@@ -78,6 +81,7 @@ const FALLBACK_CATALOG: CatalogItem[] = [
 const CONNECTABLE_PROVIDERS = new Set([
   "servicetitan", "quickbooks", "gusto",
   "callrail", "samsara", "google-ads", "meta-ads", "hubspot",
+  "housecall-pro", "autodesk-acc", "viewpoint-vista", "bamboohr", "workday",
 ]);
 
 const categoryLabels: Record<string, string> = {

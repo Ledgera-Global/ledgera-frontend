@@ -185,10 +185,36 @@ export async function POST(
       return NextResponse.json(data);
     }
 
-    return NextResponse.json(
-      { error: `Provider "${provider}" does not support token-based connection` },
-      { status: 400 }
-    );
+    // Generic path: any registry api-token provider connects through the
+    // backend's unified token-connect endpoint.
+    const { credentials } = body as { credentials?: Record<string, string> };
+    if (!credentials || typeof credentials !== "object") {
+      return NextResponse.json(
+        { error: `Provider "${provider}" does not support token-based connection` },
+        { status: 400 }
+      );
+    }
+
+    const backendUrl = `${BACKEND_URL}/integrations/${companyId}/token-connect`;
+    const res = await fetch(backendUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": process.env.INTERNAL_API_KEY || "",
+      },
+      body: JSON.stringify({ provider, credentials }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}) as { error?: string });
+      return NextResponse.json(
+        { error: data.error || `Connection failed (${res.status})` },
+        { status: res.status }
+      );
+    }
+
+    const data = await res.json();
+    return NextResponse.json(data);
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Integration connect failed";
     return NextResponse.json({ error: message }, { status: 500 });
