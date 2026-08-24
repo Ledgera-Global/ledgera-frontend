@@ -15,6 +15,7 @@ type CatalogItem = {
   tier: 1 | 2 | 3;
   built: boolean;
   callbackPath: string | null;
+  fields?: { key: string; label: string; placeholder: string; secret: boolean }[];
 };
 
 /**
@@ -24,7 +25,8 @@ type CatalogItem = {
 const FALLBACK_CATALOG: CatalogItem[] = [
   { provider: "servicetitan", label: "ServiceTitan", description: "Field service management, job data, and technician scheduling", category: "field-service", authType: "oauth", tier: 1, built: true, callbackPath: "/oauth/servicetitan/callback" },
   { provider: "housecall-pro", label: "Housecall Pro", description: "Residential field service jobs, customers, and invoices", category: "field-service", authType: "api-token", tier: 1, built: true, callbackPath: null },
-  { provider: "jobber", label: "Jobber", description: "Field service operations and client management", category: "field-service", authType: "api-token", tier: 1, built: false, callbackPath: null },
+  { provider: "jobber", label: "Jobber", description: "Field service operations and client management", category: "field-service", authType: "api-token", tier: 1, built: false, callbackPath: null,
+    fields: [{ key: "accessToken", label: "Access Token", placeholder: "Paste your Jobber API access token...", secret: true }, { key: "clientKey", label: "Client Key", placeholder: "Jobber developer app client key", secret: false }] },
   { provider: "fieldedge", label: "FieldEdge", description: "Dispatch, work orders, and customer management for residential HVAC/plumbing", category: "field-service", authType: "api-token", tier: 1, built: false, callbackPath: null },
   { provider: "service-fusion", label: "Service Fusion", description: "Field service management for HVAC, plumbing, and electrical contractors", category: "field-service", authType: "api-token", tier: 1, built: false, callbackPath: null },
   { provider: "successware", label: "Successware", description: "HVAC/plumbing service management platform", category: "field-service", authType: "api-token", tier: 1, built: false, callbackPath: null },
@@ -34,7 +36,8 @@ const FALLBACK_CATALOG: CatalogItem[] = [
   { provider: "samsara", label: "Samsara", description: "Fleet tracking, vehicle GPS, driver behavior, and trip analytics", category: "fleet", authType: "api-token", tier: 2, built: true, callbackPath: null },
   { provider: "quickbooks", label: "QuickBooks Online", description: "General ledger, invoicing, and expense tracking", category: "accounting", authType: "oauth", tier: 1, built: true, callbackPath: "/oauth/quickbooks/callback" },
   { provider: "quickbooks-desktop", label: "QuickBooks Enterprise/Desktop", description: "Desktop accounting used by many $3M-$15M shops", category: "accounting", authType: "api-token", tier: 1, built: false, callbackPath: null },
-  { provider: "xero", label: "Xero", description: "Cloud accounting and financial reporting", category: "accounting", authType: "oauth", tier: 2, built: false, callbackPath: null },
+  { provider: "xero", label: "Xero", description: "Cloud accounting and financial reporting", category: "accounting", authType: "api-token", tier: 2, built: false, callbackPath: null,
+    fields: [{ key: "accessToken", label: "Access Token", placeholder: "Paste your Xero OAuth access token...", secret: true }, { key: "tenantId", label: "Tenant ID", placeholder: "Xero organization tenant id", secret: false }] },
   { provider: "netsuite", label: "NetSuite", description: "Enterprise accounting and ERP for $10M+ operators", category: "accounting", authType: "oauth", tier: 1, built: true, callbackPath: "/oauth/netsuite/callback" },
   { provider: "sage-intacct", label: "Sage Intacct", description: "Cloud financial management for scaling service businesses", category: "accounting", authType: "api-token", tier: 1, built: false, callbackPath: null },
   { provider: "viewpoint-vista", label: "Viewpoint Vista (Trimble)", description: "Construction ERP for heavy/commercial contractors: job costing and projects", category: "accounting", authType: "api-token", tier: 2, built: true, callbackPath: null },
@@ -46,11 +49,12 @@ const FALLBACK_CATALOG: CatalogItem[] = [
   { provider: "bamboohr", label: "BambooHR", description: "HR system: headcount, departments, and hiring trends", category: "payroll", authType: "api-token", tier: 2, built: true, callbackPath: null },
   { provider: "workday", label: "Workday", description: "Enterprise HR/finance suite for large PE-backed operators", category: "payroll", authType: "api-token", tier: 2, built: true, callbackPath: null },
   { provider: "rippling", label: "Rippling", description: "Modern payroll, HR, and IT management", category: "payroll", authType: "api-token", tier: 2, built: false, callbackPath: null },
+  { provider: "plaid", label: "Plaid", description: "Banking aggregation - cash balances, transactions, and cash-flow analytics across 12,000+ financial institutions", category: "banking", authType: "api-token", tier: 1, built: true, callbackPath: null,
+    fields: [{ key: "accessToken", label: "Plaid Access Token", placeholder: "access_production-...", secret: true }, { key: "institutionName", label: "Institution Name", placeholder: "e.g. Chase", secret: false }] },
   { provider: "stripe", label: "Stripe", description: "Payment processing, invoice collection, and refunds", category: "payments", authType: "webhook", tier: 2, built: true, callbackPath: null },
   { provider: "authorize-net", label: "Authorize.net", description: "Payment gateway widely used by HVAC/mechanical contractors", category: "payments", authType: "api-token", tier: 2, built: false, callbackPath: null },
   { provider: "quickbooks-payments", label: "QuickBooks Payments", description: "Intuit payment processing tied to QuickBooks", category: "payments", authType: "oauth", tier: 2, built: false, callbackPath: "/oauth/quickbooks-payments/callback" },
   { provider: "fiserv-clover", label: "Fiserv (Clover)", description: "Clover point-of-sale and payment data", category: "payments", authType: "api-token", tier: 2, built: false, callbackPath: null },
-  { provider: "plaid", label: "Plaid", description: "Banking aggregation - cash balances, transactions, and cash-flow analytics across 12,000+ financial institutions", category: "banking", authType: "oauth", tier: 1, built: true, callbackPath: "/oauth/plaid/callback" },
   { provider: "finicity", label: "Finicity (Mastercard)", description: "Open-banking data aggregation", category: "banking", authType: "api-token", tier: 3, built: false, callbackPath: null },
   { provider: "mx", label: "MX Technologies", description: "Financial data aggregation and enrichment", category: "banking", authType: "api-token", tier: 3, built: false, callbackPath: null },
   { provider: "calendly", label: "Calendly", description: "Appointment scheduling and booking automation", category: "scheduling", authType: "webhook", tier: 2, built: true, callbackPath: null },
@@ -73,17 +77,8 @@ const FALLBACK_CATALOG: CatalogItem[] = [
   { provider: "bigquery", label: "BigQuery", description: "Data warehouse and analytics infrastructure", category: "data", authType: "api-token", tier: 2, built: true, callbackPath: null },
 ];
 
-/**
- * Providers that have a working connect flow on the frontend
- * (either OAuth redirect or an API-token form). Everything else
- * renders as "coming soon" instead of a dead Connect button.
- */
-const CONNECTABLE_PROVIDERS = new Set([
-  "servicetitan", "quickbooks", "gusto",
-  "callrail", "samsara", "google-ads", "meta-ads", "hubspot",
-  "housecall-pro", "autodesk-acc", "viewpoint-vista", "bamboohr", "workday",
-  "dynamics-365",
-]);
+/** OAuth providers backed by a real consent flow on the backend. */
+const OAUTH_CONNECTABLE = new Set(["servicetitan", "quickbooks", "gusto"]);
 
 const categoryLabels: Record<string, string> = {
   "field-service": "Field Service Management",
@@ -233,7 +228,25 @@ export default function IntegrationsPage() {
                             <span className="rounded-full border border-surface-700/30 bg-surface-800/30 px-4 py-1.5 text-xs font-medium text-surface-500">
                               Coming soon
                             </span>
-                          ) : CONNECTABLE_PROVIDERS.has(integration.provider) ? (
+                          ) : integration.authType === "api-token" && (integration.fields?.length ?? 0) > 0 ? (
+                            <button
+                              onClick={async () => {
+                                window.location.href = `/api/oauth/connect/${integration.provider}?companyId=${companyId}`;
+                              }}
+                              className="rounded-full bg-brand-500/90 px-4 py-1.5 text-xs font-medium text-surface-950 transition-all hover:bg-brand-400 hover:scale-[1.02]"
+                            >
+                              Connect &rarr;
+                            </button>
+                          ) : integration.authType === "webhook" ? (
+                            <button
+                              onClick={async () => {
+                                window.location.href = `/api/oauth/connect/${integration.provider}?companyId=${companyId}`;
+                              }}
+                              className="rounded-full bg-brand-500/90 px-4 py-1.5 text-xs font-medium text-surface-950 transition-all hover:bg-brand-400 hover:scale-[1.02]"
+                            >
+                              Setup &rarr;
+                            </button>
+                          ) : OAUTH_CONNECTABLE.has(integration.provider) ? (
                             <button
                               onClick={async () => {
                                 // Providers with a connect flow: OAuth redirect or API-token form
