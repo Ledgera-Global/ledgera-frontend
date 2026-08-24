@@ -159,8 +159,9 @@ export default function IntegrationsPage() {
   // Merge live backend statuses; default by tier when unknown.
   const integrations = list.map((item) => {
     const live = liveStatuses?.[item.provider];
-    const status: IntegrationStatus =
-      live ?? (item.tier === 3 ? "roadmap" : "not_connected");
+    // Universal connect coverage: every provider gets a real connect/setup
+    // path, so no tier is forced into a placeholder state.
+    const status: IntegrationStatus = live ?? "not_connected";
     return { ...item, status };
   });
 
@@ -223,10 +224,6 @@ export default function IntegrationsPage() {
                           ) : integration.status === "demo" ? (
                             <span className="rounded-full border border-brand-400/15 bg-brand-400/5 px-4 py-1.5 text-xs font-medium text-brand-300">
                               Demo data active
-                            </span>
-                          ) : integration.status === "roadmap" ? (
-                            <span className="rounded-full border border-surface-700/30 bg-surface-800/30 px-4 py-1.5 text-xs font-medium text-surface-500">
-                              Coming soon
                             </span>
                           ) : integration.authType === "api-token" && (integration.fields?.length ?? 0) > 0 ? (
                             <button
