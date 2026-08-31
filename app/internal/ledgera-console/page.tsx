@@ -1,5 +1,6 @@
 "use client";
 import AppHeader from "@/components/layouts/AppHeader";
+import AuthGuard from "@/components/AuthGuard";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
@@ -179,203 +180,205 @@ export default function LedgeraConsolePage() {
   const acq = d?.acquisition;
 
   return (
-    <div className="min-h-screen bg-surface-950 text-surface-100">
-      <AppHeader currentHref="/internal/ledgera-console" transparent />
-      <div className="pt-24 pb-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10">
-          <div className="mb-10">
-            <h1 className="text-3xl font-semibold text-white mb-3">Ledgera Operating Console</h1>
-            <p className="max-w-3xl text-base text-surface-300">
-              Ledgera Global's internal institutional view — not customer-facing. Risk register, product health by customer outcome, and acquisition intelligence with prediction-vs-actual calibration.
-            </p>
-          </div>
+    <AuthGuard>
+      <div className="min-h-screen bg-surface-950 text-surface-100">
+        <AppHeader currentHref="/internal/ledgera-console" transparent />
+        <div className="pt-24 pb-16">
+          <div className="mx-auto max-w-7xl px-6 lg:px-10">
+            <div className="mb-10">
+              <h1 className="text-3xl font-semibold text-white mb-3">Ledgera Operating Console</h1>
+              <p className="max-w-3xl text-base text-surface-300">
+                The internal institutional view for Ledgera Global — not customer-facing. Risk register, product health by customer outcome, and acquisition intelligence with prediction-vs-actual calibration.
+              </p>
+            </div>
 
-          {loading ? <LoadingSkeleton count={6} /> : d && (
-            <div className="space-y-8">
-              {/* RISK REGISTER */}
-              <div>
-                <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-red-400" />
-                  Enterprise Risk Register
-                </h2>
-                <Card title="Ledgera's owned risks" sub={`${d.riskRegister.length} risks · exec-owned · reviewed on a cadence`}>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-xs">
-                      <thead>
-                        <tr className="border-b border-white/10 text-surface-400">
-                          <th className="text-left py-2 pr-4">Risk</th>
-                          <th className="text-left py-2 px-4">Category</th>
-                          <th className="text-left py-2 px-4">Impact</th>
-                          <th className="text-left py-2 px-4">Likelihood</th>
-                          <th className="text-left py-2 px-4">Owner</th>
-                          <th className="text-left py-2 px-4">Status</th>
-                          <th className="text-right py-2 pl-4">Review</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {d.riskRegister.map((r) => (
-                          <tr key={r.id} className="border-b border-white/5">
-                            <td className="py-2 pr-4 text-white">{r.title}</td>
-                            <td className="py-2 px-4 text-surface-300">{r.category}</td>
-                            <td className="py-2 px-4"><LevelBadge level={r.impact} /></td>
-                            <td className="py-2 px-4"><LevelBadge level={r.likelihood} /></td>
-                            <td className="py-2 px-4 text-surface-300">{r.owner}</td>
-                            <td className="py-2 px-4 text-surface-300">{r.status}</td>
-                            <td className="py-2 pl-4 text-right text-surface-400">{r.reviewDate}</td>
+            {loading ? <LoadingSkeleton count={6} /> : d && (
+              <div className="space-y-8">
+                {/* RISK REGISTER */}
+                <div>
+                  <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-red-400" />
+                    Enterprise Risk Register
+                  </h2>
+                  <Card title="Owned risks" sub={`${d.riskRegister.length} risks · exec-owned · reviewed on a cadence`}>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs">
+                        <thead>
+                          <tr className="border-b border-white/10 text-surface-400">
+                            <th className="text-left py-2 pr-4">Risk</th>
+                            <th className="text-left py-2 px-4">Category</th>
+                            <th className="text-left py-2 px-4">Impact</th>
+                            <th className="text-left py-2 px-4">Likelihood</th>
+                            <th className="text-left py-2 px-4">Owner</th>
+                            <th className="text-left py-2 px-4">Status</th>
+                            <th className="text-right py-2 pl-4">Review</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </Card>
-              </div>
-
-              {/* PRODUCT HEALTH */}
-              <div>
-                <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-brand-400" />
-                  Product Health <span className="text-xs font-normal text-surface-400">(measured by customer outcomes, not features)</span>
-                </h2>
-                <div className="grid gap-6 mb-6 md:grid-cols-4">
-                  <Card title="Outcome Score">
-                    <p className="text-3xl font-bold text-emerald-300">{ph!.summary.outcomeScore}</p>
-                    <p className="text-xs text-surface-400 mt-1">/ 100 composite</p>
-                  </Card>
-                  <Card title="Adoption">
-                    <p className="text-3xl font-bold text-white">{pct(ph!.summary.adoptionPct)}</p>
-                    <p className="text-xs text-surface-400 mt-1">Across product areas</p>
-                  </Card>
-                  <Card title="Churn">
-                    <p className="text-3xl font-bold text-red-300">{pct(ph!.summary.churnPct)}</p>
-                    <p className="text-xs text-surface-400 mt-1">Weighted avg</p>
-                  </Card>
-                  <Card title="Renewal">
-                    <p className="text-3xl font-bold text-white">{pct(ph!.summary.renewalPct)}</p>
-                    <p className="text-xs text-surface-400 mt-1">Weighted avg</p>
-                  </Card>
-                </div>
-                <div className="grid gap-6 md:grid-cols-2">
-                  {ph!.areas.map((a) => (
-                    <Card key={a.id} title={a.area}>
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-surface-400">Outcome score</span>
-                          <span className="text-lg font-bold text-white">{a.outcomeScore}</span>
-                        </div>
-                        <Bar label="Adoption" value={a.adoptionPct} max={100} color="bg-brand-400" ffn={(v) => v + "%"} />
-                        <Bar label="Churn" value={a.churnPct} max={20} color="bg-red-500" ffn={(v) => v.toFixed(1) + "%"} />
-                        <Bar label="Renewal" value={a.renewalPct} max={100} color="bg-emerald-500" ffn={(v) => v + "%"} />
-                        <div className="flex items-center justify-between border-t border-white/5 pt-3">
-                          <span className="text-xs text-surface-400">Time saved / customer</span>
-                          <span className="text-sm font-semibold text-white">{a.timeSavedHrs} hrs</span>
-                        </div>
-                        <div className="flex justify-end"><TrendBadge trend={a.trend} /></div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-
-              {/* ACQUISITION INTELLIGENCE */}
-              <div>
-                <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-purple-400" />
-                  Acquisition Intelligence
-                </h2>
-
-                <div className="grid gap-6 mb-6 lg:grid-cols-2">
-                  <Card title="Pipeline" sub="Ledgera's own M&A funnel">
-                    <div className="space-y-2">
-                      {acq!.pipeline.map((p) => (
-                        <div key={p.stage} className="flex items-center justify-between rounded-xl border border-white/10 bg-surface-900/50 px-3 py-2">
-                          <span className="text-xs text-surface-300">{p.stage}</span>
-                          <span className="text-sm font-bold text-white">{p.count}</span>
-                        </div>
-                      ))}
+                        </thead>
+                        <tbody>
+                          {d.riskRegister.map((r) => (
+                            <tr key={r.id} className="border-b border-white/5">
+                              <td className="py-2 pr-4 text-white">{r.title}</td>
+                              <td className="py-2 px-4 text-surface-300">{r.category}</td>
+                              <td className="py-2 px-4"><LevelBadge level={r.impact} /></td>
+                              <td className="py-2 px-4"><LevelBadge level={r.likelihood} /></td>
+                              <td className="py-2 px-4 text-surface-300">{r.owner}</td>
+                              <td className="py-2 px-4 text-surface-300">{r.status}</td>
+                              <td className="py-2 pl-4 text-right text-surface-400">{r.reviewDate}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </Card>
-                  <div className="space-y-4">
-                    <Card title="Value Opportunity" sub="Identified priority targets">
-                      <div className="grid grid-cols-2 gap-3 text-center">
-                        <div className="rounded-xl border border-white/10 bg-surface-900/50 p-3">
-                          <p className="text-xs text-surface-400">Targets</p>
-                          <p className="text-lg font-bold text-white">{acq!.valueOpportunity.targets}</p>
-                        </div>
-                        <div className="rounded-xl border border-white/10 bg-surface-900/50 p-3">
-                          <p className="text-xs text-surface-400">EBITDA</p>
-                          <p className="text-lg font-bold text-white">{fmt(acq!.valueOpportunity.aggregateEbitda)}</p>
-                        </div>
-                        <div className="rounded-xl border border-white/10 bg-surface-900/50 p-3">
-                          <p className="text-xs text-surface-400">Improvement opp</p>
-                          <p className="text-lg font-bold text-emerald-300">{fmt(acq!.valueOpportunity.improvementOpportunity)}</p>
-                        </div>
-                        <div className="rounded-xl border border-white/10 bg-surface-900/50 p-3">
-                          <p className="text-xs text-surface-400">EV opportunity</p>
-                          <p className="text-lg font-bold text-cyan-300">{fmt(acq!.valueOpportunity.evOpportunity)}</p>
-                        </div>
-                      </div>
+                </div>
+
+                {/* PRODUCT HEALTH */}
+                <div>
+                  <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-brand-400" />
+                    Product Health <span className="text-xs font-normal text-surface-400">(measured by customer outcomes, not features)</span>
+                  </h2>
+                  <div className="grid gap-6 mb-6 md:grid-cols-4">
+                    <Card title="Outcome Score">
+                      <p className="text-3xl font-bold text-emerald-300">{ph!.summary.outcomeScore}</p>
+                      <p className="text-xs text-surface-400 mt-1">/ 100 composite</p>
                     </Card>
-                    <Card title="Prediction Accuracy" sub="Predicted vs actual EBITDA uplift">
-                      <p className="text-3xl font-bold text-emerald-300">{acq!.predictionAccuracyPct}%</p>
-                      <p className="text-xs text-surface-400 mt-1">Calibrated over measured deals</p>
+                    <Card title="Adoption">
+                      <p className="text-3xl font-bold text-white">{pct(ph!.summary.adoptionPct)}</p>
+                      <p className="text-xs text-surface-400 mt-1">Across product areas</p>
                     </Card>
+                    <Card title="Churn">
+                      <p className="text-3xl font-bold text-red-300">{pct(ph!.summary.churnPct)}</p>
+                      <p className="text-xs text-surface-400 mt-1">Weighted avg</p>
+                    </Card>
+                    <Card title="Renewal">
+                      <p className="text-3xl font-bold text-white">{pct(ph!.summary.renewalPct)}</p>
+                      <p className="text-xs text-surface-400 mt-1">Weighted avg</p>
+                    </Card>
+                  </div>
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {ph!.areas.map((a) => (
+                      <Card key={a.id} title={a.area}>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-surface-400">Outcome score</span>
+                            <span className="text-lg font-bold text-white">{a.outcomeScore}</span>
+                          </div>
+                          <Bar label="Adoption" value={a.adoptionPct} max={100} color="bg-brand-400" ffn={(v) => v + "%"} />
+                          <Bar label="Churn" value={a.churnPct} max={20} color="bg-red-500" ffn={(v) => v.toFixed(1) + "%"} />
+                          <Bar label="Renewal" value={a.renewalPct} max={100} color="bg-emerald-500" ffn={(v) => v + "%"} />
+                          <div className="flex items-center justify-between border-t border-white/5 pt-3">
+                            <span className="text-xs text-surface-400">Time saved / customer</span>
+                            <span className="text-sm font-semibold text-white">{a.timeSavedHrs} hrs</span>
+                          </div>
+                          <div className="flex justify-end"><TrendBadge trend={a.trend} /></div>
+                        </div>
+                      </Card>
+                    ))}
                   </div>
                 </div>
 
-                <Card title="Calibration Loop" sub="After each deal, compare predicted uplift to realized — this is the institutional memory">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-xs">
-                      <thead>
-                        <tr className="border-b border-white/10 text-surface-400">
-                          <th className="text-left py-2 pr-4">Target</th>
-                          <th className="text-left py-2 px-4">Stage</th>
-                          <th className="text-left py-2 px-4">EBITDA</th>
-                          <th className="text-left py-2 px-4">Predicted</th>
-                          <th className="text-left py-2 px-4">Actual</th>
-                          <th className="text-right py-2 pl-4">Accuracy</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {acq!.calibration.map((deal) => (
-                          <tr key={deal.id} className="border-b border-white/5">
-                            <td className="py-2 pr-4 text-white">{deal.targetName}</td>
-                            <td className="py-2 px-4 text-surface-400">{deal.stage}</td>
-                            <td className="py-2 px-4 text-surface-300">{fmt(deal.ebitda)}</td>
-                            <td className="py-2 px-4 text-surface-300">{fmt(deal.predictedUplift)}</td>
-                            <td className="py-2 px-4 text-surface-300">{deal.actualUplift > 0 ? fmt(deal.actualUplift) : "—"}</td>
-                            <td className="py-2 pl-4 text-right">
-                              {deal.accuracy > 0 ? (
-                                <span className={`font-semibold ${Math.abs(deal.accuracy - 100) <= 15 ? "text-emerald-300" : "text-amber-300"}`}>{deal.accuracy}%</span>
-                              ) : (
-                                <span className="text-surface-500">Pending</span>
-                              )}
-                            </td>
-                          </tr>
+                {/* ACQUISITION INTELLIGENCE */}
+                <div>
+                  <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-purple-400" />
+                    Acquisition Intelligence
+                  </h2>
+
+                  <div className="grid gap-6 mb-6 lg:grid-cols-2">
+                    <Card title="Pipeline" sub="Internal M&A funnel">
+                      <div className="space-y-2">
+                        {acq!.pipeline.map((p) => (
+                          <div key={p.stage} className="flex items-center justify-between rounded-xl border border-white/10 bg-surface-900/50 px-3 py-2">
+                            <span className="text-xs text-surface-300">{p.stage}</span>
+                            <span className="text-sm font-bold text-white">{p.count}</span>
+                          </div>
                         ))}
-                      </tbody>
-                    </table>
+                      </div>
+                    </Card>
+                    <div className="space-y-4">
+                      <Card title="Value Opportunity" sub="Identified priority targets">
+                        <div className="grid grid-cols-2 gap-3 text-center">
+                          <div className="rounded-xl border border-white/10 bg-surface-900/50 p-3">
+                            <p className="text-xs text-surface-400">Targets</p>
+                            <p className="text-lg font-bold text-white">{acq!.valueOpportunity.targets}</p>
+                          </div>
+                          <div className="rounded-xl border border-white/10 bg-surface-900/50 p-3">
+                            <p className="text-xs text-surface-400">EBITDA</p>
+                            <p className="text-lg font-bold text-white">{fmt(acq!.valueOpportunity.aggregateEbitda)}</p>
+                          </div>
+                          <div className="rounded-xl border border-white/10 bg-surface-900/50 p-3">
+                            <p className="text-xs text-surface-400">Improvement opp</p>
+                            <p className="text-lg font-bold text-emerald-300">{fmt(acq!.valueOpportunity.improvementOpportunity)}</p>
+                          </div>
+                          <div className="rounded-xl border border-white/10 bg-surface-900/50 p-3">
+                            <p className="text-xs text-surface-400">EV opportunity</p>
+                            <p className="text-lg font-bold text-cyan-300">{fmt(acq!.valueOpportunity.evOpportunity)}</p>
+                          </div>
+                        </div>
+                      </Card>
+                      <Card title="Prediction Accuracy" sub="Predicted vs actual EBITDA uplift">
+                        <p className="text-3xl font-bold text-emerald-300">{acq!.predictionAccuracyPct}%</p>
+                        <p className="text-xs text-surface-400 mt-1">Calibrated over measured deals</p>
+                      </Card>
+                    </div>
                   </div>
-                </Card>
 
-                <Card title="Learned Signals" sub="Institutional memory from Ledgera's own deals">
-                  <ul className="list-disc list-inside space-y-1.5">
-                    {acq!.learnedSignals.map((s, i) => (
-                      <li key={i} className="text-sm text-surface-300">{s}</li>
-                    ))}
-                  </ul>
-                </Card>
+                  <Card title="Calibration Loop" sub="After each deal, compare predicted uplift to realized — this is the institutional memory">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs">
+                        <thead>
+                          <tr className="border-b border-white/10 text-surface-400">
+                            <th className="text-left py-2 pr-4">Target</th>
+                            <th className="text-left py-2 px-4">Stage</th>
+                            <th className="text-left py-2 px-4">EBITDA</th>
+                            <th className="text-left py-2 px-4">Predicted</th>
+                            <th className="text-left py-2 px-4">Actual</th>
+                            <th className="text-right py-2 pl-4">Accuracy</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {acq!.calibration.map((deal) => (
+                            <tr key={deal.id} className="border-b border-white/5">
+                              <td className="py-2 pr-4 text-white">{deal.targetName}</td>
+                              <td className="py-2 px-4 text-surface-400">{deal.stage}</td>
+                              <td className="py-2 px-4 text-surface-300">{fmt(deal.ebitda)}</td>
+                              <td className="py-2 px-4 text-surface-300">{fmt(deal.predictedUplift)}</td>
+                              <td className="py-2 px-4 text-surface-300">{deal.actualUplift > 0 ? fmt(deal.actualUplift) : "—"}</td>
+                              <td className="py-2 pl-4 text-right">
+                                {deal.accuracy > 0 ? (
+                                  <span className={`font-semibold ${Math.abs(deal.accuracy - 100) <= 15 ? "text-emerald-300" : "text-amber-300"}`}>{deal.accuracy}%</span>
+                                ) : (
+                                  <span className="text-surface-500">Pending</span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </Card>
+
+                  <Card title="Learned Signals" sub="Institutional memory from own deals">
+                    <ul className="list-disc list-inside space-y-1.5">
+                      {acq!.learnedSignals.map((s, i) => (
+                        <li key={i} className="text-sm text-surface-300">{s}</li>
+                      ))}
+                    </ul>
+                  </Card>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
 
-      <footer className="border-t border-white/5 bg-surface-950/70">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-8 lg:flex-row lg:px-10">
-          <span className="text-sm text-surface-400">&copy; {new Date().getFullYear()} Ledgera Global Inc.</span>
-          <Link href="/internal/ledgera-console" className="text-sm text-surface-400 hover:text-white transition-colors">Internal Console</Link>
-        </div>
-      </footer>
-    </div>
+        <footer className="border-t border-white/5 bg-surface-950/70">
+          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-8 lg:flex-row lg:px-10">
+            <span className="text-sm text-surface-400">&copy; {new Date().getFullYear()} Ledgera Global Inc.</span>
+            <Link href="/internal/ledgera-console" className="text-sm text-surface-400 hover:text-white transition-colors">Internal Console</Link>
+          </div>
+        </footer>
+      </div>
+    </AuthGuard>
   );
 }
