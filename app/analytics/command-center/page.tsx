@@ -2,6 +2,7 @@
 import AppHeader from "@/components/layouts/AppHeader";
 import BranchRankingsCard from "@/components/BranchRankingsCard";
 import BusinessAdvisorCard from "@/components/BusinessAdvisorCard";
+import CapitalAllocationCard from "@/components/CapitalAllocationCard";
 import CashRunwayCard from "@/components/CashRunwayCard";
 import DailyBriefCard from "@/components/DailyBriefCard";
 import EvTrackerCard from "@/components/EvTrackerCard";
@@ -39,7 +40,11 @@ export default function CommandCenterPage() {
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
+          <CapitalAllocationCard companyId={COMPANY_ID} />
           <BranchRankingsCard companyId={COMPANY_ID} />
+        </div>
+
+        <div className="mt-6">
           <ExecutiveRecommendationsCard companyId={COMPANY_ID} />
         </div>
 

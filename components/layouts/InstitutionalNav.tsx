@@ -12,6 +12,7 @@ export interface InstitutionalLink {
 
 export const INSTITUTIONAL_LINKS: InstitutionalLink[] = [
   { label: "Command Center", href: "/analytics/command-center" },
+  { label: "Capital Intelligence", href: "/analytics/capital" },
   { label: "Weekly CEO Briefing", href: "/analytics/executive" },
   { label: "Institutional Risk", href: "/analytics/institutional-risk" },
   { label: "Lender Readiness", href: "/analytics/lender-readiness" },
