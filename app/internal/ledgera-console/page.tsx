@@ -1,6 +1,6 @@
 "use client";
 import AppHeader from "@/components/layouts/AppHeader";
-import AuthGuard from "@/components/AuthGuard";
+import InternalGuard from "@/components/InternalGuard";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
@@ -253,7 +253,7 @@ export default function LedgeraConsolePage() {
   const riskDash = d?.riskDashboard || [];
 
   return (
-    <AuthGuard>
+    <InternalGuard>
       <div className="min-h-screen bg-surface-950 text-surface-100">
         <AppHeader currentHref="/internal/ledgera-console" transparent />
         <div className="pt-24 pb-16">
@@ -504,6 +504,6 @@ export default function LedgeraConsolePage() {
           </div>
         </footer>
       </div>
-    </AuthGuard>
+    </InternalGuard>
   );
 }
