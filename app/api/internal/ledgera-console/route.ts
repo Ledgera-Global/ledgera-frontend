@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 
+// Demo fallback for the Ledgera Operating Console. Mirrors the live shape the
+// backend engine (LedgeraConsoleEngine) returns so the internal page renders
+// the full institutional surface even before the backend proxy is wired.
 const demoData = {
   generatedAt: new Date().toISOString(),
   riskRegister: [
@@ -9,6 +12,13 @@ const demoData = {
     { id: "risk-4", title: "Regulatory change (data privacy)", category: "Compliance", impact: "Medium", likelihood: "Medium", owner: "General Counsel", status: "Under review", reviewDate: "2026-08-20" },
     { id: "risk-5", title: "AI model drift degrading advice", category: "AI Risk", impact: "Medium", likelihood: "Medium", owner: "CTO / AI Lead", status: "Monitor drift metrics", reviewDate: "2026-08-18" },
     { id: "risk-6", title: "Single integration vendor dependency", category: "Vendor", impact: "Medium", likelihood: "Medium", owner: "CTO", status: "Diversify integrations", reviewDate: "2026-08-22" },
+  ],
+  riskDashboard: [
+    { category: "Cybersecurity", owner: "Head of Security", riskCount: 1, highCount: 1, status: "action", metrics: [{ label: "Risk register entries", value: "1", status: "warn" }] },
+    { category: "Operational", owner: "COO / CTO", riskCount: 1, highCount: 1, status: "action", metrics: [{ label: "Risk register entries", value: "1", status: "warn" }] },
+    { category: "Financial", owner: "CFO", riskCount: 0, highCount: 0, status: "na", metrics: [{ label: "Accounts receivable aging", value: "$0", status: "ok" }, { label: "Cash runway", value: "$0", status: "na" }, { label: "Fraud signals", value: "0", status: "ok" }] },
+    { category: "Legal & Compliance", owner: "General Counsel", riskCount: 1, highCount: 0, status: "monitor", metrics: [{ label: "Risk register entries", value: "1", status: "warn" }] },
+    { category: "AI Risk", owner: "CTO / AI Lead", riskCount: 1, highCount: 0, status: "monitor", metrics: [{ label: "Risk register entries", value: "1", status: "warn" }] },
   ],
   productHealth: {
     summary: { outcomeScore: 75.4, adoptionPct: 66.2, churnPct: 5.16, renewalPct: 84.8 },
@@ -37,6 +47,17 @@ const demoData = {
       improvementOpportunity: 12400000,
       evOpportunity: 173000000,
     },
+    radar: [
+      { tier: "priority", description: "Exceptionally well-scored targets", count: 8, hiddenGems: 2 },
+      { tier: "watchlist", description: "Interesting but not ready yet", count: 24, hiddenGems: 1 },
+      { tier: "monitor", description: "Potentially interesting, insufficient data", count: 61, hiddenGems: 0 },
+      { tier: "avoid", description: "Poor economics / excessive risk / weak fit", count: 17, hiddenGems: 0 },
+    ],
+    topCandidates: [
+      { id: "deal-1", name: "Southeast HVAC Platform — Branch 3", tier: "priority", score: 90, revenue: 18400000, ebitda: 1650000, ebitdaMargin: 9, growthRate: 8, hiddenGem: false },
+      { id: "deal-2", name: "Gulf Coast Plumbing Roll-up", tier: "watchlist", score: 78, revenue: 9200000, ebitda: 980000, ebitdaMargin: 10.7, growthRate: 10, hiddenGem: true },
+      { id: "deal-3", name: "Midwest Commercial Refrigeration", tier: "monitor", score: 66, revenue: 12400000, ebitda: 1420000, ebitdaMargin: 11.5, growthRate: 12, hiddenGem: false },
+    ],
     calibration: [
       { id: "deal-1", targetName: "Southeast HVAC Platform — Branch 3", stage: "Closed", revenue: 18400000, ebitda: 1650000, predictedUplift: 1200000, actualUplift: 900000, accuracy: 75, closedDate: "2026-03-12" },
       { id: "deal-2", targetName: "Gulf Coast Plumbing Roll-up", stage: "Closed", revenue: 9200000, ebitda: 980000, predictedUplift: 620000, actualUplift: 700000, accuracy: 113, closedDate: "2026-01-28" },
@@ -48,6 +69,16 @@ const demoData = {
       "Pricing improvements consistently over-perform vs. labor-efficiency estimates.",
       "Owner-dependent companies with weak financial reporting take 2.3x longer to integrate.",
       "Geographic density (jobs per mile) correlates with faster post-close margin expansion.",
+    ],
+  },
+  impact: {
+    customerImpact: 21400000,
+    acquisitionImpact: 2300000,
+    platformImpact: 23700000,
+    methodology: [
+      "Customer impact = realized EBITDA lift from implemented agent signals + recovery automation.",
+      "Acquisition impact = realized EBITDA uplift from closed Ledgera deals (prediction-vs-actual).",
+      "Platform impact = customer impact + acquisition impact. Not a valuation multiple.",
     ],
   },
 };
