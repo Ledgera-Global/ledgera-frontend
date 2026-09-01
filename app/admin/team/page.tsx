@@ -64,7 +64,7 @@ export default function AdminTeamPage() {
         setError(data?.error || "Failed to create user.");
         return;
       }
-      const link = data?.inviteLink || "";
+      const link = data?.inviteUrl || "";
       setNotice(`Invite link: ${link}`);
       setEmail("");
       setFirstName("");
