@@ -8,7 +8,7 @@ import { fetchJson } from "@/lib/api/client";
 // empty state renders the "AI watching your business" message.
 
 
-type AgentName = "finance" | "margin" | "labor" | "growth";
+type AgentName = "finance" | "margin" | "labor" | "growth" | "capital";
 type AgentCategory = "revenue" | "cost" | "efficiency" | "risk";
 type AgentStatus = "suggested" | "approved" | "declined" | "implemented";
 
@@ -66,6 +66,7 @@ const AGENT_LABEL: Record<AgentName, string> = {
   margin: "Margin Agent",
   labor: "Labor Agent",
   growth: "Growth Agent",
+  capital: "Capital Agent",
 };
 
 const AGENT_COLOR: Record<AgentName, string> = {
@@ -73,6 +74,7 @@ const AGENT_COLOR: Record<AgentName, string> = {
   margin: "bg-brand-400/10 text-brand-200 border-brand-400/20",
   labor: "bg-sky-400/10 text-sky-300 border-sky-400/20",
   growth: "bg-violet-400/10 text-violet-300 border-violet-400/20",
+  capital: "bg-emerald-400/10 text-emerald-300 border-emerald-400/20",
 };
 
 const STATUS_STYLE: Record<AgentStatus, string> = {
@@ -106,6 +108,12 @@ function agentIcon(agent: AgentName) {
       return (
         <svg className="h-5 w-5 text-violet-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+      );
+    case "capital":
+      return (
+        <svg className="h-5 w-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m-6 4h6m-6 4h6M5 21h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z" />
         </svg>
       );
   }
