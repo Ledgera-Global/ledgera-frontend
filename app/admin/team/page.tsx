@@ -13,6 +13,7 @@ type TeamUser = {
   lastName?: string;
   createdAt?: string;
   inviteLink?: string;
+  disabled?: boolean;
 };
 
 type TeamResponse =
@@ -84,6 +85,23 @@ export default function AdminTeamPage() {
       setTimeout(() => setCopied(""), 1500);
     } catch {
       setError("Could not copy — select and copy the link manually.");
+    }
+  }
+
+  async function setStatus(u: TeamUser, action: "offboard" | "restore") {
+    setError("");
+    setNotice("");
+    try {
+      const res = await fetch(`/api/admin/team/${u.id}/${action}`, { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data?.error || `Failed to ${action} user.`);
+        return;
+      }
+      setNotice(`${u.email} ${action === "offboard" ? "offboarded" : "restored"}.`);
+      load();
+    } catch {
+      setError("Something went wrong.");
     }
   }
 
@@ -165,18 +183,32 @@ export default function AdminTeamPage() {
                     <th className="px-5 py-3">Email</th>
                     <th className="px-5 py-3">Name</th>
                     <th className="px-5 py-3">Role</th>
+                    <th className="px-5 py-3">Status</th>
                     <th className="px-5 py-3 text-right">Invite link</th>
                   </tr>
                 </thead>
                 <tbody>
                   {team.length === 0 ? (
-                    <tr><td colSpan={4} className="px-5 py-6 text-center text-sm text-surface-500">No internal users yet.</td></tr>
+                    <tr><td colSpan={5} className="px-5 py-6 text-center text-sm text-surface-500">No internal users yet.</td></tr>
                   ) : (
                     team.map((u) => (
                       <tr key={u.id} className="border-b border-white/5 last:border-0">
                         <td className="px-5 py-3 text-white">{u.email}</td>
                         <td className="px-5 py-3 text-surface-300">{(u.lastName || "").trim() || "—"}</td>
                         <td className="px-5 py-3 text-surface-300">{u.role}</td>
+                        <td className="px-5 py-3">
+                          {u.disabled ? (
+                            <span className="inline-flex items-center rounded-full border border-red-400/30 bg-red-400/10 px-2.5 py-0.5 text-xs font-medium text-red-200">Disabled</span>
+                          ) : (
+                            <span className="inline-flex items-center rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-0.5 text-xs font-medium text-emerald-200">Active</span>
+                          )}
+                          <button
+                            onClick={() => setStatus(u, u.disabled ? "restore" : "offboard")}
+                            className="ml-2 rounded-lg border border-white/10 bg-surface-900 px-2.5 py-1 text-xs text-surface-300 hover:bg-surface-800"
+                          >
+                            {u.disabled ? "Restore" : "Offboard"}
+                          </button>
+                        </td>
                         <td className="px-5 py-3 text-right">
                           {u.inviteLink ? (
                             <button
