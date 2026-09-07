@@ -36,28 +36,32 @@ type PortfolioCapital = {
   findingsRequiringReview: number;
 };
 
+type PortfolioSummary = {
+  totalCompanies: number;
+  withData: number;
+  strong: number;
+  watch: number;
+  underperforming: number;
+  noData: number;
+  portfolioRevenue: number;
+  portfolioEbitda: number;
+  blendedMarginPct: number;
+  valueCreationGap: number;
+};
+
+type PortfolioPriority = {
+  companyId: string;
+  companyName: string;
+  reason: string;
+  estimatedAnnualEbitdaLift: number;
+};
+
 type PortfolioData = {
   generatedAt: string;
   companies: PortfolioCompany[];
   capital: PortfolioCapital;
-  summary: {
-    totalCompanies: number;
-    withData: number;
-    strong: number;
-    watch: number;
-    underperforming: number;
-    noData: number;
-    portfolioRevenue: number;
-    portfolioEbitda: number;
-    blendedMarginPct: number;
-    valueCreationGap: number;
-  };
-  priorities: {
-    companyId: string;
-    companyName: string;
-    reason: string;
-    estimatedAnnualEbitdaLift: number;
-  }[];
+  summary: PortfolioSummary;
+  priorities: PortfolioPriority[];
 };
 
 const EMPTY: PortfolioData = {
@@ -149,6 +153,10 @@ export default function PortfolioPage() {
 
   const { data, loading } = usePortfolio(COMPANY_ID);
   const d = data ?? EMPTY;
+  const cap = d.capital ?? EMPTY.capital;
+  const summary = d.summary ?? EMPTY.summary;
+  const companies = d.companies ?? [];
+  const priorities = d.priorities ?? [];
 
   return (
     <div className="min-h-screen bg-surface-950 text-surface-100">
@@ -179,26 +187,26 @@ export default function PortfolioPage() {
             <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <CapStat
                 label="Cost optimization identified"
-                value={money(d.capital.identifiedCostOptimization)}
+                value={money(cap.identifiedCostOptimization)}
                 sub="Annualized waste + low-return spend across all companies"
               />
               <CapStat
                 label="Potential EBITDA improvement"
-                value={money(d.capital.potentialEbitdaImprovement)}
+                value={money(cap.potentialEbitdaImprovement)}
                 sub="If every recommendation is approved and realized"
                 accent
               />
               <CapStat
                 label="Estimated EV creation"
-                value={`${money(d.capital.potentialEvCreationLow)} – ${money(
-                  d.capital.potentialEvCreationHigh
+                value={`${money(cap.potentialEvCreationLow)} – ${money(
+                  cap.potentialEvCreationHigh
                 )}`}
-                sub={`Mid ${money(d.capital.potentialEvCreationMid)} at the current multiple`}
+                sub={`Mid ${money(cap.potentialEvCreationMid)} at the current multiple`}
                 accent
               />
               <CapStat
                 label="Findings requiring review"
-                value={`${d.capital.findingsRequiringReview}`}
+                value={`${cap.findingsRequiringReview}`}
                 sub="Capital recommendations awaiting an owner decision"
               />
             </section>
@@ -207,34 +215,34 @@ export default function PortfolioPage() {
             <section className="mt-6 rounded-2xl border border-white/10 bg-surface-900/40 p-5">
               <div className="flex flex-wrap items-center gap-x-8 gap-y-3 text-sm">
                 <span className="text-surface-400">
-                  Companies <span className="ml-1 font-semibold text-white">{d.summary.totalCompanies}</span>
+                  Companies <span className="ml-1 font-semibold text-white">{summary.totalCompanies}</span>
                 </span>
                 <span className="text-surface-400">
-                  With data <span className="ml-1 font-semibold text-white">{d.summary.withData}</span>
+                  With data <span className="ml-1 font-semibold text-white">{summary.withData}</span>
                 </span>
                 <span className="text-surface-400">
-                  Strong <span className="ml-1 font-semibold text-emerald-300">{d.summary.strong}</span>
+                  Strong <span className="ml-1 font-semibold text-emerald-300">{summary.strong}</span>
                 </span>
                 <span className="text-surface-400">
-                  Watch <span className="ml-1 font-semibold text-amber-300">{d.summary.watch}</span>
+                  Watch <span className="ml-1 font-semibold text-amber-300">{summary.watch}</span>
                 </span>
                 <span className="text-surface-400">
-                  Underperforming <span className="ml-1 font-semibold text-rose-300">{d.summary.underperforming}</span>
+                  Underperforming <span className="ml-1 font-semibold text-rose-300">{summary.underperforming}</span>
                 </span>
                 <span className="text-surface-400">
-                  No data <span className="ml-1 font-semibold text-surface-500">{d.summary.noData}</span>
+                  No data <span className="ml-1 font-semibold text-surface-500">{summary.noData}</span>
                 </span>
                 <span className="text-surface-400">
-                  Portfolio revenue <span className="ml-1 font-semibold text-white">{money(d.summary.portfolioRevenue)}</span>
+                  Portfolio revenue <span className="ml-1 font-semibold text-white">{money(summary.portfolioRevenue)}</span>
                 </span>
                 <span className="text-surface-400">
-                  Portfolio EBITDA <span className="ml-1 font-semibold text-white">{money(d.summary.portfolioEbitda)}</span>
+                  Portfolio EBITDA <span className="ml-1 font-semibold text-white">{money(summary.portfolioEbitda)}</span>
                 </span>
                 <span className="text-surface-400">
-                  Blended margin <span className="ml-1 font-semibold text-white">{pct(d.summary.blendedMarginPct)}</span>
+                  Blended margin <span className="ml-1 font-semibold text-white">{pct(summary.blendedMarginPct)}</span>
                 </span>
                 <span className="text-surface-400">
-                  Value-creation gap <span className="ml-1 font-semibold text-rose-300">{money(d.summary.valueCreationGap)}</span>
+                  Value-creation gap <span className="ml-1 font-semibold text-rose-300">{money(summary.valueCreationGap)}</span>
                 </span>
               </div>
             </section>
@@ -244,13 +252,13 @@ export default function PortfolioPage() {
               <p className="text-xs uppercase tracking-[0.24em] text-surface-400">Where attention earns the most</p>
               <h2 className="mt-2 text-2xl font-semibold text-white">Priorities</h2>
               <div className="mt-4 space-y-3">
-                {d.priorities.length === 0 ? (
+                {priorities.length === 0 ? (
                   <div className="rounded-2xl border border-white/5 bg-surface-900/40 p-6 text-sm text-surface-400">
                     No company trails the portfolio median yet. Every company with data is at or above the
                     blended benchmark — keep driving.
                   </div>
                 ) : (
-                  d.priorities.map((p) => (
+                  priorities.map((p) => (
                     <div
                       key={p.companyId}
                       className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/5 bg-surface-900/40 p-4"
@@ -287,14 +295,14 @@ export default function PortfolioPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {d.companies.length === 0 ? (
+                    {companies.length === 0 ? (
                       <tr>
                         <td colSpan={8} className="px-5 py-10 text-center text-surface-400">
                           No companies in this portfolio yet.
                         </td>
                       </tr>
                     ) : (
-                      d.companies.map((c) => {
+                      companies.map((c) => {
                         const h = HEALTH_STYLE[c.health];
                         return (
                           <tr key={c.companyId} className="border-b border-white/5 last:border-0 hover:bg-surface-900/30">

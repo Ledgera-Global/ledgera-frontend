@@ -4,6 +4,14 @@ import { handleApiGet } from "@/lib/backendProxy";
 const demoPortfolio = {
   generatedAt: new Date().toISOString(),
   companies: [],
+  capital: {
+    identifiedCostOptimization: 0,
+    potentialEbitdaImprovement: 0,
+    potentialEvCreationLow: 0,
+    potentialEvCreationMid: 0,
+    potentialEvCreationHigh: 0,
+    findingsRequiringReview: 0,
+  },
   summary: {
     totalCompanies: 0,
     withData: 0,
