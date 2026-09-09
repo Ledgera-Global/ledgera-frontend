@@ -96,6 +96,43 @@ const FALLBACK: CapitalReport = {
 
 type Props = { companyId: string };
 
+// Small inline icon set so the card reads visually without emoji glyphs.
+function IconWarning({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path
+        fillRule="evenodd"
+        d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 6a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 6zm0 9a1 1 0 100-2 1 1 0 000 2z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+}
+
+function IconTrendUp({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path
+        fillRule="evenodd"
+        d="M12.577 4.878a.75.75 0 01.919-.53l4.78 1.28a.75.75 0 01.53.919l-1.281 4.78a.75.75 0 01-1.449-.387l.81-3.022a19.02 19.02 0 00-5.594 5.203.75.75 0 01-1.139.093L7 10.06l-4.72 4.72a.75.75 0 01-1.06-1.061l5.25-5.25a.75.75 0 011.06 0l3.074 3.073a17.43 17.43 0 005.157-4.876l-3.284-.88a.75.75 0 01-.53-.919z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+}
+
+function IconBan({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path
+        fillRule="evenodd"
+        d="M13.477 2.821a9.25 9.25 0 00-6.954 0L2.821 6.523A9.25 9.25 0 002 10a9.25 9.25 0 0016.5 5.984L19 10a9.25 9.25 0 00-5.523-7.179zM3.5 10a6.5 6.5 0 011.477-4.158l9.18 9.18A6.5 6.5 0 013.5 10zm11.188 4.155l-9.18-9.18A6.5 6.5 0 0116.5 10a6.5 6.5 0 01-1.812 4.155z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+}
+
 export default function CapitalAllocationCard({ companyId }: Props) {
   const [data, setData] = useState<CapitalReport | null>(null);
   const [loading, setLoading] = useState(true);
@@ -151,7 +188,10 @@ export default function CapitalAllocationCard({ companyId }: Props) {
           {/* Waste identified */}
           <div className="mb-4 rounded-2xl border border-red-400/20 bg-red-400/5 p-4">
             <div className="flex items-center justify-between">
-              <p className="text-xs uppercase tracking-[0.18em] text-surface-400">⚠ Waste identified</p>
+              <p className="flex items-center gap-1.5 text-xs uppercase tracking-[0.18em] text-surface-400">
+                <IconWarning className="h-3.5 w-3.5 text-red-400" />
+                Waste identified
+              </p>
               <span className="text-lg font-bold text-red-400">
                 {fmt(d.summary.wasteMonthlyIdentified)}/mo
               </span>
@@ -173,7 +213,10 @@ export default function CapitalAllocationCard({ companyId }: Props) {
           {/* Opportunities */}
           <div className="mb-4 rounded-2xl border border-emerald-400/20 bg-emerald-400/5 p-4">
             <div className="flex items-center justify-between">
-              <p className="text-xs uppercase tracking-[0.18em] text-surface-400">📈 Capital opportunities</p>
+              <p className="flex items-center gap-1.5 text-xs uppercase tracking-[0.18em] text-surface-400">
+                <IconTrendUp className="h-3.5 w-3.5 text-emerald-400" />
+                Capital opportunities
+              </p>
               <span className="text-lg font-bold text-emerald-400">
                 +{fmt(d.summary.opportunityEbitdaAnnual)}/yr EBITDA
               </span>
@@ -196,7 +239,10 @@ export default function CapitalAllocationCard({ companyId }: Props) {
           {d.reductions.length > 0 && (
             <div className="rounded-2xl border border-amber-400/20 bg-amber-400/5 p-4">
               <div className="flex items-center justify-between">
-                <p className="text-xs uppercase tracking-[0.18em] text-surface-400">🛑 Recommended reductions</p>
+                <p className="flex items-center gap-1.5 text-xs uppercase tracking-[0.18em] text-surface-400">
+                  <IconBan className="h-3.5 w-3.5 text-amber-300" />
+                  Recommended reductions
+                </p>
                 <span className="text-lg font-bold text-amber-300">
                   {fmt(d.summary.potentialSavingsAnnual)}/yr
                 </span>
