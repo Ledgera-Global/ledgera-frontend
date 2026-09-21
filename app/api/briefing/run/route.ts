@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchFromBackend } from "@/lib/backendProxy";
+import { issueServiceToken } from "@/lib/serviceToken";
 
 // ─── Weekly CEO Briefing - delivery endpoint ───────────────────────────
 // Cron-invocable (Bearer CRON_SECRET), like the existing /api/cron route.
@@ -80,8 +81,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "companyId is required" }, { status: 400 });
   }
 
-  const backendUrl = process.env.LEDGERA_BACKEND_URL || "http://localhost:4000";
-  if (!process.env.JWT_SECRET) {
+  if (!process.env.SERVICE_JWT_SECRET && !process.env.JWT_SECRET) {
     return NextResponse.json(
       { error: "JWT_SECRET not configured; cannot reach backend" },
       { status: 503 }
@@ -89,9 +89,13 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // A cron invocation has no user session. Authenticate as a named service
+    // principal scoped to this one company so the backend can audit the caller
+    // and the tenant is derived from the credential rather than a fake user.
+    const serviceToken = issueServiceToken(companyId, "weekly-ceo-briefing");
     const brief = await fetchFromBackend<DailyBrief>(
       `/daily-brief/${companyId}`,
-      companyId
+      serviceToken
     );
 
     const text = buildBriefingText(companyId, brief);

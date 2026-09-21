@@ -14,6 +14,12 @@ type User = {
   email: string;
   role: string;
   companyId: string;
+  /**
+   * Ledgera Global employment, as reported by the server. Used only to choose
+   * which surface to render - every internal endpoint re-checks it against the
+   * database, so this value is never the access-control decision.
+   */
+  isInternal?: boolean;
 };
 
 type Company = {
@@ -262,13 +268,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       if (!res.ok) return;
       const json = await res.json();
-      if (json.company && json.onboarding) {
-        setState((prev) => ({
-          ...prev,
-          company: json.company,
-          onboarding: json.onboarding,
-        }));
-      }
+      // The server is the source of truth for identity as well as onboarding:
+      // a role change, a promotion to internal staff, or an offboarding shows up
+      // here without the user having to sign out and back in.
+      setState((prev) => ({
+        ...prev,
+        user: json.user ?? prev.user,
+        company: json.company ?? prev.company,
+        onboarding: json.onboarding ?? prev.onboarding,
+      }));
     } catch {
       /* silent - polling can retry */
     }

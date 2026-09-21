@@ -1,18 +1,6 @@
-import jwt from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
-import { handleApiGet } from "../../../lib/backendProxy";
-
-/**
- * Sign a backend JWT with the shared JWT_SECRET. The Express backend's auth
- * middleware reads `sub`/`companyId` as the tenant, matching backendProxy.
- */
-function createBackendToken(companyId: string): string {
-  return jwt.sign(
-    { sub: companyId, companyId, userId: `ui-${companyId}`, email: "ui@ledgera.local", role: "admin" },
-    process.env.JWT_SECRET || "",
-    { algorithm: "HS256", expiresIn: "5m" }
-  );
-}
+import { extractUserSessionToken, handleApiGet } from "../../../lib/backendProxy";
+import { verifyApiToken } from "../../../lib/security";
 
 const BACKEND_URL = process.env.LEDGERA_BACKEND_URL || "http://localhost:4000";
 
@@ -208,13 +196,31 @@ export async function POST(
       );
     }
 
+    // This endpoint acts on behalf of the signed-in user, so it forwards that
+    // user's own validated session token. The backend enforces the admin role
+    // and per-user revocation against that token. The frontend never mints an
+    // identity of its own, because a fabricated identity would bypass the
+    // revocation check that protects offboarded users.
+    const userToken = extractUserSessionToken(request);
+    if (!userToken) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+
+    const session = verifyApiToken(userToken);
+    if (!session.valid) {
+      return NextResponse.json({ error: "Invalid or expired session" }, { status: 401 });
+    }
+
+    if (session.companyId && session.companyId !== companyId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const backendUrl = `${BACKEND_URL}/integrations/${companyId}/token-connect`;
-    const backendToken = createBackendToken(companyId);
     const res = await fetch(backendUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${backendToken}`,
+        Authorization: `Bearer ${userToken}`,
       },
       body: JSON.stringify({ provider, credentials }),
     });
