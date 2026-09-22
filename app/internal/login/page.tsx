@@ -14,15 +14,12 @@ import { isLedgeraEmployee } from "@/lib/internal/roles";
  * create a company account.
  *
  * Signing in proves nothing about employment. The decision is made by the server:
- * `login()` establishes the session, then `/api/auth/me` is read back and the
- * account is admitted only when the server reports `isInternal` plus an employee
- * label. A customer who signs in successfully here is told plainly that this door
- * is not for them and is pointed at their own workspace.
+ * `/auth/login` reports `isInternal` on the user it returns, and `login()`
+ * resolves with that same user, so the account is admitted only when the server
+ * says so - never on anything this page decides. A customer who signs in
+ * successfully here is told plainly that this door is not for them and is
+ * pointed at their own workspace.
  */
-
-type MeResponse = {
-  user?: { role?: string; isInternal?: boolean };
-};
 
 export default function InternalLoginPage() {
   const router = useRouter();
@@ -51,23 +48,12 @@ export default function InternalLoginPage() {
 
     setSubmitting(true);
     try {
-      await login(email.trim(), password);
+      // `login` resolves with the server's own view of the account, straight
+      // from the `/auth/login` response. Employment is still decided
+      // server-side; this only reads the verdict the server already returned.
+      const { user } = await login(email.trim(), password);
 
-      // The session exists, but employment is decided by the server, never by
-      // what this page holds. Read the identity back before admitting anyone.
-      const res = await fetch("/api/auth/me", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        cache: "no-store",
-      });
-
-      if (!res.ok) {
-        setLocalError("Signed in, but your account could not be verified. Try again.");
-        return;
-      }
-
-      const body = (await res.json()) as MeResponse;
-      if (isLedgeraEmployee(body.user)) {
+      if (isLedgeraEmployee(user)) {
         router.push("/internal/workforce");
         return;
       }

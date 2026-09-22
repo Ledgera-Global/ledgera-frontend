@@ -51,7 +51,17 @@ type AuthState = {
 };
 
 type AuthActions = {
-  login: (email: string, password: string) => Promise<void>;
+  /**
+   * Signs in and resolves with the server's own view of the account, including
+   * `isInternal`.
+   *
+   * The caller needs that identity to decide which surface to open, and it must
+   * not be fetched separately: a follow-up `/auth/me` would race the session
+   * cookie, and the caller's `token` from context is still stale in the same
+   * tick because React has not re-rendered yet. Returning the login response
+   * gives callers the authoritative user with no second round-trip.
+   */
+  login: (email: string, password: string) => Promise<{ user: User; token: string }>;
   register: (
     email: string,
     password: string,
@@ -193,6 +203,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }).catch(() => {
         /* non-critical */
       });
+
+      return { user, token };
     } catch (err) {
       const message = err instanceof Error ? err.message : "Login failed";
       setState((prev) => ({ ...prev, loading: false, error: message }));
