@@ -114,6 +114,20 @@ export function applySecurityHeaders(headers: Headers): void {
 // ─── Token validation utilities ─────────────────────────────────────────────
 
 
+/**
+ * Whether this deployment can verify a session token locally.
+ *
+ * `verifyApiToken` needs the shared JWT_SECRET, which is optional here - the
+ * frontend is documented to run without it, and other routes already branch on
+ * its absence. Callers must be able to tell "this token is bad" apart from
+ * "this deployment cannot check tokens at all": treating the second as the
+ * first rejects every signed-in user instead of letting the backend, which
+ * always validates the token, make the call.
+ */
+export function isTokenVerifierConfigured(): boolean {
+  return Boolean(process.env.JWT_SECRET);
+}
+
 export function verifyApiToken(token: string): {
   valid: boolean;
   companyId?: string;

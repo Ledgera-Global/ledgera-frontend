@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { readSessionToken } from "./sessionCookie";
 
 import {
   applySecurityHeaders,
   checkRateLimit,
+  isTokenVerifierConfigured,
   validateRequestOrigin,
   verifyApiToken,
 } from "./security";
@@ -21,18 +23,14 @@ const DATA_SOURCE_HEADER = "X-Ledgera-Data-Source";
 
 /**
  * Extracts the user's session token from the incoming Next.js request.
- * Checks the Authorization header first, then falls back to the session cookie.
+ *
+ * Delegates to the shared resolver so this proxy and the workspace proxy cannot
+ * disagree about where a session token lives. That disagreement was the bug:
+ * both looked for a cookie nothing ever wrote, so the workspace answered 401
+ * while this proxy silently served demo fixtures to signed-in customers.
  */
 export function extractUserSessionToken(req: NextRequest): string | null {
-  const authHeader = req.headers.get("authorization");
-  if (authHeader?.startsWith("Bearer ")) {
-    return authHeader.slice("Bearer ".length).trim();
-  }
-
-  const cookieToken = req.cookies.get("ledgera_token")?.value;
-  if (cookieToken) return cookieToken;
-
-  return null;
+  return readSessionToken(req);
 }
 
 /**
@@ -122,22 +120,32 @@ export async function handleApiGet<T>(
   const userToken = extractUserSessionToken(req);
 
   if (userToken) {
-    const tokenValidation = verifyApiToken(userToken);
-    if (!tokenValidation.valid) {
-      return NextResponse.json(
-        { error: "Invalid or expired session" },
-        { status: 401, headers }
-      );
-    }
+    // This check is a first pass, not the authority: the backend re-verifies
+    // the same token against the live user record on every request. It only
+    // runs when this deployment actually holds the shared secret. Without
+    // JWT_SECRET we cannot tell a forged token from a legitimate one, and
+    // refusing the caller would sign every customer out of their own
+    // dashboard - so we defer to the backend, which still refuses anything it
+    // does not accept. The company check is likewise only meaningful when the
+    // token's own company is decodable.
+    if (isTokenVerifierConfigured()) {
+      const tokenValidation = verifyApiToken(userToken);
+      if (!tokenValidation.valid) {
+        return NextResponse.json(
+          { error: "Invalid or expired session" },
+          { status: 401, headers }
+        );
+      }
 
-    if (
-      tokenValidation.companyId &&
-      !isCompanyAccessAuthorized(tokenValidation.companyId, companyId)
-    ) {
-      return NextResponse.json(
-        { error: "Forbidden: you do not have access to this company's data" },
-        { status: 403, headers }
-      );
+      if (
+        tokenValidation.companyId &&
+        !isCompanyAccessAuthorized(tokenValidation.companyId, companyId)
+      ) {
+        return NextResponse.json(
+          { error: "Forbidden: you do not have access to this company's data" },
+          { status: 403, headers }
+        );
+      }
     }
   } else {
     // Unauthenticated preview: serve fixtures, clearly labelled as such.
@@ -200,16 +208,21 @@ export async function handleApiMutation<T>(
     return NextResponse.json({ error: "Authentication required" }, { status: 401, headers });
   }
 
-  const tokenValidation = verifyApiToken(userToken);
-  if (!tokenValidation.valid) {
-    return NextResponse.json({ error: "Invalid or expired session" }, { status: 401, headers });
-  }
+  // Same reasoning as the GET path: a token must always be present, but the
+  // local signature check only runs when this deployment can perform it. The
+  // backend remains the gate that actually decides.
+  if (isTokenVerifierConfigured()) {
+    const tokenValidation = verifyApiToken(userToken);
+    if (!tokenValidation.valid) {
+      return NextResponse.json({ error: "Invalid or expired session" }, { status: 401, headers });
+    }
 
-  if (
-    tokenValidation.companyId &&
-    !isCompanyAccessAuthorized(tokenValidation.companyId, companyId)
-  ) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403, headers });
+    if (
+      tokenValidation.companyId &&
+      !isCompanyAccessAuthorized(tokenValidation.companyId, companyId)
+    ) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403, headers });
+    }
   }
 
   // ── Execute mutation, forwarding the caller's own token ─────────────

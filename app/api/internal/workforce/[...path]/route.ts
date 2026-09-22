@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { readSessionToken } from "@/lib/sessionCookie";
 
 const BACKEND_URL = process.env.LEDGERA_BACKEND_URL || "http://localhost:4000";
 const BACKEND_FETCH_TIMEOUT_MS = 8000;
@@ -18,13 +19,6 @@ const BACKEND_FETCH_TIMEOUT_MS = 8000;
  * than being softened into an empty success.
  */
 
-/** The caller's session token: Authorization header first, then the session cookie. */
-function extractSessionToken(req: NextRequest): string | null {
-    const auth = req.headers.get("authorization");
-    if (auth?.startsWith("Bearer ")) return auth.slice("Bearer ".length).trim();
-    return req.cookies.get("ledgera_token")?.value ?? null;
-}
-
 type RouteContext = { params: Promise<{ path: string[] }> };
 
 /** Build the backend URL, preserving the query string the browser sent. */
@@ -40,7 +34,7 @@ async function forward(
     method: "GET" | "POST" | "PATCH" | "DELETE"
 ): Promise<NextResponse> {
     const { path } = await context.params;
-    const token = extractSessionToken(req);
+    const token = readSessionToken(req);
 
     if (!token) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
