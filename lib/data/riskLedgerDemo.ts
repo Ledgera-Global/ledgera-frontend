@@ -1,0 +1,273 @@
+import type { CorporateRiskLedger } from "@/lib/types/riskLedger";
+
+/**
+ * Risk Ledger Demo Fixture
+ *
+ * Served ONLY to unauthenticated previews, and always labelled via the
+ * X-Ledgera-Data-Source: demo header. Authenticated callers get live data or a
+ * loud 502 — never this.
+ *
+ * The fixture describes a ~$25M commercial/residential service company with 120
+ * employees, 45 trucks, 8 locations, refrigeration work and customer data —
+ * carrying coverage that has not kept up with the operation. The numbers are
+ * consistent with the backend risk model so the preview and the live ledger
+ * read the same way.
+ */
+
+const DOLLARS = 100;
+
+export const RISK_LEDGER_DEMO: CorporateRiskLedger = {
+  companyId: "companyA",
+  generatedAt: "2026-09-28T00:00:00.000Z",
+  sources: [
+    {
+      provider: "applied-epic",
+      kind: "agency-system",
+      connected: false,
+      note: "Demo insurance portfolio for Applied Epic — connect a real key to sync the live portfolio (5 policies, 2 claims shown).",
+    },
+  ],
+  policies: [
+    {
+      id: "applied-epic-gl",
+      policyNumber: "GL-APP-10041",
+      carrier: "The Hartford",
+      broker: "Applied Epic",
+      lines: ["general_liability"],
+      annualPremiumCents: 31200 * DOLLARS,
+      deductibleCents: 10000 * DOLLARS,
+      limitCents: 1_000_000 * DOLLARS,
+      effectiveDate: "2026-03-01",
+      expirationDate: "2027-03-01",
+      namedInsured: "Ledgera Demo Services, Inc.",
+      additionalInsureds: ["Peak Property Management LLC"],
+    },
+    {
+      id: "applied-epic-wc",
+      policyNumber: "WC-APP-10042",
+      carrier: "AmTrust",
+      broker: "Applied Epic",
+      lines: ["workers_compensation"],
+      annualPremiumCents: 84500 * DOLLARS,
+      deductibleCents: 0,
+      limitCents: 1_000_000 * DOLLARS,
+      effectiveDate: "2025-10-15",
+      expirationDate: "2026-10-15",
+      namedInsured: "Ledgera Demo Services, Inc.",
+      additionalInsureds: [],
+    },
+    {
+      id: "applied-epic-auto",
+      policyNumber: "CA-APP-10043",
+      carrier: "Progressive Commercial",
+      broker: "Applied Epic",
+      lines: ["commercial_auto"],
+      annualPremiumCents: 41200 * DOLLARS,
+      deductibleCents: 1000 * DOLLARS,
+      limitCents: 1_000_000 * DOLLARS,
+      effectiveDate: "2026-02-01",
+      expirationDate: "2027-02-01",
+      namedInsured: "Ledgera Demo Services, Inc.",
+      additionalInsureds: [],
+    },
+    {
+      id: "applied-epic-umbrella",
+      policyNumber: "UM-APP-10044",
+      carrier: "Chubb",
+      broker: "Applied Epic",
+      lines: ["umbrella_excess"],
+      annualPremiumCents: 12400 * DOLLARS,
+      deductibleCents: 0,
+      limitCents: 5_000_000 * DOLLARS,
+      effectiveDate: "2026-01-01",
+      expirationDate: "2027-01-01",
+      namedInsured: "Ledgera Demo Services, Inc.",
+      additionalInsureds: [],
+    },
+    {
+      id: "applied-epic-property",
+      policyNumber: "CP-APP-10045",
+      carrier: "Erie Insurance",
+      broker: "Applied Epic",
+      lines: ["commercial_property", "inland_marine"],
+      annualPremiumCents: 20300 * DOLLARS,
+      deductibleCents: 5000 * DOLLARS,
+      limitCents: 500_000 * DOLLARS,
+      effectiveDate: "2026-04-01",
+      expirationDate: "2027-04-01",
+      namedInsured: "Ledgera Demo Services, Inc.",
+      additionalInsureds: [],
+    },
+  ],
+  claims: [
+    {
+      id: "applied-epic-claim-1",
+      policyId: "applied-epic-auto",
+      line: "commercial_auto",
+      reserveCents: 18500 * DOLLARS,
+      paidCents: 6400 * DOLLARS,
+      incidentDate: "2026-06-30",
+      open: true,
+      description: "Rear-end collision on I-77, no injuries reported",
+    },
+    {
+      id: "applied-epic-claim-2",
+      policyId: "applied-epic-wc",
+      line: "workers_compensation",
+      reserveCents: 9200 * DOLLARS,
+      paidCents: 3100 * DOLLARS,
+      incidentDate: "2026-03-01",
+      open: false,
+      description: "Technician back strain while lifting a condenser unit",
+    },
+  ],
+  premium: {
+    totalAnnualPremiumCents: 189600 * DOLLARS,
+    byLine: {
+      general_liability: 31200 * DOLLARS,
+      workers_compensation: 84500 * DOLLARS,
+      commercial_auto: 41200 * DOLLARS,
+      umbrella_excess: 12400 * DOLLARS,
+      commercial_property: 20300 * DOLLARS,
+      inland_marine: 20300 * DOLLARS,
+    },
+    policyCount: 5,
+  },
+  exposures: [
+    {
+      line: "general_liability",
+      label: "General liability",
+      exposureCents: 6_250_000 * DOLLARS,
+      coverageLimitCents: 1_000_000 * DOLLARS,
+      state: "underinsured",
+      note: "General liability limit is below the level this operation would normally carry.",
+    },
+    {
+      line: "workers_compensation",
+      label: "Workers' compensation",
+      exposureCents: 12_000_000 * DOLLARS,
+      coverageLimitCents: 1_000_000 * DOLLARS,
+      state: "underinsured",
+      note: "Workers' compensation limit is below the level this operation would normally carry.",
+    },
+    {
+      line: "commercial_auto",
+      label: "Commercial auto",
+      exposureCents: 45_000_000 * DOLLARS,
+      coverageLimitCents: 1_000_000 * DOLLARS,
+      state: "underinsured",
+      note: "Commercial auto limit is below the level this operation would normally carry.",
+    },
+    {
+      line: "commercial_property",
+      label: "Commercial property",
+      exposureCents: 14_500_000 * DOLLARS,
+      coverageLimitCents: 500_000 * DOLLARS,
+      state: "underinsured",
+      note: "Commercial property limit is below the level this operation would normally carry.",
+    },
+    {
+      line: "inland_marine",
+      label: "Inland marine (tools & equipment)",
+      exposureCents: 6_500_000 * DOLLARS,
+      coverageLimitCents: 500_000 * DOLLARS,
+      state: "underinsured",
+      note: "Inland marine (tools & equipment) limit is below the level this operation would normally carry.",
+    },
+    {
+      line: "umbrella_excess",
+      label: "Umbrella / excess",
+      exposureCents: 12_500_000 * DOLLARS,
+      coverageLimitCents: 5_000_000 * DOLLARS,
+      state: "covered",
+      note: "Umbrella / excess coverage is in line with the operation's exposure.",
+    },
+    {
+      line: "cyber",
+      label: "Cyber liability",
+      exposureCents: 1_000_000 * DOLLARS,
+      coverageLimitCents: 0,
+      state: "uncovered",
+      note: "No cyber liability coverage found. This risk is uninsured.",
+    },
+    {
+      line: "pollution_environmental",
+      label: "Pollution / environmental",
+      exposureCents: 1_000_000 * DOLLARS,
+      coverageLimitCents: 0,
+      state: "uncovered",
+      note: "No pollution / environmental coverage found. This risk is uninsured.",
+    },
+  ],
+  claimsSummary: {
+    openClaims: 1,
+    totalIncurredCents: 37200 * DOLLARS,
+  },
+  coverageGaps: ["cyber", "pollution_environmental"],
+  signals: [
+    {
+      id: "gap-cyber",
+      severity: "critical",
+      category: "coverage_gap",
+      title: "No cyber liability coverage",
+      detail: "No cyber liability coverage found. This risk is uninsured.",
+    },
+    {
+      id: "gap-pollution_environmental",
+      severity: "critical",
+      category: "coverage_gap",
+      title: "No pollution / environmental coverage",
+      detail: "No pollution / environmental coverage found. This risk is uninsured.",
+    },
+    {
+      id: "under-general_liability",
+      severity: "high",
+      category: "exposure",
+      title: "General liability limit below exposure",
+      detail: "General liability limit is below the level this operation would normally carry.",
+    },
+    {
+      id: "under-workers_compensation",
+      severity: "high",
+      category: "exposure",
+      title: "Workers' compensation limit below exposure",
+      detail: "Workers' compensation limit is below the level this operation would normally carry.",
+    },
+    {
+      id: "under-commercial_auto",
+      severity: "high",
+      category: "exposure",
+      title: "Commercial auto limit below exposure",
+      detail: "Commercial auto limit is below the level this operation would normally carry.",
+    },
+    {
+      id: "under-commercial_property",
+      severity: "high",
+      category: "exposure",
+      title: "Commercial property limit below exposure",
+      detail: "Commercial property limit is below the level this operation would normally carry.",
+    },
+    {
+      id: "under-inland_marine",
+      severity: "high",
+      category: "exposure",
+      title: "Inland marine (tools & equipment) limit below exposure",
+      detail: "Inland marine (tools & equipment) limit is below the level this operation would normally carry.",
+    },
+    {
+      id: "renewal-applied-epic-wc",
+      severity: "medium",
+      category: "renewal",
+      title: "AmTrust policy expiring soon",
+      detail: "Policy WC-APP-10042 expires 2026-10-15.",
+    },
+    {
+      id: "open-claims",
+      severity: "low",
+      category: "claims",
+      title: "1 open claim",
+      detail: "$24,900.00 in open reserves and paid losses.",
+    },
+  ],
+  riskScore: 13,
+};
