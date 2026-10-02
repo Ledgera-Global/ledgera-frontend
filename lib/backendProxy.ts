@@ -257,3 +257,105 @@ export async function handleApiMutation<T>(
     return NextResponse.json({ error: "Internal server error" }, { status: 500, headers });
   }
 }
+/**
+ * Handle a proxied Server-Sent Events request.
+ *
+ * This exists because `handleApiGet` cannot serve a stream: it buffers the
+ * upstream body into JSON and applies a 4-second timeout, both of which would
+ * break an event stream that is meant to stay open for up to half an hour.
+ *
+ * It is deliberately still part of this module rather than a standalone route
+ * helper, so that "where does the session token come from" and "who is allowed
+ * to read this company" have exactly one answer in this codebase.
+ *
+ * No timeout is applied to the upstream fetch. The backend closes the stream
+ * itself after its maximum lifetime, and the caller's own abort signal is
+ * forwarded so a browser that navigates away tears the upstream connection down
+ * immediately rather than leaving it running until the next write fails.
+ *
+ * Unauthenticated callers are refused rather than served a fixture. A demo
+ * event stream that never produces events would be indistinguishable from a
+ * real one that is simply quiet, which is precisely the confusion this whole
+ * layer is built to avoid.
+ */
+export async function handleApiStream(
+  req: NextRequest,
+  params: { companyId: string },
+  backendPath: string
+): Promise<Response> {
+  const { companyId } = params;
+  const headers = new Headers();
+  applySecurityHeaders(headers);
+
+  const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
+
+  // Streams are limited far more tightly than reads: each one holds a database
+  // cursor and a subscription on the backend, so a reconnect loop is expensive
+  // in a way a repeated GET is not.
+  const rl = checkRateLimit(`${ip}:${backendPath}`, {
+    limit: 20,
+    windowSeconds: 900,
+    prefix: "stream",
+  });
+  if (!rl.allowed) {
+    headers.set("Retry-After", String(Math.ceil((rl.resetAt - Date.now()) / 1000)));
+    return NextResponse.json({ error: "Too many stream connections" }, { status: 429, headers });
+  }
+
+  const userToken = extractUserSessionToken(req);
+  if (!userToken) {
+    return NextResponse.json({ error: "Authentication required" }, { status: 401, headers });
+  }
+
+  // As on the other paths, this check only runs when the deployment holds the
+  // shared secret; the backend still verifies the token against the live user
+  // record and derives the tenant from it.
+  if (isTokenVerifierConfigured()) {
+    const tokenValidation = verifyApiToken(userToken);
+    if (!tokenValidation.valid) {
+      return NextResponse.json({ error: "Invalid or expired session" }, { status: 401, headers });
+    }
+    if (
+      tokenValidation.companyId &&
+      !isCompanyAccessAuthorized(tokenValidation.companyId, companyId)
+    ) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403, headers });
+    }
+  }
+
+  let upstream: Response;
+  try {
+    upstream = await fetch(`${BACKEND_URL}${backendPath}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+        Accept: "text/event-stream",
+      },
+      cache: "no-store",
+      signal: req.signal,
+    });
+  } catch (err) {
+    console.error(`[backendProxy] stream ${backendPath} failed:`, (err as Error).message);
+    return NextResponse.json(
+      { error: "Live stream temporarily unavailable" },
+      { status: 502, headers }
+    );
+  }
+
+  if (!upstream.ok || !upstream.body) {
+    return NextResponse.json(
+      { error: "Live stream unavailable", status: upstream.status },
+      { status: 502, headers }
+    );
+  }
+
+  const streamHeaders = new Headers(headers);
+  streamHeaders.set("Content-Type", "text/event-stream");
+  streamHeaders.set("Cache-Control", "no-cache, no-transform");
+  streamHeaders.set("Connection", "keep-alive");
+  // Tells any intermediary not to buffer, which would defeat the point of SSE.
+  streamHeaders.set("X-Accel-Buffering", "no");
+  streamHeaders.set(DATA_SOURCE_HEADER, "live");
+
+  return new Response(upstream.body, { status: 200, headers: streamHeaders });
+}

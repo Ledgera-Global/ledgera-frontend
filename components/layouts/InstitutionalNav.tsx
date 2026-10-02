@@ -16,6 +16,7 @@ export const INSTITUTIONAL_LINKS: InstitutionalLink[] = [
   { label: "Portfolio", href: "/analytics/portfolio" },
   { label: "Weekly CEO Briefing", href: "/analytics/executive" },
   { label: "Institutional Risk", href: "/analytics/institutional-risk" },
+  { label: "Live Visibility", href: "/analytics/live" },
   { label: "Corporate Risk Ledger", href: "/analytics/risk-ledger" },
   { label: "Lender Readiness", href: "/analytics/lender-readiness" },
   { label: "Exit Readiness", href: "/analytics/exit-readiness" },
