@@ -2,15 +2,11 @@
 import AppHeader from "@/components/layouts/AppHeader";
 import Link from "next/link";
 import LiveBoard from "@/components/live/LiveBoard";
-import { useEffect, useState } from "react";
+import LiveUnavailable from "@/components/live/LiveUnavailable";
+import { useCallback, useEffect, useState } from "react";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
-import { fetchJson } from "@/lib/api/client";
+import { combineSources, readLive, type LiveDataSource } from "@/lib/live/provenance";
 
-import {
-  LIVE_CONNECTIONS_DEMO,
-  LIVE_EVENTS_DEMO,
-  LIVE_IDENTITY_RESPONSE_DEMO,
-} from "@/lib/data/liveDemo";
 import type {
   ConnectionHealth,
   ConnectionsResponse,
@@ -20,6 +16,12 @@ import type {
 } from "@/lib/types/live";
 
 const COMPANY_ID = "companyA";
+
+interface LivePayload {
+  identity: IdentityResponse;
+  events: EconomicEvent[];
+  connections: ConnectionHealth[];
+}
 
 /**
  * Live Visibility: the state of the business right now, and the state of the
@@ -34,46 +36,72 @@ const COMPANY_ID = "companyA";
  * The data arrives in three reads, then stays open on a stream. The stream is a
  * transport, not a source of truth: if it drops, the page keeps the last figures
  * it received and says so, rather than blanking or pretending.
+ *
+ * The page holds three states and no fourth. It shows the reader's own figures
+ * when the server says it served them; it shows the sample company, clearly
+ * labelled as a sample, when the server says this is an unauthenticated
+ * preview; and it shows an error when the server refused the read. It never
+ * fills a refusal with the sample - that is the one combination a reader cannot
+ * detect and the one this whole layer exists to prevent.
+ *
+ * The fixtures are not imported here. They arrive from the API only when the
+ * API deliberately marked the response as demo, so this page cannot serve them
+ * by accident or by a fallback that quietly did its job.
  */
 export default function LiveVisibilityPage() {
-  const [identity, setIdentity] = useState<IdentityResponse>(
-    LIVE_IDENTITY_RESPONSE_DEMO
-  );
-  const [events, setEvents] = useState<EconomicEvent[]>(LIVE_EVENTS_DEMO);
-  const [connections, setConnections] = useState<ConnectionHealth[]>(
-    LIVE_CONNECTIONS_DEMO
-  );
-  const [loading, setLoading] = useState(true);
+  const [payload, setPayload] = useState<LivePayload | null>(null);
+  const [dataSource, setDataSource] = useState<LiveDataSource | null>(null);
+  const [failureStatus, setFailureStatus] = useState<number | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
 
     (async () => {
-      const [identityData, eventsData, connectionsData] = await Promise.all([
-        fetchJson<IdentityResponse>(
-          `/api/live/${COMPANY_ID}/identity`,
-          LIVE_IDENTITY_RESPONSE_DEMO
-        ),
-        fetchJson<EventsResponse>(
-          `/api/live/${COMPANY_ID}/events?limit=50`,
-          { companyId: COMPANY_ID, events: LIVE_EVENTS_DEMO }
-        ),
-        fetchJson<ConnectionsResponse>(
-          `/api/live/${COMPANY_ID}/connections`,
-          { companyId: COMPANY_ID, connections: LIVE_CONNECTIONS_DEMO }
-        ),
+      const [identity, events, connections] = await Promise.all([
+        readLive<IdentityResponse>(`/api/live/${COMPANY_ID}/identity`),
+        readLive<EventsResponse>(`/api/live/${COMPANY_ID}/events?limit=50`),
+        readLive<ConnectionsResponse>(`/api/live/${COMPANY_ID}/connections`),
       ]);
 
       if (cancelled) return;
-      setIdentity(identityData);
-      setEvents(eventsData.events);
-      setConnections(connectionsData.connections);
-      setLoading(false);
+
+      const source = combineSources([identity, events, connections]);
+
+      if (
+        source === "unavailable" ||
+        !identity.data ||
+        !events.data ||
+        !connections.data
+      ) {
+        const refused = [identity, events, connections].find(
+          (read) => read.source === "unavailable"
+        );
+        setPayload(null);
+        setDataSource("unavailable");
+        setFailureStatus(refused?.status ?? null);
+        return;
+      }
+
+      setPayload({
+        identity: identity.data,
+        events: events.data.events,
+        connections: connections.data.connections,
+      });
+      setDataSource(source);
+      setFailureStatus(null);
     })();
 
     return () => {
       cancelled = true;
     };
+  }, [attempt]);
+
+  const retry = useCallback(() => {
+    setDataSource(null);
+    setPayload(null);
+    setFailureStatus(null);
+    setAttempt((n) => n + 1);
   }, []);
 
   return (
@@ -94,14 +122,19 @@ export default function LiveVisibilityPage() {
             </p>
           </div>
 
-          {loading ? (
-            <LoadingSkeleton count={3} />
-          ) : (
+          {dataSource === null && <LoadingSkeleton count={3} />}
+
+          {dataSource === "unavailable" && (
+            <LiveUnavailable status={failureStatus} onRetry={retry} />
+          )}
+
+          {payload && dataSource !== null && dataSource !== "unavailable" && (
             <LiveBoard
               companyId={COMPANY_ID}
-              identity={identity}
-              events={events}
-              connections={connections}
+              identity={payload.identity}
+              events={payload.events}
+              connections={payload.connections}
+              dataSource={dataSource}
             />
           )}
 
@@ -136,6 +169,16 @@ export default function LiveVisibilityPage() {
                   The stream carries changes as they happen. If it is interrupted
                   the figures already on screen stay, marked with when they last
                   arrived, rather than being replaced by placeholders.
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1.5 inline-flex h-1.5 w-1.5 shrink-0 rounded-full bg-brand-400" />
+                <span>
+                  Whether these figures are{" "}
+                  <span className="text-white">yours</span> is stated above the
+                  board and is never inferred. An unauthenticated visit is shown
+                  a sample company and told so; a refused read shows an error
+                  rather than the sample.
                 </span>
               </li>
             </ul>

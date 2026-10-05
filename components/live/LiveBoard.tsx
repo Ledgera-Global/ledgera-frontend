@@ -4,7 +4,7 @@ import EventFeed from "@/components/live/EventFeed";
 import IdentityDimensionList from "@/components/live/IdentityDimensionList";
 import LiveStatusBar from "@/components/live/LiveStatusBar";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { fetchJson } from "@/lib/api/client";
+import { readLive, type LiveDataSource } from "@/lib/live/provenance";
 import { useLiveStream } from "@/lib/live/useLiveStream";
 import { formatWindow } from "@/lib/liveDisplay";
 
@@ -34,23 +34,35 @@ import type {
  * page's own open time lets those ages grow honestly as the reader watches.
  * Measuring against the browser clock instead would make a fixture anchored
  * months ago display as months stale the moment it loaded.
+ *
+ * `dataSource` is threaded through rather than assumed. The stream is only
+ * opened when the figures are the reader's own: against a preview there is no
+ * session for the stream route to accept, so opening one would produce a
+ * permanent, self-inflicted "interrupted" banner over data that is working
+ * exactly as intended.
  */
 export default function LiveBoard({
   companyId,
   identity: initialIdentity,
   events: initialEvents,
   connections: initialConnections,
+  dataSource,
 }: {
   companyId: string;
   identity: IdentityResponse;
   events: EconomicEvent[];
   connections: ConnectionHealth[];
+  dataSource: LiveDataSource;
 }) {
-  const live = useLiveStream(companyId, {
-    identity: initialIdentity,
-    events: initialEvents,
-    connections: initialConnections,
-  });
+  const live = useLiveStream(
+    companyId,
+    {
+      identity: initialIdentity,
+      events: initialEvents,
+      connections: initialConnections,
+    },
+    { enabled: dataSource === "live" }
+  );
 
   const [anchorMs, setAnchorMs] = useState(() =>
     Date.parse(initialIdentity.computedAt)
@@ -78,21 +90,26 @@ export default function LiveBoard({
   const refreshNow = useCallback(async () => {
     setRefreshing(true);
     try {
-      const fresh = await fetchJson<IdentityResponse>(
-        `/api/live/${companyId}/identity?refresh=true`,
-        initialIdentity
+      const fresh = await readLive<IdentityResponse>(
+        `/api/live/${companyId}/identity?refresh=true`
       );
+
+      // A refresh that did not come back as the reader's own data is not
+      // applied at all. Re-anchoring the clock to a fixture would silently
+      // restate someone else's figures as the current moment.
+      if (fresh.source !== "live" || !fresh.data) return;
+
       // The stream owns long-lived state; a manual refresh is a one-off read, so
       // its result re-anchors the feed's clock and the next heartbeat reconciles
       // if the two ever disagree. Elapsed resets because the new snapshot is the
       // new origin.
-      setAnchorMs(Date.parse(fresh.computedAt));
+      setAnchorMs(Date.parse(fresh.data.computedAt));
       setElapsedMs(0);
       live.reconnect();
     } finally {
       setRefreshing(false);
     }
-  }, [companyId, initialIdentity, live]);
+  }, [companyId, live]);
 
   const staleSources = live.connections.filter((c) => !c.mayPresentAsCurrent);
 
@@ -102,6 +119,7 @@ export default function LiveBoard({
         streamStatus={live.streamStatus}
         lastFrameAt={live.lastFrameAt}
         note={live.identity.note}
+        dataSource={dataSource}
         mayPresentAsCurrent={live.identity.mayPresentAsCurrent}
         staleSourceCount={staleSources.length}
         onReconnect={live.reconnect}
@@ -126,14 +144,16 @@ export default function LiveBoard({
             {live.identity.windowDays}-day window,{" "}
             {formatWindow(live.identity.windowStart, live.identity.windowEnd)}
           </span>
-          <button
-            type="button"
-            onClick={refreshNow}
-            disabled={refreshing}
-            className="rounded-lg border border-white/15 px-3 py-1.5 text-xs font-semibold text-surface-200 transition hover:border-white/30 hover:text-white disabled:opacity-50"
-          >
-            {refreshing ? "Recomputing…" : "Recompute now"}
-          </button>
+          {dataSource === "live" && (
+            <button
+              type="button"
+              onClick={refreshNow}
+              disabled={refreshing}
+              className="rounded-lg border border-white/15 px-3 py-1.5 text-xs font-semibold text-surface-200 transition hover:border-white/30 hover:text-white disabled:opacity-50"
+            >
+              {refreshing ? "Recomputing…" : "Recompute now"}
+            </button>
+          )}
         </div>
       </div>
 

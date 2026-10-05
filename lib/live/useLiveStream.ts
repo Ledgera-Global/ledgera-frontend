@@ -12,7 +12,7 @@ import type {
 /**
  * Subscribes to the live stream and folds its frames into page state.
  *
- * Three decisions worth stating, because each one exists to prevent a specific
+ * Four decisions worth stating, because each one exists to prevent a specific
  * failure:
  *
  * 1. Reconnection is handled here, not left to `EventSource`. The browser's own
@@ -30,6 +30,12 @@ import type {
  *    re-send an event whose timestamp ties with one already delivered - two jobs
  *    really can complete in the same second - so a client that trusted position
  *    instead of identity would show duplicates.
+ *
+ * 4. The stream is only opened when `enabled`. The stream route refuses callers
+ *    without a session, so a preview page that opened one would spend its whole
+ *    backoff budget knocking on a door it cannot open, and would report repeated
+ *    transport failures on a page whose data is not failing at all. When the
+ *    board is not showing the reader's own data there is nothing to stream.
  */
 
 const MAX_EVENTS = 100;
@@ -52,16 +58,29 @@ export interface LiveStreamResult extends LiveDataState {
   reconnect: () => void;
 }
 
+export interface LiveStreamOptions {
+  /**
+   * False when the page is showing preview data rather than the reader's own.
+   * Defaults to true so existing callers keep the previous behaviour.
+   */
+  enabled?: boolean;
+}
+
 export function useLiveStream(
   companyId: string,
-  initial: LiveDataState
+  initial: LiveDataState,
+  options: LiveStreamOptions = {}
 ): LiveStreamResult {
+  const enabled = options.enabled ?? true;
+
   const [identity, setIdentity] = useState<InstitutionalIdentity>(initial.identity);
   const [events, setEvents] = useState<EconomicEvent[]>(initial.events);
   const [connections, setConnections] = useState<ConnectionHealth[]>(
     initial.connections
   );
-  const [streamStatus, setStreamStatus] = useState<LiveStreamStatus>("connecting");
+  const [streamStatus, setStreamStatus] = useState<LiveStreamStatus>(
+    enabled ? "connecting" : "offline"
+  );
   const [lastFrameAt, setLastFrameAt] = useState<string | null>(null);
 
   const sourceRef = useRef<EventSource | null>(null);
@@ -87,6 +106,13 @@ export function useLiveStream(
 
   const connect = useCallback(() => {
     if (!mountedRef.current) return;
+
+    if (!enabled) {
+      // Nothing to open, and nothing to retry: the preview has no session, so
+      // the stream route would refuse every attempt.
+      setStreamStatus("offline");
+      return;
+    }
 
     sourceRef.current?.close();
     setStreamStatus(attemptsRef.current === 0 ? "connecting" : "reconnecting");
@@ -154,13 +180,14 @@ export function useLiveStream(
       setStreamStatus("reconnecting");
       timerRef.current = setTimeout(connect, delay);
     });
-  }, [companyId, mergeEvents]);
+  }, [companyId, enabled, mergeEvents]);
 
   const reconnect = useCallback(() => {
+    if (!enabled) return;
     attemptsRef.current = 0;
     if (timerRef.current) clearTimeout(timerRef.current);
     connect();
-  }, [connect]);
+  }, [connect, enabled]);
 
   useEffect(() => {
     mountedRef.current = true;
