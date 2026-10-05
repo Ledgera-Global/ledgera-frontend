@@ -22,6 +22,7 @@ export const INSTITUTIONAL_LINKS: InstitutionalLink[] = [
   { label: "Exit Readiness", href: "/analytics/exit-readiness" },
   { label: "Value Growth", href: "/analytics/value-growth" },
   { label: "Acquisition & Diligence", href: "/analytics/acquisition" },
+  { label: "Acquisition Intelligence", href: "/analytics/acquisition-intelligence" },
   { label: "Missed Calls", href: "/analytics/missed-calls" },
   { label: "Marketing Profit", href: "/analytics/marketing-profit" },
   { label: "Benchmarks", href: "/analytics/benchmarks" },
