@@ -12,7 +12,7 @@
   "dependencies": {
     "@sentry/nextjs": "^10.53.1",
     "@vercel/analytics": "^2.0.1",
-    "@vercel/connect": "^0.3.0",
+    "@vercel/connect": "^2.3.0",
     "@vercel/speed-insights": "^2.0.0",
     "jsonwebtoken": "^9.0.3",
     "next": "^16.3.3",
