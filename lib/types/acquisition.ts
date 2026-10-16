@@ -357,20 +357,40 @@ export type MarketingProfitReport = {
 
 // ─── Benchmarking ───────────────────────────────────────────────────────
 
+/** How a metric is expressed. Drives formatting, not the arithmetic. */
+export type MetricUnit = "percent" | "usd" | "usd_per_tech" | "ratio";
+
+/**
+ * Which way is good. Without this the surface would have to infer direction
+ * from the metric key, and a metric whose key was not on the inferred list
+ * would be reported backwards — a collections problem shown as a strength.
+ */
+export type MetricDirection = "higher_is_better" | "lower_is_better";
+
 export type BenchmarkAssessment =
-  | "Above median"
+  | "Top decile"
   | "Near top quartile"
+  | "Above median"
   | "Below median"
-  | "Cohort growing";
+  | "Bottom quartile"
+  | "Cohort growing"
+  | "Not measured";
 
 export type BenchmarkMetric = {
   key: string;
   label: string;
-  value: number;
+  unit: MetricUnit;
+  direction: MetricDirection;
+  /** This company's own reading. Null means it could not be measured. */
+  value: number | null;
   benchmarkValue: number | null;
   topQuartileValue: number | null;
   percentile: number | null;
   assessment: BenchmarkAssessment;
+  /** Companies behind the cohort this metric was compared against. */
+  cohortCompanyCount: number | null;
+  /** Why there is no percentile, or how the figure was produced. */
+  note: string | null;
 };
 
 export type BenchmarkReport = {
@@ -379,6 +399,11 @@ export type BenchmarkReport = {
   cohort: string;
   cohortSize: number;
   cohortReady: boolean;
+  /** Why the cohort is not quotable, when it is not. */
+  cohortNote: string | null;
+  /** What the cohort is banded by, and what it is not. */
+  cohortDefinitionNote: string;
+  periodLabel: string;
   metrics: BenchmarkMetric[];
   summary: string;
 };
