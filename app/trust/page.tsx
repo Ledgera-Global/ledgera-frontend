@@ -121,6 +121,20 @@ const roadmap = [
 // New milestones are added to BOTH places; this timeline renders newest first.
 const securityJourney = [
   {
+    date: "2026-10-19",
+    category: "Evidence",
+    title: "Security evidence is generated, not typed",
+    detail:
+      "The access review, the migration record, and the route inventory are now produced by a tool that reads the live database and the deployed source, then writes the figures to disk alongside a manifest naming the database that answered. Anyone can re-run it against the same commit and the same database and get the same numbers, which is what makes the evidence worth relying on.",
+  },
+  {
+    date: "2026-10-19",
+    category: "Controls",
+    title: "Every mounted route accounted for",
+    detail:
+      "Audited all 47 routers the API mounts: 40 require an authenticated identity and the remaining 7 are public by design, each with a written justification naming the control that replaces authentication (a verified Stripe signature, a verified SAML assertion, a verified OAuth state parameter, or the absence of tenant data). None are unreviewed, and automated checks now fail the build if a future endpoint ships without either a guard or a stated reason.",
+  },
+  {
     date: "2026-08-19",
     category: "Evidence program",
     title: "Operational security evidence program",
