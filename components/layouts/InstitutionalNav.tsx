@@ -27,6 +27,8 @@ export const INSTITUTIONAL_LINKS: InstitutionalLink[] = [
   { label: "Missed Calls", href: "/analytics/missed-calls" },
   { label: "Marketing Profit", href: "/analytics/marketing-profit" },
   { label: "Benchmarks", href: "/analytics/benchmarks" },
+  { label: "Interventions", href: "/analytics/interventions" },
+  { label: "Data Coverage", href: "/analytics/data-coverage" },
   { label: "Internal Operating Console", href: "/internal/ledgera-console" },
 ];
 
