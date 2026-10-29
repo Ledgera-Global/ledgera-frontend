@@ -359,3 +359,124 @@ export async function handleApiStream(
 
   return new Response(upstream.body, { status: 200, headers: streamHeaders });
 }
+/**
+ * A mutation whose refusal text must reach the person who caused it.
+ *
+ * `handleApiMutation` deliberately collapses every upstream failure into a
+ * generic 500, which is right for writes where the only useful answer is "it did
+ * not save". It is wrong for a closure that a policy refused: the backend's
+ * rejection names what the operator must do instead ("record the recovery
+ * amount", "that attribution is directional"), and replacing that with a
+ * generic error leaves them guessing.
+ *
+ * So this variant forwards the backend's status and its `detail` field, and
+ * still applies the same origin, rate-limit and tenant checks as every other
+ * mutation in this file. It never turns a refusal into a success.
+ */
+export async function handleApiMutationWithDetail<T>(
+  req: NextRequest,
+  params: { companyId: string },
+  backendPath: string,
+  method: "POST" | "PATCH" | "PUT" | "DELETE" = "PATCH"
+): Promise<NextResponse<T | { error: string; detail?: string }>> {
+  const { companyId } = params;
+  const headers = new Headers();
+  applySecurityHeaders(headers);
+
+  const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
+  const rl = checkRateLimit(`${ip}:${backendPath}`, {
+    limit: 20,
+    windowSeconds: 15,
+    prefix: "mutation",
+  });
+  if (!rl.allowed) {
+    headers.set("Retry-After", String(Math.ceil((rl.resetAt - Date.now()) / 1000)));
+    return NextResponse.json({ error: "Too many requests" }, { status: 429, headers });
+  }
+
+  const originCheck = validateRequestOrigin(req);
+  if (!originCheck.valid) {
+    return NextResponse.json(
+      { error: originCheck.reason || "Request origin not allowed" },
+      { status: 403, headers }
+    );
+  }
+
+  const userToken = extractUserSessionToken(req);
+  if (!userToken) {
+    return NextResponse.json({ error: "Authentication required" }, { status: 401, headers });
+  }
+
+  if (isTokenVerifierConfigured()) {
+    const tokenValidation = verifyApiToken(userToken);
+    if (!tokenValidation.valid) {
+      return NextResponse.json({ error: "Invalid or expired session" }, { status: 401, headers });
+    }
+    if (
+      tokenValidation.companyId &&
+      !isCompanyAccessAuthorized(tokenValidation.companyId, companyId)
+    ) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403, headers });
+    }
+  }
+
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    body = {};
+  }
+
+  let res: Response;
+  try {
+    res = await fetch(`${BACKEND_URL}${backendPath}`, {
+      method,
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(BACKEND_FETCH_TIMEOUT_MS),
+    });
+  } catch (err) {
+    console.error(`[backendProxy] ${method} ${backendPath} failed:`, (err as Error).message);
+    return NextResponse.json(
+      { error: "The backend did not respond." },
+      { status: 502, headers }
+    );
+  }
+
+  const payload = (await res.json().catch(() => null)) as
+    | (T & { error?: string; detail?: string })
+    | null;
+
+  if (!res.ok) {
+    // 4xx is the backend's own judgement and is passed through verbatim.
+    // 5xx is passed through as a status but not as text: an internal error
+    // message is not written for an operator to read.
+    if (res.status >= 500) {
+      console.error(`[backendProxy] ${method} ${backendPath} returned ${res.status}`);
+      return NextResponse.json(
+        { error: "The case could not be saved." },
+        { status: 502, headers }
+      );
+    }
+    return NextResponse.json(
+      {
+        error: payload?.error ?? "Request refused",
+        detail: payload?.detail,
+      },
+      { status: res.status, headers }
+    );
+  }
+
+  if (payload === null) {
+    return NextResponse.json(
+      { error: "The backend returned an unreadable response." },
+      { status: 502, headers }
+    );
+  }
+
+  headers.set(DATA_SOURCE_HEADER, "live");
+  return NextResponse.json(payload, { status: res.status, headers });
+}
