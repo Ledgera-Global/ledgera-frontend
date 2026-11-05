@@ -154,26 +154,31 @@ export default function OnboardingPage() {
     setRestoringSigned(true);
     setCheckoutError(null);
     try {
-      // Re-send the MSA via the existing contract route
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000"}/contracts/firma/send`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            clientName: company?.name || "Client",
-            clientContact: user?.email || "Client",
-            clientEmail: user?.email || "",
-            state: "Delaware",
-            locationCount: 1,
-            monthlyFee: 1250,
-            setupFee: 2500,
-            documentType: "msa",
-            documentLabel: "Master Service Agreement",
-          }),
-        }
-      );
-      const data = await res.json();
+      // Re-send the MSA through this app's own proxy route.
+      //
+      // Two things were wrong with calling the backend origin directly:
+      //   1. `connect-src 'self'` in vercel.json blocks the request outright, so
+      //      this button could never work in production.
+      //   2. The backend requires `companyId` in the body and matches it against
+      //      the authenticated token, so the call would have been refused even
+      //      if it had been allowed to leave the page.
+      const res = await fetch("/api/contracts/firma/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          companyId: company?.id,
+          clientName: company?.name || "Client",
+          clientContact: user?.email || "Client",
+          clientEmail: user?.email || "",
+          state: "Delaware",
+          locationCount: 1,
+          monthlyFee: 1250,
+          setupFee: 2500,
+          documentType: "msa",
+          documentLabel: "Master Service Agreement",
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Failed to send");
       await refreshOnboarding();
     } catch (err) {

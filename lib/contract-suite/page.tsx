@@ -1,8 +1,6 @@
 "use client";
 import { useState } from "react";
-
-const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
+import { useAuth } from "@/lib/auth-context";
 
 const DOC_LABELS: Record<string, string> = {
   msa: "Master Service Agreement",
@@ -19,6 +17,7 @@ const ROLES: Record<string, string> = {
 };
 
 export default function ContractSuitePage() {
+  const { company: authCompany } = useAuth();
   const [activeDoc, setActiveDoc] = useState("msa");
   const [company, setCompany] = useState("");
   const [email, setEmail] = useState("");
@@ -55,10 +54,24 @@ export default function ContractSuitePage() {
 
   async function handleSend() {
     if (!company || !email || !modalContact) return;
+
+    // The backend enforces authenticate + requireCompanyIdInBodyMatchAuth
+    // ("companyId"): a contract is always filed against a company, and the
+    // caller may only act for a company their own token belongs to. Without
+    // this id the request is refused before Firma is ever called.
+    if (!authCompany?.id) {
+      setError("Sign in to send a contract. Contracts are filed against your company.");
+      return;
+    }
+
     setSending(true);
     setError(null);
     try {
-      const res = await fetch(`${BACKEND_URL}/contracts/firma/send`, {
+      // Same-origin proxy. `connect-src 'self'` in vercel.json blocked the
+      // direct call to the backend, so this button failed with a network error
+      // before any request reached the API. The proxy forwards the caller's
+      // session so the backend still decides who may send a contract.
+      const res = await fetch("/api/contracts/firma/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -71,6 +84,7 @@ export default function ContractSuitePage() {
           setupFee: totalSetup,
           documentType: activeDoc,
           documentLabel: docLabel,
+          companyId: authCompany.id,
         }),
       });
       const data = await res.json();

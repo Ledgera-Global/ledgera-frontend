@@ -15,7 +15,10 @@ export default function ForgotPasswordPage() {
 
     setSubmitting(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000"}/auth/forgot-password`, {
+      // Same-origin proxy: `connect-src 'self'` in vercel.json blocks any
+      // direct call to the backend origin, so the reset button used to fail
+      // before the request was ever sent.
+      const res = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim() }),

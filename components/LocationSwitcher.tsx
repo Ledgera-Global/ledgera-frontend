@@ -42,10 +42,14 @@ export default function LocationSwitcher({ companyId }: LocationSwitcherProps) {
         const headers: Record<string, string> = { "content-type": "application/json" };
         if (token) headers["authorization"] = `Bearer ${token}`;
 
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}/locations/${companyId}`,
-          { headers }
-        );
+        // Same-origin proxy. `connect-src 'self'` in vercel.json blocks a
+        // direct call to the backend origin, which is why this switcher always
+        // fell back to "All locations" in production. The token still travels
+        // as `authorization`; the proxy forwards it and the backend remains the
+        // gate on who may read these locations.
+        const res = await fetch(`/api/locations/${encodeURIComponent(companyId)}`, {
+          headers,
+        });
         if (!res.ok) throw new Error("Failed to load locations");
         const json = await res.json();
         if (!cancelled) {
