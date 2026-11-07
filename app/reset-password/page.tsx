@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ResetPasswordForm from "./ResetPasswordForm";
+import { readResetTokenEmail } from "@/lib/resetToken";
 
 type Props = {
   searchParams: Promise<{ token?: string }>;
@@ -18,6 +19,7 @@ type Props = {
 export default async function ResetPasswordPage({ searchParams }: Props) {
   const params = await searchParams;
   const token = typeof params.token === "string" ? params.token.trim() : "";
+  const email = token ? readResetTokenEmail(token) : null;
 
   return (
     <div className="min-h-screen bg-surface-950 text-surface-100 flex flex-col">
@@ -36,7 +38,7 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
         <div className="w-full max-w-md">
           <div className="rounded-[2rem] border border-white/10 bg-surface-900/60 p-8 shadow-xl shadow-black/20">
             {token ? (
-              <ResetPasswordForm token={token} />
+              <ResetPasswordForm token={token} email={email} />
             ) : (
               <div className="text-center">
                 <h1 className="text-2xl font-semibold text-white">This link is incomplete</h1>

@@ -6,6 +6,8 @@ const MIN_PASSWORD_LENGTH = 8;
 
 type Props = {
   token: string;
+  /** Account address decoded from the token; used only for the hidden username field. */
+  email: string | null;
 };
 
 /**
@@ -15,7 +17,7 @@ type Props = {
  * token from `searchParams` without pulling the whole route into client
  * rendering.
  */
-export default function ResetPasswordForm({ token }: Props) {
+export default function ResetPasswordForm({ token, email }: Props) {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -92,6 +94,21 @@ export default function ResetPasswordForm({ token }: Props) {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
+        {/*
+          Password managers file a new password under the username they find in
+          the same form. Without this field they create an orphan entry nobody
+          can autofill from, so the account address travels with the form even
+          though the link itself already identifies the account.
+        */}
+        <input
+          type="email"
+          name="username"
+          autoComplete="username"
+          defaultValue={email ?? ""}
+          readOnly
+          hidden
+        />
+
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-surface-300 mb-1.5">
             New password
