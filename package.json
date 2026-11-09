@@ -13,11 +13,11 @@
     "@sentry/nextjs": "^10.53.1",
     "@vercel/analytics": "^2.0.1",
     "@vercel/connect": "^0.3.0",
-    "@vercel/speed-insights": "^2.0.0",
+    "@vercel/speed-insights": "^2.1.0",
     "jsonwebtoken": "^9.0.3",
-    "next": "^16.3.3",
-    "react": "19.2.7",
-    "react-dom": "19.2.7"
+    "next": "^16.4.5",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.15",
