@@ -13,6 +13,14 @@ interface DataSourceNoticeProps {
   source: DataSource;
   /** What the screen would have measured, e.g. "attribution" or "coverage". */
   subject: string;
+  /**
+   * What the demo actually is, when it is not a set of borrowed sample numbers.
+   * Without this the notice would claim that figures below come from a sample
+   * company, which is false on a screen that deliberately shows none.
+   */
+  demoBody?: string;
+  /** Heading to use instead of "Showing the worked example". */
+  demoTitle?: string;
 }
 
 const DEMO_CLASSES =
@@ -23,6 +31,8 @@ const UNAVAILABLE_CLASSES =
 export default function DataSourceNotice({
   source,
   subject,
+  demoBody,
+  demoTitle,
 }: DataSourceNoticeProps) {
   if (source === "live") return null;
 
@@ -49,12 +59,13 @@ export default function DataSourceNotice({
       <div className="space-y-1">
         <p className="text-sm font-semibold">
           {isDemo
-            ? "Showing the worked example, not your books"
+            ? demoTitle ?? "Showing the worked example, not your books"
             : `${capitalise(subject)} could not be read`}
         </p>
         <p className="text-sm leading-relaxed opacity-90">
           {isDemo
-            ? `No live ${subject} was returned for this company, so the numbers below come from the bundled sample company. They demonstrate how the analysis reads; they are not a claim about your business.`
+            ? demoBody ??
+              `No live ${subject} was returned for this company, so the numbers below come from the bundled sample company. They demonstrate how the analysis reads; they are not a claim about your business.`
             : `The backend refused or did not answer the read, so nothing is shown rather than the sample figures. ${capitalise(subject)} will populate once the connection is restored.`}
         </p>
       </div>

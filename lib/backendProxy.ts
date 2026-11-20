@@ -46,6 +46,26 @@ function isCompanyAccessAuthorized(
 }
 
 /**
+ * An upstream refusal, carrying the status.
+ *
+ * The status used to live only inside the message string, which meant any
+ * caller that needed to tell "no such record" apart from "the backend is
+ * broken" had to pattern-match English. That is not a decision a HTTP status
+ * should be recovered from, so it is carried as a field.
+ */
+export class BackendFetchError extends Error {
+  readonly status: number;
+  readonly body: string;
+
+  constructor(status: number, body: string) {
+    super(`Backend fetch failed (${status}): ${body}`);
+    this.name = "BackendFetchError";
+    this.status = status;
+    this.body = body;
+  }
+}
+
+/**
  * Fetch data from the Express backend.
  *
  * The caller's own validated session token is forwarded verbatim. The backend
@@ -66,7 +86,7 @@ export async function fetchFromBackend<T>(path: string, bearerToken: string): Pr
 
   if (!res.ok) {
     const text = await res.text().catch(() => "");
-    throw new Error(`Backend fetch failed (${res.status}): ${text}`);
+    throw new BackendFetchError(res.status, text);
   }
 
   return res.json() as Promise<T>;
@@ -88,8 +108,9 @@ export async function handleApiGet<T>(
   req: NextRequest,
   params: { companyId: string },
   backendPath: string,
-  demoData: T
-): Promise<NextResponse<T | { error: string }>> {
+  demoData: T,
+  options?: { treatNotFoundAsAbsent?: boolean }
+): Promise<NextResponse<T | { error: string } | { found: false; detail: string }>> {
   const { companyId } = params;
   const headers = new Headers();
   applySecurityHeaders(headers);
@@ -159,6 +180,19 @@ export async function handleApiGet<T>(
     headers.set(DATA_SOURCE_HEADER, "live");
     return NextResponse.json(data, { headers });
   } catch (err) {
+    // An upstream 404 is "absent" only where the caller asked for that reading.
+    // For most endpoints a 404 means the path is wrong and must stay an error;
+    // for a record lookup it means no record exists yet, which a screen has to
+    // be able to say without calling the read itself a failure. The label stays
+    // `live`: the backend answered, and the answer was "nothing here".
+    if (
+      options?.treatNotFoundAsAbsent === true &&
+      err instanceof BackendFetchError &&
+      err.status === 404
+    ) {
+      headers.set(DATA_SOURCE_HEADER, "live");
+      return NextResponse.json({ found: false, detail: err.body }, { headers });
+    }
     console.error(`[backendProxy] ${backendPath} failed:`, (err as Error).message);
     return NextResponse.json(
       { error: "Upstream data temporarily unavailable" },
