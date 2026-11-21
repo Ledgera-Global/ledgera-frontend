@@ -50,7 +50,7 @@ export default function WorkforceShell({ children }: { children: ReactNode }) {
                     <div className="mx-auto flex max-w-[100rem] flex-col items-center justify-between gap-3 px-6 py-8 text-xs text-surface-500 sm:flex-row lg:px-10">
                         <span>&copy; {new Date().getFullYear()} Ledgera Global Inc. — internal use only</span>
                         <Link
-                            href="/internal/ledgera-console"
+                            href="/internal/workforce/console"
                             className="transition-colors hover:text-surface-200"
                         >
                             Operating console

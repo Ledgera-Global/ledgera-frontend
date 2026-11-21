@@ -31,7 +31,6 @@ export const INSTITUTIONAL_LINKS: InstitutionalLink[] = [
   { label: "Interventions", href: "/analytics/interventions" },
   { label: "Data Coverage", href: "/analytics/data-coverage" },
   { label: "Assurance Cases", href: "/analytics/assurance-cases" },
-  { label: "Internal Operating Console", href: "/internal/ledgera-console" },
 ];
 
 export default function InstitutionalNav({

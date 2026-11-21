@@ -56,7 +56,14 @@ export const WORKFORCE_NAV: NavGroup[] = [
         heading: "People & operations",
         links: [
             { label: "Directory", href: `${ROOT}/directory` },
+            { label: "Team", href: `${ROOT}/team` },
             { label: "Decision queue", href: `${ROOT}/queue` },
+        ],
+    },
+    {
+        heading: "Ledgera Global",
+        links: [
+            { label: "Operating console", href: `${ROOT}/console` },
         ],
     },
     {
