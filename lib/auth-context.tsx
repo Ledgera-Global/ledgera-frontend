@@ -78,6 +78,19 @@ type AuthContextValue = AuthState & AuthActions;
 
 const AUTH_STORAGE_KEY = "ledgera_auth";
 
+const EMPLOYEE_ROLES: ReadonlySet<string> = new Set([
+  "admin",
+  "staff",
+  "exec",
+  "executive",
+  "internal",
+  "ceo",
+  "superadmin",
+  "root",
+  "operator",
+  "owner",
+]);
+
 function persistAuth(
   user: User,
   company: Company,
@@ -129,6 +142,41 @@ function loadPersistedAuth(): {
     }
   }
   return null;
+}
+
+/**
+ * Writes the session cookie the server-side proxies read.
+ *
+ * This must be awaited before any navigation. `/api/auth/me` - which
+ * `InternalGuard` calls the instant it mounts - authenticates from this cookie
+ * alone, so returning from `login()` while the write is still in flight let the
+ * guard's first verification arrive with no session and bounce a legitimate
+ * employee straight back to the sign-in screen.
+ *
+ * A failed write is still not fatal: the caller holds the bearer token for this
+ * page's lifetime and only reload-survival depends on the cookie. It is logged
+ * rather than swallowed so a genuine cookie problem stays visible.
+ */
+async function storeSessionCookie(token: string): Promise<void> {
+  try {
+    const res = await fetch(`/api/auth/set-session-cookie`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    });
+    if (!res.ok) {
+      console.error(`[auth] session cookie rejected with ${res.status}`);
+    }
+  } catch (err) {
+    console.error("[auth] could not store session cookie:", err);
+  }
+}
+
+/** Whether this account belongs at the internal front door rather than /login. */
+function isEmployeeAccount(user: User | null): boolean {
+  if (!user) return false;
+  if (user.isInternal !== true) return false;
+  return EMPLOYEE_ROLES.has(String(user.role || "").trim().toLowerCase());
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -196,13 +244,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         error: null,
       });
 
-      fetch(`/api/auth/set-session-cookie`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
-      }).catch(() => {
-        /* non-critical */
-      });
+      // Awaited on purpose: the caller navigates immediately after this
+      // resolves, and the guard it lands on verifies through the cookie.
+      await storeSessionCookie(token);
 
       return { user, token };
     } catch (err) {
@@ -258,13 +302,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         error: null,
       });
 
-      fetch(`/api/auth/set-session-cookie`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
-      }).catch(() => {
-        /* non-critical */
-      });
+      // Onboarding is guard-protected too, so the cookie is written before the
+      // caller navigates there.
+      await storeSessionCookie(token);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Registration failed";
       setState((prev) => ({ ...prev, loading: false, error: message }));
@@ -295,6 +335,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   function logout() {
+    // Send each account back to the door it came through: an employee dumped on
+    // the customer sign-in would be told to create a company account.
+    const employee = isEmployeeAccount(state.user);
     clearPersistedAuth();
     setState({
       user: null,
@@ -310,7 +353,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }).catch(() => {
       /* non-critical */
     });
-    router.push("/login");
+    router.push(employee ? "/internal/login" : "/login");
   }
 
   return (
