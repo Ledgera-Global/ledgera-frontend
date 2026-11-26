@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { useAuth } from "../../lib/auth-context";
+import { isLedgeraEmployee } from "../../lib/internal/roles";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,8 +24,15 @@ export default function LoginPage() {
 
     setSubmitting(true);
     try {
-      await login(email.trim(), password);
-      router.push("/dashboard");
+      // `login` resolves with the server's own view of the account, so the
+      // employee test below reads the server's verdict rather than a guess.
+      const { user } = await login(email.trim(), password);
+
+      // An employee who signs in here must not be dropped into the customer
+      // surface: `/dashboard` is wrapped in `OnboardingGuard`, and a staff
+      // account's own company is not a customer company awaiting onboarding, so
+      // the guard bounced them straight back out and the sign-in looked broken.
+      router.push(isLedgeraEmployee(user) ? "/internal/workforce" : "/dashboard");
     } catch {
       setLocalError(null); // error is set in auth context
     } finally {

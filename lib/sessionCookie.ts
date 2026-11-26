@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import {
+  SESSION_COOKIE_NAME,
+  SESSION_HINT_COOKIE_NAME,
+} from "./sessionCookieNames";
+
+// Re-exported so every existing server-side importer keeps working, while the
+// client can import the same names from the dependency-free module.
+export { SESSION_COOKIE_NAME, SESSION_HINT_COOKIE_NAME };
+
 /**
  * The browser session cookie.
  *
@@ -16,9 +25,6 @@ import { NextRequest, NextResponse } from "next/server";
  * is therefore a transport convenience, not a second source of truth, and it is
  * httpOnly so page scripts cannot read it.
  */
-
-/** Name must match what every proxy in this app reads. */
-export const SESSION_COOKIE_NAME = "ledgera_token";
 
 /**
  * Matches the backend's own token lifetime (`expiresIn: "7d"` in
@@ -65,6 +71,18 @@ export function setSessionCookie(response: NextResponse, token: string): NextRes
     maxAge: SESSION_COOKIE_MAX_AGE_SECONDS,
   });
 
+  // Written and cleared alongside the real cookie, and with the same lifetime,
+  // so the hint can never outlive the session it points at.
+  response.cookies.set({
+    name: SESSION_HINT_COOKIE_NAME,
+    value: "1",
+    httpOnly: false,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: SESSION_COOKIE_MAX_AGE_SECONDS,
+  });
+
   return response;
 }
 
@@ -74,6 +92,16 @@ export function clearSessionCookie(response: NextResponse): NextResponse {
     name: SESSION_COOKIE_NAME,
     value: "",
     httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 0,
+  });
+
+  response.cookies.set({
+    name: SESSION_HINT_COOKIE_NAME,
+    value: "",
+    httpOnly: false,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",

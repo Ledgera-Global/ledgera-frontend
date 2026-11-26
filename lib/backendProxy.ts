@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { resolveBackendUrl } from "./backendUrl";
 import { readSessionToken } from "./sessionCookie";
 
 import {
@@ -9,7 +10,12 @@ import {
   verifyApiToken,
 } from "./security";
 
-const BACKEND_URL = process.env.LEDGERA_BACKEND_URL || "http://localhost:4000";
+// The backend host is resolved per request by ./backendUrl. It used to be read
+// once here with a `localhost` fallback, which in a serverless deployment is the
+// function talking to itself: the fetch never connects, never fails, and hangs
+// until the platform kills it. Resolving per request also means a corrected
+// environment variable takes effect without touching module state.
+//
 // If the backend (e.g. Railway hobby tier) is cold-starting or down, fail fast rather
 // than letting pages hang on a slow/unbounded fetch.
 const BACKEND_FETCH_TIMEOUT_MS = 4000;
@@ -74,7 +80,7 @@ export class BackendFetchError extends Error {
  * replacement identity for the user.
  */
 export async function fetchFromBackend<T>(path: string, bearerToken: string): Promise<T> {
-  const res = await fetch(`${BACKEND_URL}${path}`, {
+  const res = await fetch(`${resolveBackendUrl()}${path}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${bearerToken}`,
@@ -268,7 +274,7 @@ export async function handleApiMutation<T>(
       body = {};
     }
 
-    const res = await fetch(`${BACKEND_URL}${backendPath}`, {
+    const res = await fetch(`${resolveBackendUrl()}${backendPath}`, {
       method,
       headers: {
         Authorization: `Bearer ${userToken}`,
@@ -359,7 +365,7 @@ export async function handleApiStream(
 
   let upstream: Response;
   try {
-    upstream = await fetch(`${BACKEND_URL}${backendPath}`, {
+    upstream = await fetch(`${resolveBackendUrl()}${backendPath}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${userToken}`,
@@ -463,7 +469,7 @@ export async function handleApiMutationWithDetail<T>(
 
   let res: Response;
   try {
-    res = await fetch(`${BACKEND_URL}${backendPath}`, {
+    res = await fetch(`${resolveBackendUrl()}${backendPath}`, {
       method,
       headers: {
         Authorization: `Bearer ${userToken}`,
